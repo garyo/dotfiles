@@ -2,5 +2,6 @@
 ignore = [
   '.git',
   '.gitignore',
-  '*.swp']
+  '*.swp',
+  '*~']
 externals = { }

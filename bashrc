@@ -12,6 +12,7 @@
 # echo "Incoming PATH:"
 # echo $path | tr ':' '\n'
 
+# could use $OSTYPE here: cygwin, darwin10.0, linux-gnu
 case `uname -s` in
   CYGWIN*) OS=windows ;;
   Darwin)  OS=mac ;;
@@ -64,7 +65,10 @@ setpath_windows() {
 }
 
 setpath() {
-    : generic version: nothing here
+    path_append $HOME/bin
+    path_append /usr/local/sbin
+    path_append /usr/sbin
+    path_append /sbin
 }
 
 # set up path.  Only do this once, to avoid duplicates.
@@ -110,6 +114,8 @@ SAVEHIST=300
 HISTSIZE=1000
 NUMERICGLOBSORT=1
 READNULLCMD=less
+LC_ALL=C			# use regular "C" locale, fixes man pages
+LANG=C
 TIMEFMT="%J:
 	%U(u)+%S(s)/%E=%P.
 	%W swap, %Kk(max %M), pf=%F+%R,
@@ -128,6 +134,7 @@ export LESS='-eij3Mqs'
 export LESSOPEN='|lessopen.sh %s'
 export MORE=s
 export PAGER='less'
+export PERLDOC=-t
 export PGPPATH=$HOME/.pgp
 if [[ $TERM = emacs || $TERM = dumb ]]; then
   export PAGER=
@@ -195,6 +202,13 @@ if [[ -n "$ZSH_VERSION" ]]; then
   if [[ $TERM = xterm ]]; then
     set PROMPT='%{]2;%m (%l): %~%}'$PROMPT
   fi
+fi
+
+if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
+    eval "`dircolors -b`"
+    alias -- ls='ls -CF --color=auto'
+else
+    alias -- ls='ls -CF --color=never'
 fi
 
 # end of file
