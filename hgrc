@@ -1,0 +1,43 @@
+# Mercurial config file
+# Gary Oberbrunner 26-Jan-10
+
+[ui]
+username = Gary Oberbrunner <garyo@oberbrunner.com>
+# set default log style
+style=compact
+
+[extensions]
+rebase=
+bookmarks=
+hgext.graphlog=
+hgext.mq=
+transplant=
+fetch=
+record=
+#svn=c:/home/garyo/hgsubversion/hgsubversion
+#hgattic=c:/home/garyo/hgattic/attic.py
+
+[bookmarks]
+# behave more like git; only move the current bookmark on commit
+track.current=True
+
+[diff]
+# git-format diffs (nicer?)
+git=1
+# prevent patch from updating file dates
+nodates=1
+
+# for "hg serve"
+[web]
+allow_push = *
+push_ssl = false
+
+[hooks]
+# Prevent "hg push" if MQ patches are applied.
+# (only works on Linux I guess -- must use cmd shell)
+# preoutgoing.mq-no-push = ! hg qtop > /dev/null 2>&1
+
+[alias]
+llog = glog -l 5
+# show a given changeset, e.g. "hg show 12345"
+show = log -pr

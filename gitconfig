@@ -1,0 +1,34 @@
+[user]
+	name = Gary Oberbrunner
+	email = garyo@genarts.com
+[pretty]
+	twolines = tformat:%h %an, %cr: %d%n. . . . %s
+[alias]
+	ll = !git log -10 --all --graph --format=twolines  | cut -c1-100
+	tube = log --graph --format=oneline --abbrev-commit --decorate --color
+	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
+	whatsnew = !/Python26/python.exe /bin2/git-whatsnew
+	alias = !git config --get-regexp 'alias.*'
+	ff = merge --ff-only @{u}
+[gui]
+	recentrepo = C:/genarts/sapphire
+	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+[push]
+	default = tracking
+[diff]
+	renamelimit = 0
+	renames = copies
+	tool = kdiff3
+	guitool = kdiff3
+[merge]
+	conflictstyle = diff3
+	tool = kdiff3
+[mergetool "kdiff3"]
+	path = \"c:/Program Files (x86)/kdiff3/kdiff3.exe\"
+[difftool "kdiff3"]
+	path = c:/Program Files (x86)/kdiff3/kdiff3.exe
+[core]
+	editor = emacsclient -a runemacs '%*'
+	autocrlf = input
+[credential]
+	helper = !\"C:/Program Files (x86)/GitExtensions/GitCredentialWinStore/git-credential-winstore.exe\"
