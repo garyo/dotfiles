@@ -12,6 +12,12 @@
 # echo "Incoming PATH:"
 # echo $path | tr ':' '\n'
 
+case `uname -s` in
+  CYGWIN*) OS=windows ;;
+  Darwin)  OS=mac ;;
+  *)       OS=linux ;;
+esac
+
 ########################################################################
 # Misc stuff
 umask 2
@@ -29,11 +35,9 @@ path_remove ()  {
     PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%$REMOVE});IFS=':';echo "${t[*]}");
 }
 
-function setpath {
-    # set up path.  Only do this once, to avoid duplicates.
+setpath_noise() {
     VC10="/Program Files (x86)/Microsoft Visual Studio 10.0/VC"
     VS10="/Program Files (x86)/Microsoft Visual Studio 10.0"
-    path_prepend /PATHSETFROMBASH
     path_append /gnupg
     path_append "/Program Files/R/R-2.14.0/bin"
     path_append "/Program Files (x86)/Lua/5.1"
@@ -49,8 +53,33 @@ function setpath {
     path_append "$VS10/Bin"
 }
 
+setpath_windows() {
+    path_append "/Program files/Mercurial"
+    path_append "/Program Files/TortoiseHg"
+    # # Tex/LaTeX (http://tug.org/texlive/)
+    path_append /texlive/2010/bin/win32
+    path_append /Windows
+    path_append /Windows/system32
+    path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
+}
+
+setpath() {
+    : generic version: nothing here
+}
+
+# set up path.  Only do this once, to avoid duplicates.
 if ! ( echo "$PATH" | grep -q PATHSETFROM ); then
-    setpath
+    path_prepend /PATHSETFROMBASH
+    machine_setpath=setpath_`uname -n`
+    os_setpath=setpath_$OS
+    if declare -f "$machine_setpath" >/dev/null; then
+      $machine_setpath
+    elif declare -f "$os_setpath" >/dev/null; then
+      $os_setpath
+    else
+      setpath
+    fi
+    path_append .
 fi
 
 ########################################################################
