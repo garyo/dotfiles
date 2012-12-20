@@ -55,6 +55,7 @@ setpath_noise() {
 }
 
 setpath_windows() {
+    path_append "/Program files (x86)/Git/cmd"
     path_append "/Program files/Mercurial"
     path_append "/Program Files/TortoiseHg"
     # # Tex/LaTeX (http://tug.org/texlive/)
@@ -162,6 +163,10 @@ alias -- df='df -k'
 alias -- j='jobs -l'
 alias -- ll='ls -l'
 alias -- tf='tail -f'
+
+if [[ $OS = windows ]]; then
+  alias -- git=git.cmd
+fi
 
 ########################################################################
 # Shell options
