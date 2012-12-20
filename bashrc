@@ -210,7 +210,9 @@ if [[ -n "$ZSH_VERSION" ]]; then
 fi
 
 if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
-    eval "`dircolors -b`"
+    if command -v dircolors >/dev/null 2>&1 ; then
+      eval "`dircolors -b`"
+    fi
     alias -- ls='ls -CF --color=auto'
 else
     alias -- ls='ls -CF --color=never'
