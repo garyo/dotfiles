@@ -131,7 +131,7 @@ else
   export EDITOR=emacs
 fi
 export EXINIT='set redraw sw=2 wm=2'
-export LESS='-eij3Mqs'
+export LESS='-eij3MqsFX'
 export LESSOPEN='|lessopen.sh %s'
 export MORE=s
 export PAGER='less'
