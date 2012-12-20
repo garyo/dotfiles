@@ -75,7 +75,7 @@ setpath() {
 # set up path.  Only do this once, to avoid duplicates.
 if ! ( echo "$PATH" | grep -q PATHSETFROM ); then
     path_prepend /PATHSETFROMBASH
-    machine_setpath=setpath_`uname -n`
+    machine_setpath=setpath_`uname -n | sed s/\\..*//` # sed: ignore domain part
     os_setpath=setpath_$OS
     if declare -f "$machine_setpath" >/dev/null; then
       $machine_setpath
