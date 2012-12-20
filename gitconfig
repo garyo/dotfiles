@@ -10,6 +10,7 @@
 	whatsnew = !/Python26/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
+        outgoing = log @{u}..HEAD
 [gui]
 	recentrepo = C:/genarts/sapphire
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
