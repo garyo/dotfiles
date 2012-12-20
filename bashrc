@@ -148,24 +148,24 @@ function la()
   ls -lt "$@" | head -10
 }
 
-alias -- ls='ls -CF'
-alias -- m='less'
-alias -- which='type -a'
-alias -- 1='pushd +1'
-alias -- 2='pushd +2'
-alias -- 3='pushd +3'
-alias -- 4='pushd +4'
-alias -- 5='pushd +5'
-alias -- 6='pushd +6'
-alias -- sc='. ~/.bashrc'
-alias -- d='dirs -v'
-alias -- df='df -k'
-alias -- j='jobs -l'
-alias -- ll='ls -l'
-alias -- tf='tail -f'
+alias ls='ls -CF'
+alias m='less'
+alias which='type -a'
+alias 1='pushd +1'
+alias 2='pushd +2'
+alias 3='pushd +3'
+alias 4='pushd +4'
+alias 5='pushd +5'
+alias 6='pushd +6'
+alias sc='. ~/.bashrc'
+alias d='dirs -v'
+alias df='df -k'
+alias j='jobs -l'
+alias ll='ls -l'
+alias tf='tail -f'
 
 if [[ $OS = windows ]]; then
-  alias -- git=git.cmd
+  alias git=git.cmd
 fi
 
 ########################################################################
@@ -212,10 +212,8 @@ fi
 if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
     if command -v dircolors >/dev/null 2>&1 ; then
       eval "`dircolors -b`"
+      alias ls='ls -CF --color=auto'
     fi
-    alias -- ls='ls -CF --color=auto'
-else
-    alias -- ls='ls -CF --color=never'
 fi
 
 # end of file
