@@ -18,6 +18,7 @@ case `uname -s` in
   Darwin)  OS=mac ;;
   *)       OS=linux ;;
 esac
+MACHINENAME=`uname -n | tr '[:upper:]' '[:lower:]' | sed 's/\\..*//'` # sed: ignore domain part
 
 ########################################################################
 # Misc stuff
@@ -44,6 +45,7 @@ setpath_noise() {
     path_append "/Program Files (x86)/Lua/5.1"
     path_append "/Program Files/GraphicsMagick-1.3.7-Q16"
     path_append "/Program files/Mercurial"
+    path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
     # # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
@@ -74,8 +76,10 @@ setpath() {
 
 # set up path.  Only do this once, to avoid duplicates.
 if ! ( echo "$PATH" | grep -q PATHSETFROM ); then
+    ORIG_PATH="$PATH"
     path_prepend /PATHSETFROMBASH
-    machine_setpath=setpath_`uname -n | sed 's/\\..*//'` # sed: ignore domain part
+    machine_setpath=setpath_$MACHINENAME
+    echo "machine setpath = ", $machine_setpath
     os_setpath=setpath_$OS
     if declare -f "$machine_setpath" >/dev/null; then
       $machine_setpath
