@@ -191,7 +191,7 @@ alias ll='ls -l'
 alias tf='tail -f'
 
 if [[ $OS = windows ]]; then
-  alias git=git.cmd
+  alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
 fi
 
 ########################################################################
