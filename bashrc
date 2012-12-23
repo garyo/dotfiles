@@ -28,6 +28,9 @@ else
 fi
 # echo MACHINENAME is $MACHINENAME
 
+# utility to see if command is defined (in any way)
+has_command () { command -v "$1" > /dev/null 2>&1 }
+  
 ########################################################################
 # Misc stuff
 umask 2
@@ -216,7 +219,9 @@ fi
 PROMPT='%U%m (%~) %@ %B%!=>%b%u
 %# %B'
 PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
-#POSTEDIT=`echotc me`	# turn off all attributes
+if has_command echotc ; then
+  POSTEDIT=`echotc me`	# turn off all attributes
+fi
 RPROMPT=
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
@@ -228,7 +233,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
 fi
 
 if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
-    if command -v dircolors >/dev/null 2>&1 ; then
+    if has_command dircolors ; then
       eval "`dircolors -b`"
       alias ls='ls -CF --color=auto'
     fi
