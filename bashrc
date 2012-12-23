@@ -13,12 +13,19 @@
 # echo $path | tr ':' '\n'
 
 # could use $OSTYPE here: cygwin, darwin10.0, linux-gnu
-case `uname -s` in
-  CYGWIN*) OS=windows ;;
-  Darwin)  OS=mac ;;
+case $OSTYPE in
+  cygwin*) OS=windows ;;
+  win*)    OS=windows ;;
+  darwin*) OS=mac ;;
   *)       OS=linux ;;
 esac
-MACHINENAME=`uname -n | tr '[:upper:]' '[:lower:]' | sed 's/\\..*//'` # sed: ignore domain part
+#MACHINENAME=`uname -n | tr '[:upper:]' '[:lower:]' | sed 's/\\..*//'` # sed: ignore domain part
+if [[ -n "$ZSH_VERSION" ]]; then
+  MACHINENAME=${${HOST%%.*}:l}
+else
+  MACHINENAME=${HOST%%.*}      # strip domain
+  MACHINENAME=${MACHINENAME,,} # lowercase
+fi
 
 ########################################################################
 # Misc stuff
@@ -57,6 +64,8 @@ setpath_noise() {
 }
 
 setpath_windows() {
+    path_prepend "/Python26"
+    path_prepend "/Python27"
     path_append "/Program files (x86)/Git/cmd"
     path_append "/Program files/Mercurial"
     path_append "/Program Files/TortoiseHg"
@@ -75,7 +84,7 @@ setpath() {
 }
 
 # set up path.  Only do this once, to avoid duplicates.
-if ! ( echo "$PATH" | grep -q PATHSETFROM ); then
+if ! [[ "$PATH" == *PATHSETFROM* ]]; then
     ORIG_PATH="$PATH"
     path_prepend /PATHSETFROMBASH
     machine_setpath=setpath_$MACHINENAME
