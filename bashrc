@@ -26,6 +26,7 @@ else
   MACHINENAME=${HOST%%.*}      # strip domain
   MACHINENAME=${MACHINENAME,,} # lowercase
 fi
+# echo MACHINENAME is $MACHINENAME
 
 ########################################################################
 # Misc stuff
@@ -37,11 +38,20 @@ umask 2
 path_append ()  { path_remove "$1"; export PATH="$PATH:$1"; }
 path_prepend () { path_remove "$1"; export PATH="$1:$PATH"; }
 path_remove ()  {
-    # this way with awk and set is slow; use the pure bash version below.
-    # newpath=`echo -n $PATH | gawk -v RS=: -v ORS=: -- '$0 != "'$1'"' | sed 's/:$//'`;
-    # export PATH="$newpath"
     REMOVE="$1"
-    PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%$REMOVE});IFS=':';echo "${t[*]}");
+    if [[ -n "$ZSH_VERSION" ]]; then
+      PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%$REMOVE});IFS=':';echo "${t[*]}");
+    else
+      IFS=':'
+      t=($PATH)
+      n=${#t[*]}
+      a=()
+      for ((i=0;i<n;i++)); do
+	p="${t[i]%%$REMOVE}"
+	[ "${p}" ] && a[i]="${p}"
+      done
+      PATH="${a[*]}"
+    fi
 }
 
 setpath_noise() {
@@ -88,7 +98,7 @@ if ! [[ "$PATH" == *PATHSETFROM* ]]; then
     ORIG_PATH="$PATH"
     path_prepend /PATHSETFROMBASH
     machine_setpath=setpath_$MACHINENAME
-    echo "machine setpath = ", $machine_setpath
+    #echo "machine setpath = " $machine_setpath
     os_setpath=setpath_$OS
     if declare -f "$machine_setpath" >/dev/null; then
       $machine_setpath
@@ -202,16 +212,11 @@ fi
 ########################################################################
 # Prompt
 
-if [[ X$VENDOR = Xpc ]]; then
-PROMPT='%m (%~) %@ %! =>
-%# '
-PROMPT2='MORE: => '
-else
+# multiline highlighted prompt
 PROMPT='%U%m (%~) %@ %B%!=>%b%u
 %# %B'
 PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 #POSTEDIT=`echotc me`	# turn off all attributes
-fi
 RPROMPT=
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
