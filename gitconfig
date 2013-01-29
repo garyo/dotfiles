@@ -30,7 +30,7 @@
 [difftool "kdiff3"]
 	path = c:/Program Files (x86)/kdiff3/kdiff3.exe
 [core]
-	editor = emacsclient -a runemacs '%*'
+	editor = emacsclient -a emacs
 	autocrlf = input
 [credential]
 	helper = !\"C:/Program Files (x86)/GitExtensions/GitCredentialWinStore/git-credential-winstore.exe\"
