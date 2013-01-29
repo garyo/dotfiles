@@ -10,7 +10,7 @@
 	whatsnew = !/Python26/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
-        outgoing = log @{u}..HEAD
+	outgoing = log @{u}..HEAD
 	incoming = !git fetch && git log ..@{u}
 [gui]
 	recentrepo = C:/genarts/sapphire
