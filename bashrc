@@ -24,13 +24,13 @@ if [[ -n "$ZSH_VERSION" ]]; then
   MACHINENAME=${${HOST%%.*}:l}
 else
   MACHINENAME=${HOST%%.*}      # strip domain
-  MACHINENAME=${MACHINENAME,,} # lowercase
+  MACHINENAME=`echo $MACHINENAME | tr '[A-Z]' '[a-z]'` # lowercase (${VAR,,} only works on bash 4.x)
 fi
 # echo MACHINENAME is $MACHINENAME
 
 # utility to see if command is defined (in any way)
 has_command () { command -v "$1" > /dev/null 2>&1 }
-  
+
 ########################################################################
 # Misc stuff
 umask 2
@@ -192,6 +192,11 @@ alias tf='tail -f'
 
 if [[ $OS = windows ]]; then
   alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
+  # start on Windows opens a file with its default application.
+  # It's a builtin in cmd.exe.
+  function start()  {
+    cmd /c "start /B $@"
+  }
 fi
 
 ########################################################################
