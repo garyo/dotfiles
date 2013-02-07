@@ -229,6 +229,9 @@ if has_command echotc ; then
 fi
 RPROMPT=
 
+# For bash, nothing fancy but better than default:
+PS1='\h [\W] % '
+
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
 if [[ -n "$ZSH_VERSION" ]]; then
   chpwd () { [[ $TERM = xterm ]] && print -Pn ']2;%m (%l): %~' > /dev/tty; }
