@@ -29,7 +29,7 @@ fi
 # echo MACHINENAME is $MACHINENAME
 
 # utility to see if command is defined (in any way)
-has_command () { command -v "$1" > /dev/null 2>&1 }
+has_command () { command -v "$1" > /dev/null 2>&1 ; }
 
 ########################################################################
 # Misc stuff
@@ -230,7 +230,9 @@ fi
 RPROMPT=
 
 # For bash, nothing fancy but better than default:
-PS1='\h [\W] % '
+if [[ -n "$BASH_VERSION" ]]; then
+  PS1='\h [\W] % '
+fi 
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
 if [[ -n "$ZSH_VERSION" ]]; then
