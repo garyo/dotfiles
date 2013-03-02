@@ -14,6 +14,7 @@ hgext.mq=
 transplant=
 fetch=
 record=
+hgk=
 #svn=c:/home/garyo/hgsubversion/hgsubversion
 #hgattic=c:/home/garyo/hgattic/attic.py
 
