@@ -12,6 +12,7 @@
 	ff = merge --ff-only @{u}
 	outgoing = log @{u}..HEAD
 	incoming = !git fetch && git log ..@{u}
+	ga-merge = merge --no-commit --no-ff --log=9999
 [gui]
 	recentrepo = C:/genarts/sapphire
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
