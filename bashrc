@@ -28,6 +28,10 @@ else
 fi
 # echo MACHINENAME is $MACHINENAME
 
+case $OSTYPE in
+  cygwin*) export CYGWIN="nodosfilewarning" ;;
+esac
+
 # utility to see if command is defined (in any way)
 has_command () { command -v "$1" > /dev/null 2>&1 ; }
 
@@ -232,7 +236,7 @@ RPROMPT=
 # For bash, nothing fancy but better than default:
 if [[ -n "$BASH_VERSION" ]]; then
   PS1='\h [\W] % '
-fi 
+fi
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
 if [[ -n "$ZSH_VERSION" ]]; then
