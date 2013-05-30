@@ -120,7 +120,7 @@ fi
 ########################################################################
 # Terminal setup
 
-ttymodes=(-istrip erase \^h susp \^Z intr \^C quit \^\\ flush \^O ixany)
+ttymodes=(-istrip erase \^? susp \^Z intr \^C quit \^\\ flush \^O ixany)
 if [[ $TERM = emacs ]]; then
   :
 else
