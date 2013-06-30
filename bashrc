@@ -93,6 +93,14 @@ setpath_windows() {
     path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
 }
 
+setpath_mac() {
+    path_append $HOME/bin
+    path_append /usr/local/sbin
+    path_append /usr/sbin
+    path_append /sbin
+    path_append /Applications/Xcode.app/Contents/Developer/usr/bin
+}
+
 setpath() {
     path_append $HOME/bin
     path_append /usr/local/sbin
