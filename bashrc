@@ -120,7 +120,11 @@ fi
 ########################################################################
 # Terminal setup
 
-ttymodes=(-istrip erase \^? susp \^Z intr \^C quit \^\\ flush \^O ixany)
+if [[ $TERM = xterm-256color ]]; then  # get this coming from a Mac via ssh
+  TERM=xterm
+fi
+
+ttymodes=(-istrip erase \^\? susp \^Z intr \^C quit \^\\ flush \^O ixany)
 if [[ $TERM = emacs ]]; then
   :
 else
