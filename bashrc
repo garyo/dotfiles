@@ -12,6 +12,11 @@
 # echo "Incoming PATH:"
 # echo $path | tr ':' '\n'
 
+if [ -z "$ZSH_VERSION" -a -z "$BASH" ]; then
+    SIMPLE_SH_MODE=1
+    return # the rest of this file assumes at least bash or zsh.
+fi
+
 # could use $OSTYPE here: cygwin, darwin10.0, linux-gnu
 case $OSTYPE in
   cygwin*) OS=windows ;;
@@ -174,7 +179,7 @@ else
 fi
 export EXINIT='set redraw sw=2 wm=2'
 export LESS='-eij3MqsFX'
-export LESSOPEN='|lessopen.sh %s'
+#export LESSOPEN='|lessopen.sh %s'
 export MORE=s
 export PAGER='less'
 export PERLDOC=-t
