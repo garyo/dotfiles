@@ -4,7 +4,8 @@
 [pretty]
 	twolines = tformat:%h %an, %cr: %d%n. . . . %s
 [alias]
-	ll = !git log -10 --all --graph --format=twolines  | cut -c1-100
+	ll = !git log -15 --all --graph --format=twolines  | cut -c1-100
+	l = !git log --all --graph --format=twolines
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
 	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
 	whatsnew = !/Python26/python.exe /bin2/git-whatsnew
