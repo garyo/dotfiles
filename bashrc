@@ -85,6 +85,10 @@ setpath_noise() {
     path_append "$VS10/VC/Bin"
     path_append "$VS10/Bin"
 }
+setpath_simplex() {
+    # Simplex is my new work machine (2013), same config as noise
+    setpath_noise
+}
 
 setpath_windows() {
     path_prepend "/Python26"
