@@ -15,9 +15,10 @@ transplant=
 fetch=
 record=
 hgk=
+shelve=
+histedit=
 #svn=c:/home/garyo/hgsubversion/hgsubversion
 # hgattic=~/src/hgattic/attic.py
-shelve=~/src/hgshelve/hgshelve.py
 
 [bookmarks]
 # behave more like git; only move the current bookmark on commit
