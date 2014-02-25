@@ -4,20 +4,27 @@
 [pretty]
 	twolines = tformat:%h %an, %cr: %d%n. . . . %s
 [alias]
-	ll = !git log -15 --all --graph --format=twolines  | cut -c1-100
-	l = !git log --all --graph --format=twolines
+	ll = !git log -10 --all --graph --date-order --format=twolines  | cut -c1-100
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
 	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
-	whatsnew = !/Python26/python.exe /bin2/git-whatsnew
+	whatsnew = !/Python27/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
 	outgoing = log @{u}..HEAD
 	incoming = !git fetch && git log ..@{u}
 	ga-merge = merge --no-commit --no-ff --log=9999
+	lg1 = log --graph --date-order --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(black)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold red)%d%C(reset)' --all
+	lg2 = log --graph --date-order --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold red)%d%C(reset)%n''          %C(black)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+	lg = !"git lg1"
+	# Show the latest ancestor of HEAD that's on a different branch; that's usually where this branch branched from.
+	# May only work if this branch is not merged, e.g. a topic branch.
+	branch-base = !git show-branch -a 2>/dev/null | grep '\\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//'
+	current-branch = rev-parse --abbrev-ref HEAD
 [gui]
 	recentrepo = C:/genarts/sapphire
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 11 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
+	recentrepo = C:/genarts/sapphire-renderapi
 [push]
 	default = tracking
 [diff]
@@ -37,6 +44,8 @@
 [core]
 	editor = emacsclient -a emacs
 	autocrlf = input
+[credential]
+	helper = !\"C:/Program Files (x86)/GitExtensions/GitCredentialWinStore/git-credential-winstore.exe\"
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
