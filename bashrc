@@ -76,6 +76,7 @@ setpath_noise() {
     path_append "/Program files/Mercurial"
     path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
+    path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
     # # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
     path_append /Windows
@@ -83,6 +84,10 @@ setpath_noise() {
     path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
     path_append "$VS10/VC/Bin"
     path_append "$VS10/Bin"
+}
+setpath_simplex() {
+    # Simplex is my new work machine (2013), same config as noise
+    setpath_noise
 }
 
 setpath_windows() {
