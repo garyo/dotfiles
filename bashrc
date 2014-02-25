@@ -76,14 +76,21 @@ setpath_noise() {
     path_append "/Program files/Mercurial"
     path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
+    path_append "/Program Files (x86)/KDiff3"
     path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
-    # # Tex/LaTeX (http://tug.org/texlive/)
+    # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
+    # LibreOffice (soffice.exe) - for converting odt to docx in emacs
+    path_append "/Program files (x86)/LibreOffice 4/program"
     path_append /Windows
     path_append /Windows/system32
     path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
-    path_append "$VS10/VC/Bin"
+    path_append "$VS10/Common7/IDE" # DLLs for dumpbin
+    path_append "$VC10/Bin"
     path_append "$VS10/Bin"
+    path_prepend /bin
+    path_prepend "/Python27"
+    path_prepend "/Python27/Scripts"
 }
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
@@ -93,6 +100,8 @@ setpath_simplex() {
 setpath_windows() {
     path_prepend "/Python26"
     path_prepend "/Python27"
+    path_prepend "/Python27/Scripts"
+    path_prepend /bin
     path_append "/Program files (x86)/Git/cmd"
     path_append "/Program files/Mercurial"
     path_append "/Program Files/TortoiseHg"
