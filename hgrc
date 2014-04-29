@@ -4,7 +4,7 @@
 [ui]
 username = Gary Oberbrunner <garyo@oberbrunner.com>
 # set default log style
-style=compact
+style=~/.compact.hg.tmpl
 
 [extensions]
 rebase=
@@ -29,6 +29,9 @@ track.current=True
 git=1
 # prevent patch from updating file dates
 nodates=1
+
+[phases]
+publish = False
 
 # for "hg serve"
 [web]
