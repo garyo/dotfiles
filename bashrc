@@ -8,7 +8,6 @@
 # set for debugging:
 # set -v
 # set -x
-# echo "Running .bashrc"
 # echo "Incoming PATH:"
 # echo $path | tr ':' '\n'
 
@@ -91,6 +90,7 @@ setpath_noise() {
     path_prepend /bin
     path_prepend "/Python27"
     path_prepend "/Python27/Scripts"
+    path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
 }
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
