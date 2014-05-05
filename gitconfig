@@ -2,9 +2,9 @@
 	name = Gary Oberbrunner
 	email = garyo@genarts.com
 [pretty]
-	twolines = tformat:%h %an, %cr: %d%n. . . . %s
+	twolines = tformat:%h %an, %cr: %d%n. . . . %w(70,0,8)%s
 [alias]
-	ll = !git log -10 --all --graph --date-order --format=twolines  | cut -c1-100
+	ll = !git log -10 --graph --date-order --format=twolines
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
 	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
 	whatsnew = !/Python27/python.exe /bin2/git-whatsnew
@@ -21,10 +21,11 @@
 	branch-base = !git show-branch -a 2>/dev/null | grep '\\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//'
 	current-branch = rev-parse --abbrev-ref HEAD
 [gui]
-	recentrepo = C:/genarts/sapphire
-	fontdiff = -family \"Droid Sans Mono Dotted\" -size 11 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
 	recentrepo = C:/genarts/sapphire-renderapi
+	recentrepo = C:/genarts/sapphire
+	encoding = utf-8
 [push]
 	default = tracking
 [diff]
