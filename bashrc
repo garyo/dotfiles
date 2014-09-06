@@ -110,6 +110,7 @@ setpath_windows() {
     path_append /Windows
     path_append /Windows/system32
     path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
+    path_append "/swig"
 }
 
 setpath_mac() {
