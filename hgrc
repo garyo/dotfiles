@@ -5,6 +5,7 @@
 username = Gary Oberbrunner <garyo@oberbrunner.com>
 # set default log style
 style=~/.compact.hg.tmpl
+ssh="/Program Files (x86)/PuTTY/plink" -ssh
 
 [extensions]
 rebase=
@@ -17,8 +18,6 @@ record=
 hgk=
 shelve=
 histedit=
-#svn=c:/home/garyo/hgsubversion/hgsubversion
-# hgattic=~/src/hgattic/attic.py
 
 [bookmarks]
 # behave more like git; only move the current bookmark on commit
