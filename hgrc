@@ -5,7 +5,9 @@
 username = Gary Oberbrunner <garyo@oberbrunner.com>
 # set default log style
 style=~/.compact.hg.tmpl
-ssh="/Program Files (x86)/PuTTY/plink" -ssh
+#ssh="/Program Files (x86)/PuTTY/plink" -ssh
+# Use basic conflict-marker merge style (no fancy tools)
+merge=internal:merge
 
 [extensions]
 rebase=
