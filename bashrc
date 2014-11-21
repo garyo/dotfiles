@@ -76,6 +76,7 @@ setpath_noise() {
     path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
     path_append "/Program Files (x86)/KDiff3"
+    path_append "/Program Files (x86)/GnuWin32/bin"
     path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
     # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32

@@ -44,7 +44,7 @@
   trustExitCode = false
 [core]
 	editor = emacsclient -a emacs
-	autocrlf = input
+	# autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
 [credential]
 	helper = !\"C:/Program Files (x86)/GitExtensions/GitCredentialWinStore/git-credential-winstore.exe\"
 [difftool "Kaleidoscope"]
