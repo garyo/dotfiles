@@ -20,15 +20,21 @@ fi
 case $OSTYPE in
   cygwin*) OS=windows ;;
   win*)    OS=windows ;;
+  msys*)    OS=windows ;;
   darwin*) OS=mac ;;
   *)       OS=linux ;;
 esac
-#MACHINENAME=`uname -n | tr '[:upper:]' '[:lower:]' | sed 's/\\..*//'` # sed: ignore domain part
 if [[ -n "$ZSH_VERSION" ]]; then
   MACHINENAME=${${HOST%%.*}:l}
 else
-  MACHINENAME=${HOST%%.*}      # strip domain
-  MACHINENAME=`echo $MACHINENAME | tr '[A-Z]' '[a-z]'` # lowercase (${VAR,,} only works on bash 4.x)
+  if [[ -n "$HOSTNAME" ]]; then
+    MACHINENAME="$HOSTNAME"
+  elif [[ -n "$COMPUTERNAME" ]]; then
+    MACHINENAME="$COMPUTERNAME"
+  else
+    MACHINENAME=${HOST%%.*}      # strip domain
+    MACHINENAME=`echo $MACHINENAME | tr '[A-Z]' '[a-z]'` # lowercase (${VAR,,} only works on bash 4.x)
+  fi
 fi
 # echo MACHINENAME is $MACHINENAME
 
@@ -98,6 +104,12 @@ setpath_simplex() {
     setpath_noise
 }
 
+setpath_simplex_msys() {
+    # This is just for building emacs with msys
+    PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
+    alias git="c:/Program Files (x86)"/git/bin/git
+}
+
 setpath_windows() {
     path_prepend "/Python26"
     path_prepend "/Python27"
@@ -134,9 +146,12 @@ if ! [[ "$PATH" == *PATHSETFROM* ]]; then
     ORIG_PATH="$PATH"
     path_prepend /PATHSETFROMBASH
     machine_setpath=setpath_$MACHINENAME
-    #echo "machine setpath = " $machine_setpath
+    machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
+    # echo "machine os setpath = " $machine_os_setpath
     os_setpath=setpath_$OS
-    if declare -f "$machine_setpath" >/dev/null; then
+    if declare -f "$machine_os_setpath" >/dev/null; then
+      $machine_os_setpath
+    elif declare -f "$machine_setpath" >/dev/null; then
       $machine_setpath
     elif declare -f "$os_setpath" >/dev/null; then
       $os_setpath
