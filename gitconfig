@@ -10,7 +10,7 @@
 	whatsnew = !/Python27/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
-	outgoing = log @{u}..HEAD
+	outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
 	incoming = !git fetch && git log ..@{u}
 	ga-merge = merge --no-commit --no-ff --log=9999
 	lg1 = log --graph --date-order --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(black)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold red)%d%C(reset)' --all
@@ -18,14 +18,17 @@
 	lg = !"git lg1"
 	# Show the latest ancestor of HEAD that's on a different branch; that's usually where this branch branched from.
 	# May only work if this branch is not merged, e.g. a topic branch.
-	branch-base = !git show-branch -a 2>/dev/null | grep '\\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//'
+	branch-base = !git show-branch -a 2>/dev/null | grep '^[ +-]*\\*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | perl -pe 's/.*?\\[(.*?)\\].*/\\1/'
 	current-branch = rev-parse --abbrev-ref HEAD
+	accept-ours = "!f() { git checkout --ours -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
+	accept-theirs = "!f() { git checkout --theirs -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
+	summary = !"git status -b --untracked-files=no; echo -e '\\033[0;34m*** OUTGOING:\\033[0m'; git outgoing -n2; echo -e '\\033[0;32m*** HEAD:\\033[0m'; git show --format='%ad%n  %ar [%h]: %aN%n  %s' --quiet HEAD; git stash list"
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
-	recentrepo = C:/genarts/sapphire-renderapi
 	recentrepo = C:/genarts/sapphire
 	encoding = utf-8
+	recentrepo = C:/genarts/sapphire-v8
 [push]
 	default = tracking
 [diff]
@@ -56,3 +59,7 @@
 	trustExitCode = true
 [mergetool]
 	prompt = false
+[status]
+	# magit needs this even though it's the default,
+	# otherwise it recursively shows all untracked files (which can be slow).
+	showUntrackedFiles = normal
