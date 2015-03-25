@@ -22,7 +22,7 @@
 	current-branch = rev-parse --abbrev-ref HEAD
 	accept-ours = "!f() { git checkout --ours -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
 	accept-theirs = "!f() { git checkout --theirs -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
-	summary = !"git status -b --untracked-files=no; echo -e '\\033[0;34m*** OUTGOING:\\033[0m'; git outgoing -n2; echo -e '\\033[0;32m*** HEAD:\\033[0m'; git show --format='%ad%n  %ar [%h]: %aN%n  %s' --quiet HEAD; git stash list"
+	summary = !"git status -b --untracked-files=no; echo -e '\\033[0;34m*** OUTGOING:\\033[0m'; git outgoing -n2; echo -e '\\033[0;32m*** HEAD:\\033[0m'; git show --format='%ad%n  %ar [%h]: %aN%n  %s' --quiet HEAD; git stash list; echo -e '\\033[0;34m*** UNPUSHED:\\033[0m'; git ll --branches --not --remotes"
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
