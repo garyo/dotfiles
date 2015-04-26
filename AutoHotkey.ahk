@@ -12,10 +12,10 @@ IfNotExist, %LinkFile%
   FileCreateShortcut, %A_ScriptFullPath%, %LinkFile%
 SetWorkingDir, %A_ScriptDir%
 
-return
 ; end of auto-execute section; hotkeys go below.
-; -----------------------------
+return
 
+; -----------------------------
 
 ; Win+\ - turn off monitor.  Doesn't work always.
 #\ UP::
@@ -25,15 +25,15 @@ return
 
 ; Shift-F5: Insert current date in GenArts format
 +F5::
-FormatTime date,, d{-}MMM{-}yy
-Send %date%
-return
+    FormatTime date,, d{-}MMM{-}yy
+    Send %date%
+    return
 
 ; Ctrl-F5: Insert current date in yy-mm-dd format
 ^F5::
-FormatTime date,, yyyy{-}MM{-}dd
-Send %date%
-return
+    FormatTime date,, yyyy{-}MM{-}dd
+    Send %date%
+    return
 
 ; Run or active DbgView on Ctrl-Alt-Shift-D
 ^!+d::
@@ -98,13 +98,21 @@ return
 ;                  1 2 3 4 5 6 7 8 9 1
 ;                                    0
 ;              r   g G a A c C t T u U
-*a::diacritic("a","à,À,á,Á,â,Â,ã,Ã,ä,Ä")
-*e::diacritic("e","è,È,é,É,ê,Ê,e,E,ë,Ë")
-*i::diacritic("i","ì,Ì,í,Í,î,Î,i,I,ï,Ï")
-*o::diacritic("o","ò,Ò,ó,Ó,ô,Ô,õ,Õ,ö,Ö")
-*u::diacritic("u","ù,Ù,ú,Ú,û,Û,u,U,ü,Ü")
-*n::diacritic("n","n,N,n,N,n,N,ñ,Ñ,n,N")
-*y::diacritic("y","y,Y,y,Y,y,Y,y,Y,ÿ,Ÿ")
+a::diacritic("a","à,À,á,Á,â,Â,ã,Ã,ä,Ä")
+e::diacritic("e","è,È,é,É,ê,Ê,e,E,ë,Ë")
+i::diacritic("i","ì,Ì,í,Í,î,Î,i,I,ï,Ï")
+o::diacritic("o","ò,Ò,ó,Ó,ô,Ô,õ,Õ,ö,Ö")
+u::diacritic("u","ù,Ù,ú,Ú,û,Û,u,U,ü,Ü")
+n::diacritic("n","n,N,n,N,n,N,ñ,Ñ,n,N")
+y::diacritic("y","y,Y,y,Y,y,Y,y,Y,ÿ,Ÿ")
+; shifted - is there an easier way?
++a::diacritic("a","à,À,á,Á,â,Â,ã,Ã,ä,Ä")
++e::diacritic("e","è,È,é,É,ê,Ê,e,E,ë,Ë")
++i::diacritic("i","ì,Ì,í,Í,î,Î,i,I,ï,Ï")
++o::diacritic("o","ò,Ò,ó,Ó,ô,Ô,õ,Õ,ö,Ö")
++u::diacritic("u","ù,Ù,ú,Ú,û,Û,u,U,ü,Ü")
++n::diacritic("n","n,N,n,N,n,N,ñ,Ñ,n,N")
++y::diacritic("y","y,Y,y,Y,y,Y,y,Y,ÿ,Ÿ")
 
 diacritic(regular,accentedCharacters) {
 	StringSplit, char, accentedCharacters, `,
