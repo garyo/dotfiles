@@ -72,98 +72,118 @@ return
 ;;; Currency
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; (* means no end key needed, ? means triggers inside word)
-:*?:$eur::Ђ
-:*?:$ukp::Ј
-:*?:$yen::Ґ
+:*?:$eur::в‚¬
+:*?:$ukp::ВЈ
+:*?:$yen::ВҐ
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Type accented letters OSX-style (http://www.autohotkey.com/board/topic/27801-special-characters-osx-style/)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Alt+': acute б
-; Alt+`: grave а
-; Alt+^: circumflex в
-; Alt+~: tilde г
-; Alt+u: umlaut д
+; Alt+': acute
+; Alt+`: grave
+; Alt+^: circumflex
+; Alt+~: tilde
+; Alt+u: umlaut
 ; (no cedilla)
-; бaва
 
 #UseHook
-!VKC0SC029::Return 	; grave -> the grave ` accent gave some probs, used the virtualkey + scancode instead
-!VKDESC028::Return    	; acute
-!^::Return		; circumflex
-!~::Return         	; tilde
-!u::Return		; umlaut
+!VKC0SC029::	; grave `
+!VKDESC028::	; acute '
+!^::	; circumflex
+!~::    ; tilde
+!u::	; umlaut
+Accent:=1
+Sleep 5000
+Accent:=0
+return
 
-;                  1 2 3 4 5 6 7 8 9 1
-;                                    0
-;              r   g G a A c C t T u U
-a::diacritic("a","а,А,б,Б,в,В,г,Г,д,Д")
-e::diacritic("e","и,И,й,Й,к,К,e,E,л,Л")
-i::diacritic("i","м,М,н,Н,о,О,i,I,п,П")
-o::diacritic("o","т,Т,у,У,ф,Ф,х,Х,ц,Ц")
-u::diacritic("u","щ,Щ,ъ,Ъ,ы,Ы,u,U,ь,Ь")
-n::diacritic("n","n,N,n,N,n,N,с,С,n,N")
-y::diacritic("y","y,Y,y,Y,y,Y,y,Y,я,џ")
-; shifted - is there an easier way?
-+a::diacritic("a","а,А,б,Б,в,В,г,Г,д,Д")
-+e::diacritic("e","и,И,й,Й,к,К,e,E,л,Л")
-+i::diacritic("i","м,М,н,Н,о,О,i,I,п,П")
-+o::diacritic("o","т,Т,у,У,ф,Ф,х,Х,ц,Ц")
-+u::diacritic("u","щ,Щ,ъ,Ъ,ы,Ы,u,U,ь,Ь")
-+n::diacritic("n","n,N,n,N,n,N,с,С,n,N")
-+y::diacritic("y","y,Y,y,Y,y,Y,y,Y,я,џ")
+#If Accent
+;              1 2 3 4 5 6 7 8 9 1
+;                                0
+;          r   g G a A c C t T u U
+*a::
+diacritic("a","Г ,ГЂ,ГЎ,ГЃ,Гў,Г‚,ГЈ,Гѓ,Г¤,Г„")
+Accent:=0
+return
+*e::
+diacritic("e","ГЁ,Г€,Г©,Г‰,ГЄ,ГЉ,e,E,Г«,Г‹")
+Accent:=0
+return
+*i::
+diacritic("i","Г¬,ГЊ,Г­,ГЌ,Г®,ГЋ,i,I,ГЇ,ГЏ")
+Accent:=0
+return
+*o::
+diacritic("o","ГІ,Г’,Гі,Г“,Гґ,Г”,Гµ,Г•,Г¶,Г–")
+Accent:=0
+return
+*u::
+diacritic("u","Г№,Г™,Гє,Гљ,Г»,Г›,u,U,Гј,Гњ")
+Accent:=0
+return
+*n::
+diacritic("n","n,N,n,N,n,N,Г±,Г‘,n,N")
+Accent:=0
+return
+*y::
+diacritic("y","y,Y,y,Y,y,Y,y,Y,Гї,Её")
+Accent:=0
+return
 
 diacritic(regular,accentedCharacters) {
-	StringSplit, char, accentedCharacters, `,
-	graveOption            := char1
-	graveShiftOption       := char2
-	acuteOption            := char3
-	acuteShiftOption       := char4
-	circumflexOption       := char5
-	circumflexShiftOption  := char6
-	tildeOption            := char7
-	tildeShiftOption       := char8
-	umlautOption           := char9
-	umlautShiftOption      := char10
+    StringSplit, char, accentedCharacters, `,
+    graveOption := char1
+    graveShiftOption := char2
+    acuteOption              := char3
+    acuteShiftOption := char4
+    circumflexOption := char5
+    circumflexShiftOption := char6
+    tildeOption := char7
+    tildeShiftOption := char8
+    umlautOption := char9
+    umlautShiftOption := char10
 
-	if (A_PriorHotKey = "!VKC0SC029" && A_TimeSincePriorHotkey < 2000) {
-		if (GetKeyState("Shift")) {
-			SendInput % graveShiftOption
-		} else {
-			SendInput % graveOption
-		}
-	} else if (A_PriorHotKey = "!VKDESC028" && A_TimeSincePriorHotkey < 2000) {
-		if (GetKeyState("Shift")) {
-			SendInput % acuteShiftOption
-		} else {
-			SendInput % acuteOption
-		}
-	} else if (A_PriorHotKey = "!^" && A_TimeSincePriorHotkey < 2000) {
-		if (GetKeyState("Shift")) {
-			SendInput % circumflexShiftOption
-		} else {
-			SendInput % circumflexOption
-		}
-	} else if (A_PriorHotKey = "!~" && A_TimeSincePriorHotkey < 2000) {
-		if (GetKeyState("Shift")) {
-			SendInput % tildeShiftOption
-		} else {
-			SendInput % tildeOption
-		}
-	} else if (A_PriorHotKey = "!u" && A_TimeSincePriorHotkey < 2000) {
-		if (GetKeyState("Shift")) {
-			SendInput % umlautShiftOption
-		} else {
-			SendInput % umlautOption
-		}
-	} else {
-		if (GetKeyState("Shift") or GetKeyState("Capslock","T")) {
-			SendInput % "+" regular
-		} else {
-			SendInput % regular
-		}
-	}
+    if (A_PriorHotKey = "!VKC0SC029" && A_TimeSincePriorHotkey < 2000) {
+        if (GetKeyState("Shift")) {
+            SendInput % graveShiftOption
+        } else {
+            SendInput % graveOption
+        }
+    } else if (A_PriorHotKey = "!e" && A_TimeSincePriorHotkey < 2000) {
+        if (GetKeyState("Shift")) {
+            SendInput % acuteShiftOption
+        } else {
+            SendInput % acuteOption
+        }
+    } else if (A_PriorHotKey = "!i" && A_TimeSincePriorHotkey < 2000) {
+        if (GetKeyState("Shift")) {
+            SendInput % circumflexShiftOption
+        } else {
+            SendInput % circumflexOption
+        }
+    } else if (A_PriorHotKey = "!t" && A_TimeSincePriorHotkey < 2000) {
+        if (GetKeyState("Shift")) {
+            SendInput % tildeShiftOption
+        } else {
+            SendInput % tildeOption
+        }
+    } else if (A_PriorHotKey = "!u" && A_TimeSincePriorHotkey < 2000) {
+        if (GetKeyState("Shift")) {
+            SendInput % umlautShiftOption
+        } else {
+            SendInput % umlautOption
+        }
+    } else {
+        if (GetKeyState("Shift") or GetKeyState("Capslock","T")) {
+            SendInput % "+" regular
+        } else {
+            SendInput % regular
+        }
+    }
 }
+
+#If
+
 
 ; end of file ==============
