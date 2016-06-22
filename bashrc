@@ -152,6 +152,7 @@ setpath_mac() {
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
+    path_prepend /usr/local/homebrew/bin
 }
 
 setpath() {
