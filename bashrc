@@ -16,11 +16,15 @@ if [ -z "$ZSH_VERSION" -a -z "$BASH" ]; then
     return # the rest of this file assumes at least bash or zsh.
 fi
 
-# could use $OSTYPE here: cygwin, darwin10.0, linux-gnu
+if [[ "$OSTYPE" = cygwin && "$EMACS" = t ]]; then
+  # Ugly, but otherwise emacs thinks it's cygwin.  Not sure why.
+  OSTYPE=msys
+fi
+
 case $OSTYPE in
   cygwin*) OS=windows ;;
+  msys*)   OS=windows ;;
   win*)    OS=windows ;;
-  msys*)    OS=windows ;;
   darwin*) OS=mac ;;
   *)       OS=linux ;;
 esac
@@ -39,7 +43,14 @@ fi
 # echo MACHINENAME is $MACHINENAME
 
 case $OSTYPE in
-  cygwin*) export CYGWIN="nodosfilewarning" ;;
+  cygwin*)
+      export CYGWIN="nodosfilewarning"
+      ;;
+  msys*)
+      export CYGWIN="nodosfilewarning"
+      export MSYS=winsymlinks:nativestrict
+      export MSYSTEM=MSYS
+      ;;
 esac
 
 # utility to see if command is defined (in any way)
@@ -82,7 +93,7 @@ setpath_noise() {
     path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
     path_append "/Program Files (x86)/KDiff3"
-    path_append "/Program Files (x86)/GnuWin32/bin"
+    path_append "/c/Program Files (x86)/GnuWin32/bin"
     path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
     # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
@@ -94,28 +105,37 @@ setpath_noise() {
     path_append "$VS10/Common7/IDE" # DLLs for dumpbin
     path_append "$VC10/Bin"
     path_append "$VS10/Bin"
-    path_prepend /bin
+    case $OSTYPE in
+	cygwin*) # msys2 comes with git
+	    path_append "/Program files (x86)/Git/cmd"
+	    path_prepend /bin
+	    ;;
+    esac
     path_prepend "/Python27"
     path_prepend "/Python27/Scripts"
     path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
+    path_prepend /msys64/usr/bin
 }
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
     setpath_noise
 }
 
-setpath_simplex_msys() {
+setpath_simplex_msys_emacs() {
     # This is just for building emacs with msys
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
-    alias git="c:/Program Files (x86)"/git/bin/git
 }
 
 setpath_windows() {
     path_prepend "/Python26"
     path_prepend "/Python27"
     path_prepend "/Python27/Scripts"
-    path_prepend /bin
-    path_append "/Program files (x86)/Git/cmd"
+    # path_prepend /bin
+    path_prepend /msys64
+    case $OSTYPE in
+	cygwin*) # msys2 comes with git
+	    path_append "/Program files (x86)/Git/cmd" ;;
+    esac
     path_append "/Program files/Mercurial"
     path_append "/Program Files/TortoiseHg"
     # # Tex/LaTeX (http://tug.org/texlive/)
@@ -243,7 +263,9 @@ alias ll='ls -l'
 alias tf='tail -f'
 
 if [[ $OS = windows ]]; then
-  alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
+  if [[ $OSTYPE != msys ]]; then
+    alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
+  fi
   # start on Windows opens a file with its default application.
   # It's a builtin in cmd.exe.
   function start()  {
@@ -273,7 +295,9 @@ fi
 # Prompt
 
 # multiline highlighted prompt
-PROMPT='%U%m (%~) %@ %B%!=>%b%u
+# PROMPT='%U%m (%~) %@ %B%!=>%b%u
+setopt PROMPT_SUBST
+PROMPT='%U%m (%{$(cygpath -m `pwd`)%}) %@ %B%!=>%b%u
 %# %B'
 PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 if has_command echotc ; then
