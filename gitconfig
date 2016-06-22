@@ -10,7 +10,8 @@
 	whatsnew = !/Python27/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
-	outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
+	# outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
+	outgoing = log --format=twolines  --branches --not --remotes
 	incoming = !git fetch && git log ..@{u}
 	ga-merge = merge --no-commit --no-ff --log=9999
 	lg1 = log --graph --date-order --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(black)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold red)%d%C(reset)' --all
