@@ -298,9 +298,16 @@ fi
 # multiline highlighted prompt
 # PROMPT='%U%m (%~) %@ %B%!=>%b%u
 setopt PROMPT_SUBST
-PROMPT='%U%m (%{$(cygpath -m `pwd`)%}) %@ %B%!=>%b%u
+if has_command cygpath ; then
+  # use cygpath so Emacs dirtrack mode can track it
+  PROMPT='%U%m (%{$(cygpath -m `pwd`)%}) %@ %B%!=>%b%u
 %# %B'
-PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
+  PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
+else
+  PROMPT='%U%m (%~) %@ %B%!=>%b%u
+%# %B'
+  PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
+fi
 if has_command echotc ; then
   POSTEDIT=`echotc me`	# turn off all attributes
 fi
