@@ -92,7 +92,7 @@ setpath_noise() {
     path_append "/Program files/Mercurial"
     path_append "/Program files (x86)/Mercurial"
     path_append "/Program Files/TortoiseHg"
-    path_append "/Program Files (x86)/KDiff3"
+    path_append "/Program Files/KDiff3"
     path_append "/c/Program Files (x86)/GnuWin32/bin"
     path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
     # Tex/LaTeX (http://tug.org/texlive/)
@@ -105,16 +105,20 @@ setpath_noise() {
     path_append "$VS10/Common7/IDE" # DLLs for dumpbin
     path_append "$VC10/Bin"
     path_append "$VS10/Bin"
+    path_append "/c/Program Files (x86)/Windows Kits/10/Debuggers/x64" # for WinDBG
     case $OSTYPE in
 	cygwin*) # msys2 comes with git
 	    path_append "/Program files (x86)/Git/cmd"
 	    path_prepend /bin
 	    ;;
     esac
+    # for "wish", used by gitk:
+    path_prepend /mingw64/bin
+
     path_prepend "/Python27"
     path_prepend "/Python27/Scripts"
     path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
-    path_prepend /msys64/usr/bin
+    path_prepend /usr/bin
 }
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
@@ -228,7 +232,7 @@ fignore=( .adm .sbin3 .sbin4 .vbin 0~ 1~ 2~ 3~ 4~ 5~ 6~ 7~ 8~ 9~
 if [[ -e c:/bin2/emacs-garyo.sh ]]; then
   export EDITOR='c:/bin2/emacs-garyo.sh' # wrapper for emacsclientw
 else
-  export EDITOR=emacs
+  export EDITOR='emacsclient -c -a ""'
 fi
 export EXINIT='set redraw sw=2 wm=2'
 export LESS='-eij3MqsFXR'
