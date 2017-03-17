@@ -149,10 +149,11 @@ setpath_windows() {
 setpath_mac() {
     path_append $HOME/bin
     path_append /usr/local/sbin
+    path_append /usr/local/bin
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
-    path_prepend /usr/local/homebrew/bin
+    path_prepend /usr/local/Homebrew/bin
 }
 
 setpath() {
@@ -272,6 +273,11 @@ if [[ $OS = windows ]]; then
   function start()  {
     cmd /c "start /B $@"
   }
+fi
+
+if [[ $OS = mac ]]; then
+    # GenArts custom python
+    alias gapy="/usr/local/python2.7-64-genarts/python/bin/python"
 fi
 
 ########################################################################
