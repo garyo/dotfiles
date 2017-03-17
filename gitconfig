@@ -47,7 +47,7 @@
 	path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
   trustExitCode = false
 [core]
-	editor = emacsclient -a emacs
+	editor = emacsclient -c -a \"\"
 	preloadindex = true
 	fscache = true
 	# autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
