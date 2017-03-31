@@ -1,3 +1,4 @@
+#!/bin/bash
 # .bashrc for Gary Oberbrunner, 2012
 
 # This is executed directly by bash if interactive and non-login,
@@ -157,7 +158,8 @@ setpath_mac() {
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
-    path_prepend /usr/local/Homebrew/bin
+    path_prepend /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9
+    path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
 }
 
 setpath() {
@@ -167,25 +169,35 @@ setpath() {
     path_append /sbin
 }
 
-# set up path.  Only do this once, to avoid duplicates.
-if ! [[ "$PATH" == *PATHSETFROM* ]]; then
-    ORIG_PATH="$PATH"
-    path_prepend /PATHSETFROMBASH
-    machine_setpath=setpath_$MACHINENAME
-    machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
-    # echo "machine os setpath = " $machine_os_setpath
-    os_setpath=setpath_$OS
-    if declare -f "$machine_os_setpath" >/dev/null; then
-      $machine_os_setpath
-    elif declare -f "$machine_setpath" >/dev/null; then
-      $machine_setpath
-    elif declare -f "$os_setpath" >/dev/null; then
-      $os_setpath
-    else
-      setpath
+maybe_setpath() {
+    # set up path.  Only do this once, to avoid duplicates.
+    if ! [[ "$PATH" == *PATHSETFROM* ]]; then
+	ORIG_PATH="$PATH"
+	path_prepend /PATHSETFROMBASH
+	machine_setpath=setpath_$MACHINENAME
+	machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
+	# echo "machine os setpath = " $machine_os_setpath
+	os_setpath=setpath_$OS
+	if declare -f "$machine_os_setpath" >/dev/null; then
+	    $machine_os_setpath
+	elif declare -f "$machine_setpath" >/dev/null; then
+	    $machine_setpath
+	elif declare -f "$os_setpath" >/dev/null; then
+	    $os_setpath
+	else
+	    setpath
+	fi
+	path_append .
     fi
-    path_append .
-fi
+}
+
+reset_path() {
+    export PATH="$ORIG_PATH"
+    maybe_setpath
+}
+
+# Now do it
+maybe_setpath
 
 ########################################################################
 # Terminal setup
@@ -235,6 +247,7 @@ else
   export EDITOR='emacsclient -c -a ""'
 fi
 export EXINIT='set redraw sw=2 wm=2'
+export GTAGSFORCECPP=1 # for GNU Global tags
 export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
 export MORE=s
