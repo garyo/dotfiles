@@ -120,6 +120,7 @@ setpath_noise() {
     path_prepend "/Python27/Scripts"
     path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
     path_prepend /usr/bin
+    path_prepend /usr/local/bin
 }
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
@@ -263,6 +264,11 @@ fi
 function la()
 {
   ls -lt "$@" | head -10
+}
+
+function gdrive-upload()
+{
+    rclone copy "$1"  borisfx-gdrive:"Boris FX/$2"
 }
 
 alias ls='ls -CF'
