@@ -24,6 +24,10 @@
 	accept-ours = "!f() { git checkout --ours -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
 	accept-theirs = "!f() { git checkout --theirs -- \"${@:-.}\"; git add -u \"${@:-.}\"; }; f"
 	summary = !"git status -s -b --untracked-files=no; echo -e '\\033[0;34m*** OUTGOING:\\033[0m'; git outgoing -n2; echo -e '\\033[0;32m*** HEAD:\\033[0m'; git show --format='%ad%n  %ar [%h]: %aN%n  %s' --quiet HEAD; git stash list; echo -e '\\033[0;34m*** UNPUSHED:\\033[0m'; git ll --branches --not --remotes"
+	# Summarize a single commit, e.g. to reference it somewhere
+	summarize=show --format='%h \"%s\"' --quiet
+	# Show recent branches, in a nice format
+ 	branches=branch --sort=-authordate --format='%(authordate:short) %(color:blue)%(refname:short) %(color:black)%(upstream:track)%0a   ...%(color:red)%(subject)'
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
@@ -44,8 +48,8 @@
 	# path = C:/Program Files (x86)/KDiff3/kdiff3.exe
 	trustExitCode = false
 [difftool "kdiff3"]
-	path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
-  trustExitCode = false
+	#path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
+	trustExitCode = false
 [core]
 	editor = emacsclient -c -a \"\"
 	preloadindex = true
