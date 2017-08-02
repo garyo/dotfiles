@@ -324,16 +324,38 @@ fi
 ########################################################################
 # Prompt
 
+#git_prompt() {
+# ref=$(git symbolic-ref HEAD | cut -d'/' -f3-)
+# echo $ref
+#}
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' actionformats \
+    '%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f'
+zstyle ':vcs_info:*' formats       \
+    '%F{5}[%F{2}%b%F{5}]%f'
+zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+
+zstyle ':vcs_info:*' enable git cvs svn
+
+# or use pre_cmd, see man zshcontrib
+vcs_info_wrapper() {
+  vcs_info
+  if [ -n "$vcs_info_msg_0_" ]; then
+    echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+  fi
+}
+
 # multiline highlighted prompt
 # PROMPT='%U%m (%~) %@ %B%!=>%b%u
 setopt PROMPT_SUBST
 if has_command cygpath ; then
   # use cygpath so Emacs dirtrack mode can track it
-  PROMPT='%U%m (%{$(cygpath -m `pwd`)%}) %@ %B%!=>%b%u
+  PROMPT='%U%m (%{$(cygpath -m `pwd`)%} $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U%m (%~) %@ %B%!=>%b%u
+  PROMPT='%U%m (%~ $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 fi
