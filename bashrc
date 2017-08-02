@@ -330,6 +330,11 @@ fi
 #}
 
 autoload -Uz vcs_info
+if typeset -f vcs_info | grep -q undefined; then
+    has_vcs_info=0
+else
+    has_vcs_info=1
+fi
 zstyle ':vcs_info:*' actionformats \
     '%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f'
 zstyle ':vcs_info:*' formats       \
@@ -340,7 +345,7 @@ zstyle ':vcs_info:*' enable git cvs svn
 
 # or use pre_cmd, see man zshcontrib
 vcs_info_wrapper() {
-  vcs_info
+  [[ $has_vcs_info -eq 1 ]] && vcs_info
   if [ -n "$vcs_info_msg_0_" ]; then
     echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
   fi
