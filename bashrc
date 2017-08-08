@@ -329,19 +329,24 @@ fi
 # echo $ref
 #}
 
-autoload -Uz vcs_info
-if typeset -f vcs_info | grep -q undefined; then
-    has_vcs_info=0
-else
-    has_vcs_info=1
+if [[ -n "$ZSH_VERSION" && -z "$has_vcs_info" ]]; then
+    autoload -Uz vcs_info
+    if autoload +X vcs_info; then	# try to load it
+	has_vcs_info=1
+    else
+	has_vcs_info=0
+    fi
 fi
-zstyle ':vcs_info:*' actionformats \
-    '%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f'
-zstyle ':vcs_info:*' formats       \
-    '%F{5}[%F{2}%b%F{5}]%f'
-zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
 
-zstyle ':vcs_info:*' enable git cvs svn
+if [[ $has_vcs_info -gt 0 ]]; then
+    zstyle ':vcs_info:*' actionformats \
+	   '%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f'
+    zstyle ':vcs_info:*' formats       \
+	   '%F{5}[%F{2}%b%F{5}]%f'
+    zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+
+    zstyle ':vcs_info:*' enable git
+fi
 
 # or use pre_cmd, see man zshcontrib
 vcs_info_wrapper() {
@@ -353,7 +358,9 @@ vcs_info_wrapper() {
 
 # multiline highlighted prompt
 # PROMPT='%U%m (%~) %@ %B%!=>%b%u
-setopt PROMPT_SUBST
+if [[ -n "$ZSH_VERSION" ]]; then
+    setopt PROMPT_SUBST
+fi
 if has_command cygpath ; then
   # use cygpath so Emacs dirtrack mode can track it
   PROMPT='%U%m (%{$(cygpath -m `pwd`)%} $(vcs_info_wrapper)) %@ %B%!=>%b%u
