@@ -116,12 +116,13 @@ setpath_noise() {
     # for "wish", used by gitk:
     path_prepend /mingw64/bin
 
-    path_prepend "/Python27"
-    path_prepend "/Python27/Scripts"
     path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
     path_prepend /usr/bin
     path_prepend /usr/local/bin
+    path_prepend "/c/Python27"
+    path_prepend "/c/Python27/Scripts"
 }
+
 setpath_simplex() {
     # Simplex is my new work machine (2013), same config as noise
     setpath_noise
