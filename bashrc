@@ -354,6 +354,8 @@ vcs_info_wrapper() {
   [[ $has_vcs_info -eq 1 ]] && vcs_info
   if [ -n "$vcs_info_msg_0_" ]; then
     echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+  else
+    echo "[$(git rev-parse --abbrev-ref HEAD 2>/dev/null)]"
   fi
 }
 
