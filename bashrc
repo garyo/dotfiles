@@ -314,6 +314,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
   setopt nobadpattern nonomatch notify pushdignoredups pushdsilent
   setopt rcquotes nolistbeep
   setopt appendhistory histexpiredupsfirst histfindnodups histsavenodups incappendhistory extendedhistory
+  autoload -U zmv # fancy batch rename utility
   DIRSTACKSIZE=7
 
   # If emacs, make like normal shell
