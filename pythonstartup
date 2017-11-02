@@ -1,0 +1,17 @@
+import os
+import readline
+histfile = os.path.join(os.path.expanduser("~"), ".pyhistory")
+try:
+    readline.read_history_file(histfile)
+    # default history len is -1 (infinite), which may grow unruly
+    readline.set_history_length(10000)
+except IOError:
+    pass
+import atexit
+atexit.register(readline.write_history_file, histfile)
+del os, histfile
+
+print("Read local pythonstartup!")
+# Local Variables:
+# mode: python
+# End:

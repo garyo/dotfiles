@@ -269,6 +269,10 @@ if [[ $TERM = emacs || $TERM = dumb ]]; then
   export GIT_PAGER=
 fi
 
+if [[ -e "$HOME/pythonstartup" ]]; then
+  export PYTHONSTARTUP="$HOME/.pythonstartup"
+fi
+
 # 10 most recently modified files
 function la()
 {
