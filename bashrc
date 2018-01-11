@@ -133,6 +133,14 @@ setpath_simplex_msys_emacs() {
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
 }
 
+setpath_tower1() {
+    path_prepend /msys64
+    path_prepend /c/bin # ffmpeg etc.
+    # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
+    path_prepend "/c/Program Files/Python36"  # Standard python
+    path_prepend "/c/Program Files/Python36/Scripts" # pip
+}
+
 setpath_windows() {
     path_prepend "/Python26"
     path_prepend "/Python27"
@@ -175,7 +183,7 @@ maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     if ! [[ "$PATH" == *PATHSETFROM* ]]; then
 	ORIG_PATH="$PATH"
-	path_prepend /PATHSETFROMBASH
+	path_append /PATHSETFROMBASH
 	machine_setpath=setpath_$MACHINENAME
 	machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
 	# echo "machine os setpath = " $machine_os_setpath
@@ -367,11 +375,11 @@ if [[ -n "$ZSH_VERSION" ]]; then
 fi
 if has_command cygpath ; then
   # use cygpath so Emacs dirtrack mode can track it
-  PROMPT='%U%m (%{$(cygpath -m `pwd`)%} $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U%m (%{$(cygpath -m "`pwd`")%} $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U%m (%~ $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U%m%u (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 fi
