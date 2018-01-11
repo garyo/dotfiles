@@ -1,6 +1,6 @@
 [user]
 	name = Gary Oberbrunner
-	email = garyo@genarts.com
+	email = garyo@darkstarsystems.com
 [pretty]
 	twolines = tformat:%h %an, %cr: %d%n. . . . %w(70,0,8)%s
 [alias]
@@ -55,8 +55,7 @@
 	preloadindex = true
 	fscache = true
 	# autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
-[credential]
-	helper = !\"C:/Program Files (x86)/GitExtensions/GitCredentialWinStore/git-credential-winstore.exe\"
+  # Use per-repo .gitattributes instead!
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
