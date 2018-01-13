@@ -27,7 +27,7 @@
 	# Summarize a single commit, e.g. to reference it somewhere
 	summarize=show --format='%h \"%s\"' --quiet
 	# Show recent branches, in a nice format
- 	branches=branch --sort=-authordate --format='%(authordate:short) %(color:blue)%(refname:short) %(color:black)%(upstream:track)%0a   ...%(color:red)%(subject)'
+ 	branches=for-each-ref --sort=-authordate --format='%(authordate:short) %(color:blue)%(refname:short) %(color:yellow)%(upstream:track)%0a   ...%(color:red)%(subject)' refs/heads
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
