@@ -177,6 +177,7 @@ setpath() {
     path_append /usr/local/sbin
     path_append /usr/sbin
     path_append /sbin
+    path_prepend ~/anaconda3/bin
 }
 
 maybe_setpath() {
