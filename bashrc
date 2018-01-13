@@ -384,7 +384,7 @@ if has_command cygpath ; then
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U%m%u (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b
+  PROMPT='%U%m (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 fi
