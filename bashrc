@@ -135,6 +135,7 @@ setpath_simplex_msys_emacs() {
 
 setpath_tower1() {
     path_prepend /msys64
+    path_prepend /c/emacs/emacs/bin # emacsclient
     path_prepend /c/bin # ffmpeg etc.
     # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
     path_prepend "/c/Program Files/Python36"  # Standard python
