@@ -413,4 +413,17 @@ if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
     fi
 fi
 
+# If it's a login shell, start ssh-agent.
+if [[ -n "$ZSH_VERSION" ]]; then
+    [[ -o login ]]
+    IS_LOGIN=$?
+else
+    shopt -q login_shell
+    IS_LOGIN=$?
+fi
+
+if [[ $OS == windows && $IS_LOGIN == 0 ]]; then
+   eval $(ssh-agent) > /dev/null
+fi
+
 # end of file
