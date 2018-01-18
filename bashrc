@@ -239,8 +239,8 @@ if [[ -n "$ZSH_VERSION" ]]; then
 else
   HISTFILE=~/.history
 fi
-SAVEHIST=300
-HISTSIZE=1000
+SAVEHIST=5000
+HISTSIZE=9999
 NUMERICGLOBSORT=1
 READNULLCMD=less
 LC_ALL=C			# use regular "C" locale, fixes man pages
