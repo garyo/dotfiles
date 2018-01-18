@@ -171,6 +171,8 @@ setpath_mac() {
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
     path_prepend /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
+    path_prepend $HOME/Library/Python/3.6/bin # pipenv, before homebrew
+    path_prepend $HOME/python36/bin # virtualenv python in home dir
 }
 
 setpath() {
@@ -262,6 +264,8 @@ export EXINIT='set redraw sw=2 wm=2'
 export GTAGSFORCECPP=1 # for GNU Global tags
 export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
+export LANG=en_US.utf-8
+export LC_ALL=en_US.utf-8
 export MORE=s
 export PAGER='less'
 export PERLDOC=-t
