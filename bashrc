@@ -214,6 +214,32 @@ reset_path() {
 # Now do it
 maybe_setpath
 
+setvars_dev-mac() {
+    # Commonly used dirs, easy to cd to and display in prompt
+    # "cd ~RV"
+    hash -d FLOSS=~/dss/consulting/spontaneous/FLOSS/src
+    hash -d RV=~/dss/consulting/revision/revision-licensing
+}
+setvars_tower1() {
+    # Commonly used dirs, easy to cd to and display in prompt
+    # "cd ~RV"
+    hash -d FLOSS=c:/dss/Consulting/spontaneous/FLOSS/src
+    hash -d RV=c:/dss/Consulting/revision/revision-licensing
+}
+
+# Do machine or OS-specific variable setup
+# Unlike setpath, calls *all* existing funcs
+setvars() {
+    machine_setvars=setvars_$MACHINENAME
+    machine_os_setvars=setvars_${MACHINENAME}_${OSTYPE}
+    os_setvars=setvars_$OS
+    declare -f "$machine_os_setvars" >/dev/null && $machine_os_setvars
+    declare -f "$machine_setvars" >/dev/null    && $machine_setvars
+    declare -f "$os_setvars" >/dev/null         && $os_setvars
+}
+# now do it
+setvars
+
 ########################################################################
 # Terminal setup
 
