@@ -1,5 +1,5 @@
 #!/bin/bash
-# .bashrc for Gary Oberbrunner, 2012
+# .bashrc for Gary Oberbrunner, 2012-2018
 
 # This is executed directly by bash if interactive and non-login,
 # otherwise I source this from .profile or .zshrc/.kshrc
@@ -9,8 +9,10 @@
 # set for debugging:
 # set -v
 # set -x
-# echo "Incoming PATH:"
-# echo $path | tr ':' '\n'
+#echo "Incoming PATH:"
+#echo $PATH | tr ':' '\n'
+#echo "Incoming env:"
+#env
 
 if [ -z "$ZSH_VERSION" -a -z "$BASH" ]; then
     SIMPLE_SH_MODE=1
@@ -395,13 +397,27 @@ if [[ $has_vcs_info -gt 0 ]]; then
     zstyle ':vcs_info:*' enable git
 fi
 
+# returns 0 (like exit status 0) if inside a git working dir/repo
+# This is a cheap hack but it makes vcs_info_wrapper *much* faster
+# when not in a git dir.
+in_git_dir() {
+    [[ -e .git ]] && return 0
+    [[ -e ../.git ]] && return 0
+    [[ -e ../../.git ]] && return 0
+    [[ -e ../../../.git ]] && return 0
+    [[ -e ../../../../.git ]] && return 0
+    return 1
+}
+
 # or use pre_cmd, see man zshcontrib
 vcs_info_wrapper() {
-  [[ $has_vcs_info -eq 1 ]] && vcs_info
-  if [ -n "$vcs_info_msg_0_" ]; then
-    echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
-  else
-    echo "[$(git rev-parse --abbrev-ref HEAD 2>/dev/null)]"
+  if in_git_dir; then
+     [[ $has_vcs_info -eq 1 ]] && vcs_info
+     if [ -n "$vcs_info_msg_0_" ]; then
+       echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+     else
+       echo "[$(git rev-parse --abbrev-ref HEAD 2>/dev/null)]"
+     fi
   fi
 }
 
