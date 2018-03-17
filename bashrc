@@ -137,8 +137,10 @@ setpath_simplex_msys_emacs() {
 
 setpath_tower1() {
     path_prepend /msys64
+    # path_prepend /mingw64/bin       # git lfs is here, but I copied it to c:/bin
     path_prepend /c/emacs/emacs/bin # emacsclient
-    path_prepend /c/Program Files/GnuGlobal/bin
+    path_prepend "/c/Program Files/GnuGlobal/bin"
+    path_append "C:/Program Files/Cppcheck" # cppcheck, useful utility
     path_prepend /c/bin # ffmpeg etc.
     # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
     path_prepend "/c/Program Files/Python36"  # Standard python
@@ -227,6 +229,9 @@ setvars_tower1() {
     # "cd ~RV"
     hash -d FLOSS=c:/dss/Consulting/spontaneous/FLOSS/src
     hash -d RV=c:/dss/Consulting/revision/revision-licensing
+    hash -d HORIZON=/c/dss/Product/Horizon/GodotProjects/Horizon
+    hash -d GODOT=/c/dss/Product/GodotEngine
+    hash -d PRODUCT=/c/dss/Product
 }
 
 # Do machine or OS-specific variable setup
@@ -322,33 +327,38 @@ function gdrive-upload()
 alias ls='ls -CF'
 alias m='less'
 alias which='type -a'
-alias 1='pushd +1'
-alias 2='pushd +2'
-alias 3='pushd +3'
-alias 4='pushd +4'
-alias 5='pushd +5'
-alias 6='pushd +6'
 alias sc='. ~/.bashrc'
 alias d='dirs -v'
-alias df='df -k'
+alias df='df -h'
 alias j='jobs -l'
 alias ll='ls -l'
 alias tf='tail -f'
 
+if [[ -n "$ZSH_VERSION" ]]; then
+    # these cd to that dir in the stack, pushing the others down
+    alias 1='cd ~1'
+    alias 2='cd ~2'
+    alias 3='cd ~3'
+    alias 4='cd ~4'
+    alias 5='cd ~5'
+    alias 6='cd ~6'
+    # this seems odd, but it just rotates the dir stack (so it's similar to 1,2,3)
+    alias 0='pushd +1'
+fi
+
 if [[ $OS = windows ]]; then
   if [[ $OSTYPE != msys ]]; then
     alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
+  fi
+  if [[ $OSTYPE = msys && -e c:/msys64/usr/bin/ssh.exe ]]; then
+    # git will find ssh without this, but git-lfs will not. So set it explicitly.
+    export GIT_SSH_COMMAND=c:/msys64/usr/bin/ssh.exe
   fi
   # start on Windows opens a file with its default application.
   # It's a builtin in cmd.exe.
   function start()  {
     cmd /c "start /B $@"
   }
-fi
-
-if [[ $OS = mac ]]; then
-    # GenArts custom python
-    alias gapy="/usr/local/python2.7-64-genarts/python/bin/python"
 fi
 
 ########################################################################
@@ -362,7 +372,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
   setopt rcquotes nolistbeep
   setopt appendhistory histexpiredupsfirst histfindnodups histsavenodups incappendhistory extendedhistory
   autoload -U zmv # fancy batch rename utility
-  DIRSTACKSIZE=7
+  DIRSTACKSIZE=10
 
   # If emacs, make like normal shell
   if [[ $TERM = emacs || $TERM = dumb ]]; then
@@ -426,9 +436,9 @@ vcs_info_wrapper() {
 if [[ -n "$ZSH_VERSION" ]]; then
     setopt PROMPT_SUBST
 fi
-if has_command cygpath ; then
+if has_command cygpath && [[ $TERM == emacs ]] ; then
   # use cygpath so Emacs dirtrack mode can track it
-  PROMPT='%U%m (%{$(cygpath -m "`pwd`")%} $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U%m (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
@@ -472,6 +482,19 @@ fi
 
 if [[ $OS == windows && $IS_LOGIN == 0 ]]; then
    eval $(ssh-agent) > /dev/null
+fi
+
+########################################################################
+# Completion plugins
+########################################################################
+
+if [[ -n "$ZSH_VERSION" ]]; then
+    if [[ ! -f ~/antigen.zsh ]]; then
+        curl -L git.io/antigen > ~/antigen.zsh
+    fi
+    source ~/antigen.zsh
+    antigen bundle git
+    antigen apply
 fi
 
 # end of file
