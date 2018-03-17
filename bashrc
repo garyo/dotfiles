@@ -501,6 +501,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
     fi
     source ~/antigen.zsh
     antigen bundle git >& /dev/null
+    antigen bundle zsh-users/zsh-completions >& /dev/null
     antigen apply
 fi
 
