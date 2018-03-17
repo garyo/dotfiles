@@ -493,7 +493,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
         curl -L git.io/antigen > ~/antigen.zsh
     fi
     source ~/antigen.zsh
-    antigen bundle git
+    antigen bundle git >& /dev/null
     antigen apply
 fi
 
