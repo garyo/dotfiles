@@ -41,6 +41,7 @@
 	renames = copies
 	tool = kdiff3
 	guitool = kdiff3
+	submodule = log
 [merge]
 	tool = kdiff3
 [mergetool "kdiff3"]
@@ -69,3 +70,9 @@
 	# magit needs this even though it's the default,
 	# otherwise it recursively shows all untracked files (which can be slow).
 	showUntrackedFiles = normal
+	submodulesummary = 1
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
