@@ -117,7 +117,8 @@ setpath_noise() {
     esac
     # for "wish", used by gitk:
     path_prepend /mingw64/bin
-
+    path_prepend /msys64/usr/bin
+    path_prepend /mingw64/bin # mingw compiler etc., from msys shell
     path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
     path_prepend /usr/bin
     path_prepend /usr/local/bin
@@ -148,11 +149,12 @@ setpath_tower1() {
 }
 
 setpath_windows() {
-    path_prepend "/Python26"
     path_prepend "/Python27"
     path_prepend "/Python27/Scripts"
     # path_prepend /bin
     path_prepend /msys64
+    path_prepend /usr/bin # for msys2 bash/zsh
+    path_prepend /mingw64/bin # mingw compiler etc., from msys shell
     case $OSTYPE in
 	cygwin*) # msys2 comes with git
 	    path_append "/Program files (x86)/Git/cmd" ;;
@@ -261,6 +263,11 @@ else
   stty $ttymodes
 fi
 
+# ssh-pageant
+# see https://github.com/cuviper/ssh-pageant
+if [[ -f /usr/bin/ssh-pageant ]]; then
+  eval $(/usr/bin/ssh-pageant -r -a "/tmp/.ssh-pageant-$USERNAME")
+fi
 
 ########################################################################
 # Variables, shell functions and aliases
