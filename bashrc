@@ -146,6 +146,8 @@ setpath_tower1() {
     # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
     path_prepend "/c/Program Files/Python36"  # Standard python
     path_prepend "/c/Program Files/Python36/Scripts" # pip
+    # dumpbin.exe:
+    path_append "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx64/x64"
 }
 
 setpath_windows() {
@@ -504,5 +506,10 @@ if [[ -n "$ZSH_VERSION" ]]; then
     antigen bundle zsh-users/zsh-completions >& /dev/null
     antigen apply
 fi
+
+if [[ -f ~/Dotfiles/bashrc.local ]]; then
+    source ~/Dotfiles/bashrc.local
+fi
+
 
 # end of file
