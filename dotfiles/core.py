@@ -78,21 +78,21 @@ else:
 
     def CreateSymbolicLink(name, target, is_dir):
         assert type(name) == type(target)
-        if type(name) == unicode:
+        if type(name) == str:
             stat = CreateSymbolicLinkW(name, target, is_dir)
         else:
             stat = CreateSymbolicLinkA(name, target, is_dir)
         if win32_verbose:
-            print "CreateSymbolicLink(name=%s, target=%s, is_dir=%d) = %#x"%(name,target,is_dir, stat)
+            print("CreateSymbolicLink(name=%s, target=%s, is_dir=%d) = %#x"%(name,target,is_dir, stat))
         if not stat:
-            print "Can't create symlink %s -> %s"%(name, target)
+            print("Can't create symlink %s -> %s"%(name, target))
             raise ctypes.WinError()
 
     def symlink(target, name):
         CreateSymbolicLink(name, target, 0)
 
     def GetFileAttributes(path):
-        if type(path) == unicode:
+        if type(path) == str:
             return GetFileAttributesW(path)
         else:
             return GetFileAttributesA(path)
@@ -101,7 +101,7 @@ else:
         assert path
         has_link_attr = GetFileAttributes(path) & FILE_ATTRIBUTE_REPARSE_POINT
         if win32_verbose:
-            print "islink(%s): attrs=%#x: %s"%(path, GetFileAttributes(path), has_link_attr != 0)
+            print("islink(%s): attrs=%#x: %s"%(path, GetFileAttributes(path), has_link_attr != 0))
         return has_link_attr != 0
 
     def DeviceIoControl(hDevice, ioControlCode, input, output):
@@ -119,7 +119,7 @@ else:
         status = _DevIoCtl(hDevice, ioControlCode, input,
                            input_size, output, output_size, bytesReturned, None)
         if win32_verbose:
-            print "DeviceIOControl: status = %d" % status
+            print("DeviceIOControl: status = %d" % status)
         if status != 0:
             return output[:bytesReturned.value]
         else:
@@ -127,7 +127,7 @@ else:
 
 
     def CreateFile(path, access, sharemode, creation, flags):
-        if type(path) == unicode:
+        if type(path) == str:
             return _CreateFileW(path, access, sharemode, None, creation, flags, None)
         else:
             return _CreateFileA(path, access, sharemode, None, creation, flags, None)
@@ -140,7 +140,7 @@ else:
         # This wouldn't return true if the file didn't exist, as far as I know.
         if not islink(path):
             if win32_verbose:
-                print "readlink(%s): not a link."%path
+                print("readlink(%s): not a link."%path)
             return None
 
         # Open the file correctly depending on the string type.
@@ -153,7 +153,7 @@ else:
         # Minimum possible length (assuming length of the target is bigger than 0)
         if not buffer or len(buffer) < 9:
             if win32_verbose:
-                print "readlink(%s): no reparse buffer."%path
+                print("readlink(%s): no reparse buffer."%path)
             return None
 
         # Parse and return our result.
@@ -192,16 +192,16 @@ else:
         start = SubstituteNameOffset + SymbolicLinkReparseSize
         actualPath = buffer[start : start + SubstituteNameLength].decode("utf-16")
         # This utf-16 string is null terminated
-        index = actualPath.find(u"\0")
+        index = actualPath.find("\0")
         if index > 0:
             actualPath = actualPath[:index]
-        if actualPath.startswith(u"\\??\\"): # ASCII 92, 63, 63, 92
+        if actualPath.startswith("\\??\\"): # ASCII 92, 63, 63, 92
             ret = actualPath[4:]             # strip off leading junk
         else:
             ret = actualPath
         if win32_verbose:
-            print "readlink(%s->%s->%s): index(null) = %d"%\
-                (path,repr(actualPath),repr(ret),index)
+            print("readlink(%s->%s->%s): index(null) = %d"%\
+                (path,repr(actualPath),repr(ret),index))
         return ret
 
     def realpath(fpath):
@@ -241,8 +241,8 @@ class Dotfile(object):
             symlink(self.target, self.name)
         elif self.status == 'unsynced':
             if not force:
-                print("Skipping \"%s\", use --force to override"
-                        % self.basename)
+                print(("Skipping \"%s\", use --force to override"
+                        % self.basename))
                 return
             if os.path.isdir(self.name) and not os.path.islink(self.name):
                 shutil.rmtree(self.name)
@@ -252,17 +252,17 @@ class Dotfile(object):
 
     def add(self):
         if self.status == 'missing':
-            print("Skipping \"%s\", file not found" % self.basename)
+            print(("Skipping \"%s\", file not found" % self.basename))
             return
         if self.status == '':
-            print("Skipping \"%s\", already managed" % self.basename)
+            print(("Skipping \"%s\", already managed" % self.basename))
             return
         shutil.move(self.name, self.target)
         symlink(self.target, self.name)
 
     def remove(self):
         if self.status != '':
-            print("Skipping \"%s\", file is %s" % (self.basename, self.status))
+            print(("Skipping \"%s\", file is %s" % (self.basename, self.status)))
             return
         os.remove(self.name)
         shutil.move(self.target, self.name)
@@ -279,7 +279,7 @@ class Dotfiles(object):
     def __init__(self, **kwargs):
 
         # Map args from kwargs to instance-local variables
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             if k in self.__attrs__:
                 setattr(self, k, v)
 
@@ -301,7 +301,7 @@ class Dotfiles(object):
             self.dotfiles.append(Dotfile(dotfile[len(self.prefix):],
                 os.path.join(self.repository, dotfile), self.homedir))
 
-        for dotfile in self.externals.keys():
+        for dotfile in list(self.externals.keys()):
             self.dotfiles.append(Dotfile(dotfile,
                 os.path.expanduser(self.externals[dotfile]),
                 self.homedir))
@@ -348,7 +348,7 @@ class Dotfiles(object):
             if os.path.basename(file).startswith('.'):
                 getattr(Dotfile(file, self._fqpn(file), self.homedir), action)()
             else:
-                print("Skipping \"%s\", not a dotfile" % file)
+                print(("Skipping \"%s\", not a dotfile" % file))
 
     def move(self, target):
         """Move the repository to another location."""
