@@ -509,6 +509,17 @@ if [[ $OS == windows && $IS_LOGIN == 0 ]]; then
 fi
 
 ########################################################################
+# Python virtualenvwrapper setup (mkvirtualenv, workon, deactivate)
+# also lsvirtualenv, showvirtualenv, rmvirtualenv, cpvirtualenv, cdvirtualenv
+# Puts virtualenvs by default in ~/.virtualenvs
+
+VW=$(command -v virtualenvwrapper.sh)
+if [[ -n $VW ]]; then
+    source "$VW"
+fi
+
+
+########################################################################
 # Completion plugins
 ########################################################################
 
