@@ -25,11 +25,11 @@ if [[ "$OSTYPE" = cygwin && "$EMACS" = t ]]; then
 fi
 
 case $OSTYPE in
-  cygwin*) OS=windows ;;
-  msys*)   OS=windows ;;
-  win*)    OS=windows ;;
-  darwin*) OS=mac ;;
-  *)       OS=linux ;;
+  cygwin*) _OS=windows ;;
+  msys*)   _OS=windows ;;
+  win*)    _OS=windows ;;
+  darwin*) _OS=mac ;;
+  *)       _OS=linux ;;
 esac
 if [[ -n "$ZSH_VERSION" ]]; then
   MACHINENAME=${${HOST%%.*}:l}
@@ -52,7 +52,9 @@ case $OSTYPE in
   msys*)
       export CYGWIN="nodosfilewarning"
       export MSYS=winsymlinks:nativestrict
-      export MSYSTEM=MSYS
+      # NO, don't do these: (would break python virtualenvwrapper)
+      # export MSYSTEM=MSYS
+      # export MSYS_HOME="$(cygpath -m /)"
       ;;
 esac
 
@@ -137,22 +139,27 @@ setpath_simplex_msys_emacs() {
 }
 
 setpath_tower1() {
+    path_prepend "/bin"
+    path_prepend "/c/Program Files/git/bin"
+    path_prepend "/c/Program Files/git LFS"
     path_prepend /msys64
+    path_prepend /c/Windows/System32/OpenSSH # for ssh-add etc.
     # path_prepend /mingw64/bin       # git lfs is here, but I copied it to c:/bin
-    path_prepend /c/emacs/emacs/bin # emacsclient
+    # path_prepend /c/emacs/emacs/bin # emacsclient
+    path_prepend /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
     path_prepend "/c/Program Files/GnuGlobal/bin"
-    path_append "C:/Program Files/Cppcheck" # cppcheck, useful utility
     path_prepend /c/bin # ffmpeg etc.
     # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
-    path_prepend "/c/Program Files/Python36"  # Standard python
-    path_prepend "/c/Program Files/Python36/Scripts" # pip
+    path_prepend "/c/Python37"  # Standard python
+    path_prepend "/c/Python37/Scripts" # pip
+    path_append "/c/Program Files/Cppcheck" # cppcheck, useful utility
     # dumpbin.exe:
     path_append "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx64/x64"
 }
 
 setpath_windows() {
-    path_prepend "/Python27"
-    path_prepend "/Python27/Scripts"
+    path_prepend "/Python37"
+    path_prepend "/Python37/Scripts"
     # path_prepend /bin
     path_prepend /msys64
     path_prepend /usr/bin # for msys2 bash/zsh
@@ -197,12 +204,13 @@ setpath() {
 maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     if ! [[ "$PATH" == *PATHSETFROM* ]]; then
+	# echo Setting PATH, orig="$PATH"
 	ORIG_PATH="$PATH"
 	path_append /PATHSETFROMBASH
 	machine_setpath=setpath_$MACHINENAME
 	machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
 	# echo "machine os setpath = " $machine_os_setpath
-	os_setpath=setpath_$OS
+	os_setpath=setpath_$_OS
 	if declare -f "$machine_os_setpath" >/dev/null; then
 	    $machine_os_setpath
 	elif declare -f "$machine_setpath" >/dev/null; then
@@ -220,6 +228,9 @@ reset_path() {
     export PATH="$ORIG_PATH"
     maybe_setpath
 }
+show_path() {
+    echo "$PATH" | tr ':' '\n'
+}
 
 # Now do it
 maybe_setpath
@@ -234,8 +245,8 @@ setvars_dev-mac() {
 setvars_tower1() {
     # Commonly used dirs, easy to cd to and display in prompt
     # "cd ~RV"
-    hash -d FLOSS=c:/dss/Consulting/spontaneous/FLOSS/src
-    hash -d RV=c:/dss/Consulting/revision/revision-licensing
+    hash -d FLOSS=/c/dss/Consulting/spontaneous/FLOSS/src
+    hash -d RV=/c/dss/Consulting/revision/revision-licensing
     hash -d HORIZON=/c/dss/Product/Horizon/GodotProjects/Horizon
     hash -d GODOT=/c/dss/Product/GodotEngine
     hash -d PRODUCT=/c/dss/Product
@@ -246,7 +257,7 @@ setvars_tower1() {
 setvars() {
     machine_setvars=setvars_$MACHINENAME
     machine_os_setvars=setvars_${MACHINENAME}_${OSTYPE}
-    os_setvars=setvars_$OS
+    os_setvars=setvars_$_OS
     declare -f "$machine_os_setvars" >/dev/null && $machine_os_setvars
     declare -f "$machine_setvars" >/dev/null    && $machine_setvars
     declare -f "$os_setvars" >/dev/null         && $os_setvars
@@ -338,7 +349,8 @@ function gdrive-upload()
 
 alias ls='ls -CF'
 alias m='less'
-alias which='type -a'
+# alias which='type -a'
+alias which='command -v'
 alias sc='. ~/.bashrc'
 alias d='dirs -v'
 alias df='df -h'
@@ -370,7 +382,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
     alias 0='pushd +1'
 fi
 
-if [[ $OS = windows ]]; then
+if [[ $_OS = windows ]]; then
   if [[ $OSTYPE != msys ]]; then
     alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
   fi
@@ -504,7 +516,7 @@ else
     IS_LOGIN=$?
 fi
 
-if [[ $OS == windows && $IS_LOGIN == 0 ]]; then
+if [[ $_OS == windows && $IS_LOGIN == 0 ]]; then
    eval $(ssh-agent) > /dev/null
 fi
 
@@ -513,11 +525,16 @@ fi
 # also lsvirtualenv, showvirtualenv, rmvirtualenv, cpvirtualenv, cdvirtualenv
 # Puts virtualenvs by default in ~/.virtualenvs
 
-VW=$(command -v virtualenvwrapper.sh)
-if [[ -n $VW ]]; then
-    source "$VW"
+########################################################################
+# Python virtualenv and virtualenvwrapper
+if [[ $_OS = windows ]]; then
+    source c:/Python37/Scripts/virtualenvwrapper.sh
+else
+    VW=$(command -v virtualenvwrapper.sh)
+    if [[ -n $VW ]]; then
+        source "$VW"
+    fi
 fi
-
 
 ########################################################################
 # Completion plugins
