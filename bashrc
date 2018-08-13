@@ -227,6 +227,7 @@ setvars_dev-mac() {
     # "cd ~RV"
     hash -d FLOSS=~/dss/consulting/spontaneous/FLOSS/src
     hash -d RV=~/dss/consulting/revision/revision-licensing
+    hash -d SL=~/dss/consulting/shorelight
 }
 setvars_tower1() {
     # Commonly used dirs, easy to cd to and display in prompt
