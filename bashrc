@@ -182,6 +182,8 @@ setpath_mac() {
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
     path_prepend $HOME/Library/Python/3.6/bin # pipenv, before homebrew
     path_prepend $HOME/python36/bin # virtualenv python in home dir
+    path_prepend /usr/local/opt/go/libexec/bin # Go itself (the language, not the game)
+    path_prepend $HOME/go/bin # Go programs
 }
 
 setpath() {
@@ -343,6 +345,18 @@ alias df='df -h'
 alias j='jobs -l'
 alias ll='ls -l'
 alias tf='tail -f'
+alias t='tree -I __pycache__\|*.pyc\|node_modules'
+
+# Show file tree, ignoring git-ignored files/dirs.
+function gtree {
+    git_ignore_files=("$(git config --get core.excludesfile)" .gitignore ~/.gitignore)
+    ignore_pattern="$(grep -hvE '^$|^#' "${git_ignore_files[@]}" 2>/dev/null|sed 's:/$::'|sed 's:^/::'|tr '\n' '\|')"
+    if git status &> /dev/null && [[ -n "${ignore_pattern}" ]]; then
+      tree -I "${ignore_pattern}" "${@}"
+    else
+      tree "${@}"
+    fi
+}
 
 if [[ -n "$ZSH_VERSION" ]]; then
     # these cd to that dir in the stack, pushing the others down
