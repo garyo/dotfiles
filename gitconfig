@@ -7,7 +7,6 @@
 	ll = !git log -10 --graph --date-order --format=twolines
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
 	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
-	whatsnew = !/Python27/python.exe /bin2/git-whatsnew
 	alias = !git config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
 	outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
@@ -31,9 +30,7 @@
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
-	recentrepo = C:/genarts/sapphire
 	encoding = utf-8
-	recentrepo = C:/genarts/sapphire-v8
 [push]
 	default = tracking
 [diff]
@@ -44,19 +41,12 @@
 	submodule = log
 [merge]
 	tool = kdiff3
-[mergetool "kdiff3"]
-	# path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
-	# path = C:/Program Files (x86)/KDiff3/kdiff3.exe
-	trustExitCode = false
-[difftool "kdiff3"]
-	#path = /Applications/kdiff3.app/Contents/MacOS/kdiff3
-	trustExitCode = false
 [core]
 	editor = emacsclient -c -a \"\"
 	preloadindex = true
 	fscache = true
 	# autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
-  # Use per-repo .gitattributes instead!
+        # Use per-repo .gitattributes instead!
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
@@ -70,9 +60,13 @@
 	# magit needs this even though it's the default,
 	# otherwise it recursively shows all untracked files (which can be slow).
 	showUntrackedFiles = normal
-	submodulesummary = 1
+	#submodulesummary = 1
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+
+[include]
+        # Include machine-local gitconfig, e.g. for Windows/Mac tool paths
+        path = .gitconfig-local
