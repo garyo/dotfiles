@@ -347,6 +347,12 @@ function gdrive-upload()
     rclone copy "$1"  borisfx-gdrive:"Boris FX/$2"
 }
 
+# History of most recent 50 (or arg) commands, with timestamps
+function h()
+{
+    fc -li -${1:-50}
+}
+
 alias ls='ls -CF'
 alias m='less'
 # alias which='type -a'
