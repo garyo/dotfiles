@@ -71,10 +71,10 @@ umask 2
 path_append ()  { path_remove "$1"; export PATH="$PATH:$1"; }
 path_prepend () { path_remove "$1"; export PATH="$1:$PATH"; }
 path_remove ()  {
-    REMOVE="$1"
     if [[ -n "$ZSH_VERSION" ]]; then
-      PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%$REMOVE});IFS=':';echo "${t[*]}");
+      path_remove_zsh "$1"
     else
+      REMOVE="$1"
       IFS=':'
       t=($PATH)
       n=${#t[*]}
@@ -85,6 +85,11 @@ path_remove ()  {
       done
       PATH="${a[*]}"
     fi
+}
+
+path_remove_zsh () {
+    to_remove=($1)
+    path=(${path:|to_remove})
 }
 
 setpath_noise() {
@@ -231,6 +236,7 @@ maybe_setpath() {
 
 reset_path() {
     export PATH="$ORIG_PATH"
+    path_remove /PATHSETFROMBASH
     maybe_setpath
 }
 show_path() {
