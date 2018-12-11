@@ -55,6 +55,7 @@ case $OSTYPE in
       # NO, don't do these: (would break python virtualenvwrapper)
       # export MSYSTEM=MSYS
       # export MSYS_HOME="$(cygpath -m /)"
+      export MSYSTEM=MINGW64    # virtualenvwrapper seems to like this
       ;;
 esac
 
@@ -92,6 +93,7 @@ path_remove_zsh () {
     path=(${path:|to_remove})
 }
 
+# OLD
 setpath_noise() {
     VC10="/Program Files (x86)/Microsoft Visual Studio 10.0/VC"
     VS10="/Program Files (x86)/Microsoft Visual Studio 10.0"
@@ -133,22 +135,18 @@ setpath_noise() {
     path_prepend "/c/Python27/Scripts"
 }
 
-setpath_simplex() {
-    # Simplex is my new work machine (2013), same config as noise
-    setpath_noise
-}
-
 setpath_simplex_msys_emacs() {
     # This is just for building emacs with msys
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
 }
 
-setpath_tower1() {
+setpath_tower1_msys() {
     path_prepend "/bin"
     path_prepend "/c/Program Files/git/bin"
     path_prepend "/c/Program Files/git LFS"
     path_prepend /msys64
     path_prepend /c/Windows/System32/OpenSSH # for ssh-add etc.
+    path_prepend "/c/Program Files/nodejs"
     # path_prepend /mingw64/bin       # git lfs is here, but I copied it to c:/bin
     # path_prepend /c/emacs/emacs/bin # emacsclient
     path_prepend /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
@@ -201,13 +199,15 @@ setpath() {
     path_append /usr/local/sbin
     path_append /usr/sbin
     path_append /sbin
-    path_prepend ~/anaconda3/bin
+    [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
+    [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
 }
 
 # Runs after all other setpaths, always
 setpath_all() {
-    path_prepend $HOME/.poetry/bin # Python dependency manager
+    path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
     path_prepend $HOME/bin
+    path_append "./node_modules/.bin" # for Node.js
     path_append .
 }
 
@@ -263,11 +263,17 @@ setvars_tower1() {
     hash -d PRODUCT=/c/dss/Product
 }
 
+# for WSL on tower1
+setvars_tower1_linux() {
+    hash -d WEBPR=/mnt/c/dss/Product/Horizon/WebProjects
+    hash -d CONS=/mnt/c/dss/Consulting
+}
+
 # Do machine or OS-specific variable setup
 # Unlike setpath, calls *all* existing funcs
 setvars() {
     machine_setvars=setvars_$MACHINENAME
-    machine_os_setvars=setvars_${MACHINENAME}_${OSTYPE}
+    machine_os_setvars=setvars_${MACHINENAME}_${_OS}
     os_setvars=setvars_$_OS
     declare -f "$machine_os_setvars" >/dev/null && $machine_os_setvars
     declare -f "$machine_setvars" >/dev/null    && $machine_setvars
@@ -366,6 +372,7 @@ function h()
 
 alias ls='ls -CF'
 alias m='less'
+alias f='find . -name'
 # alias which='type -a'
 alias which='command -v'
 alias sc='. ~/.bashrc'
@@ -535,22 +542,6 @@ fi
 
 if [[ $_OS == windows && $IS_LOGIN == 0 ]]; then
    eval $(ssh-agent) > /dev/null
-fi
-
-########################################################################
-# Python virtualenvwrapper setup (mkvirtualenv, workon, deactivate)
-# also lsvirtualenv, showvirtualenv, rmvirtualenv, cpvirtualenv, cdvirtualenv
-# Puts virtualenvs by default in ~/.virtualenvs
-
-########################################################################
-# Python virtualenv and virtualenvwrapper
-if [[ $_OS = windows ]]; then
-    source c:/Python37/Scripts/virtualenvwrapper.sh
-else
-    VW=$(command -v virtualenvwrapper.sh)
-    if [[ -n $VW ]]; then
-        source "$VW"
-    fi
 fi
 
 ########################################################################
