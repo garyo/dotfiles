@@ -161,6 +161,8 @@ setpath_tower1_msys() {
 }
 
 setpath_windows() {
+    path_prepend "/c/Python36"
+    path_prepend "/c/Python36/Scripts"
     path_prepend "/Python37"
     path_prepend "/Python37/Scripts"
     # path_prepend /bin
@@ -171,14 +173,12 @@ setpath_windows() {
 	cygwin*) # msys2 comes with git
 	    path_append "/Program files (x86)/Git/cmd" ;;
     esac
-    path_append "/Program files/Mercurial"
-    path_append "/Program Files/TortoiseHg"
     # # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
-    path_append /Windows
-    path_append /Windows/system32
-    path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
-    path_append "/swig"
+    path_append /c/Windows
+    path_append /c/Windows/system32
+    path_append "/c/Program Files (x86)/PuTTY" # for plink (ssh)
+    path_prepend "/c/bin" # local programs e.g. git-lfs
 }
 
 setpath_mac() {
