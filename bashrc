@@ -215,7 +215,7 @@ maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     if ! [[ "$PATH" == *PATHSETFROM* ]]; then
 	# echo Setting PATH, orig="$PATH"
-	ORIG_PATH="$PATH"
+	export ORIG_PATH="$PATH"
 	path_append /PATHSETFROMBASH
 	machine_setpath=setpath_$MACHINENAME
 	machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
