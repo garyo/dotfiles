@@ -179,7 +179,6 @@ setpath_windows() {
 }
 
 setpath_mac() {
-    path_append $HOME/bin
     path_append /usr/local/sbin
     path_append /usr/local/bin
     path_append /usr/sbin
@@ -194,11 +193,17 @@ setpath_mac() {
 }
 
 setpath() {
-    path_append $HOME/bin
     path_append /usr/local/sbin
     path_append /usr/sbin
     path_append /sbin
     path_prepend ~/anaconda3/bin
+}
+
+# Runs after all other setpaths, always
+setpath_all() {
+    path_prepend $HOME/.poetry/bin # Python dependency manager
+    path_prepend $HOME/bin
+    path_append .
 }
 
 maybe_setpath() {
@@ -220,7 +225,7 @@ maybe_setpath() {
 	else
 	    setpath
 	fi
-	path_append .
+        setpath_all           # always run this at end for paths to always add
     fi
 }
 
