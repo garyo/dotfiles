@@ -179,6 +179,8 @@ setpath_windows() {
     path_append /c/Windows/system32
     path_append "/c/Program Files (x86)/PuTTY" # for plink (ssh)
     path_prepend "/c/bin" # local programs e.g. git-lfs
+    path_append "/c/Program Files/GnuGlobal/bin"
+    path_append "/swig"
 }
 
 setpath_mac() {
