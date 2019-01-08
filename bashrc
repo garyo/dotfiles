@@ -423,6 +423,10 @@ if [[ $_OS = windows ]]; then
   }
 fi
 
+function whatshell {
+  ps -p $$
+} 
+
 ########################################################################
 # Shell options
 
