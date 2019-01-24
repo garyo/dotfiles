@@ -425,7 +425,7 @@ fi
 
 function whatshell {
   ps -p $$
-} 
+}
 
 ########################################################################
 # Shell options
@@ -568,5 +568,39 @@ if [[ -f ~/Dotfiles/bashrc.local ]]; then
     source ~/Dotfiles/bashrc.local
 fi
 
+########################################################################
+# Python virtualenvwrapper
+########################################################################
+
+# Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
+# To use:
+#  mkvirtualenv <envname> (-r requirements_file)
+#  workon <envname>
+#  deactivate
+#  "workon" by itself lists envs
+#  showvirtualenv
+#  cdvirtualenv, cdsitepackages, lssitepackages
+#  virtualenvwrapper: prints basic help & cmd list
+#  mktmpenv (deleted when deactivated)
+#  lsvirtualenv
+# NOTE: if it doesn't work, try VIRTUALENVWRAPPER_VIRTUALENV='python -mvenv'
+# To install initially, `python -mpip install [--user] virtualenvwrapper`
+setup_virtualenvwrapper()
+{
+    local scripts_dirs=()
+    if [[ $_OS == windows ]]; then
+        local pythonpath=$(/bin/ls -d c:/Python*|tail -1)
+        scripts_dirs+=("$pythonpath/Scripts")
+    else
+        scripts_dirs+=($(python3 -c 'import site; print(site.USER_BASE)'))
+        scripts_dirs+=('/usr/local/bin')
+    fi
+    for dir in $scripts_dirs; do
+        if [[ -f "$dir/virtualenvwrapper.sh" ]]; then
+            source "$dir/virtualenvwrapper.sh"
+        fi
+    done
+}
+setup_virtualenvwrapper
 
 # end of file
