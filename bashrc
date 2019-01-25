@@ -570,7 +570,16 @@ fi
 
 ########################################################################
 # Python virtualenvwrapper
+#
+# NOTE: I'm using my own trivial "venv" rather than official
+# virtualenvwrapper since it's not being maintained anymore.
+# My own "venv" just allows workon, create, and list.
 ########################################################################
+
+WORKON_HOME=$HOME/.virtualenvs
+if has_command "python3"; then
+    export VIRTUALENVWRAPPER_PYTHON=python3
+fi
 
 # Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
 # To use:
@@ -596,11 +605,93 @@ setup_virtualenvwrapper()
         scripts_dirs+=('/usr/local/bin')
     fi
     for dir in $scripts_dirs; do
-        if [[ -f "$dir/virtualenvwrapper.sh" ]]; then
+        # echo Checking for virtualenvwrapper.sh in $dir of $scripts_dirs
+        if [[ -f "$dir/bin/virtualenvwrapper.sh" ]]; then
+            source "$dir/bin/virtualenvwrapper.sh"
+            return
+        elif [[ -f "$dir/virtualenvwrapper.sh" ]]; then
             source "$dir/virtualenvwrapper.sh"
+            return
         fi
     done
 }
-setup_virtualenvwrapper
+#### I'm not using this -- see "venv" below
+# setup_virtualenvwrapper
+
+#### virtualenvwrapper alternative: simple command to list and activate
+
+function venv ()
+{
+    if [[ $_OS == windows ]]; then
+        local VIRTUALENV_BINDIR=Scripts
+    else
+        local VIRTUALENV_BINDIR=bin
+    fi
+    if [[ $# == 0 ]]; then
+        local cmd="help"
+    else
+        local cmd=$1; shift
+    fi
+    case $cmd in
+        workon)
+            local env=$1; shift
+            source $WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate
+            ;;
+        list)
+            (cd $WORKON_HOME ; ls -d */ | sed s,//,,g )
+            ;;
+        create)
+            local env=$1; shift
+            echo Creating new virtualenv $env
+            $VIRTUALENVWRAPPER_PYTHON -mvenv "$WORKON_HOME/$env"
+            source "$WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate"
+            ;;
+        *)
+            echo "Usage: $0 workon <env>|list"
+            ;;
+
+    esac
+}
+
+function _venv_comp_simple () {
+    venvs=$(cd $WORKON_HOME ; echo */ | sed s,/,,g )
+    args=(
+        # '(-h --help)'{-h+,--help}'[show this help message and exit]'
+        # '(-)'--version'[display version information and exit]'
+        '1:command:(list workon create)'
+        "*::arguments:($venvs)"
+    )
+    _arguments -S $args
+}
+
+function _venv_comp () {
+    local ret=1
+    venvs=$(cd $WORKON_HOME ; echo */ | sed s,/,,g )
+    # First arg is subcommand (set state to "args"), then
+    # complete args below depending on subcommand
+    _arguments -C \
+               '1: :(list workon create)' \
+               '*::arg:->args' \
+        && ret=0
+    case $state in
+        args)
+            case $line[1] in
+                list)
+                    _message 'no more args' && ret=0
+                    ;;
+                workon)
+                    # complete existing envs
+                    _arguments "::env:($venvs)" && ret=0
+                    ;;
+                create)
+                    # any name
+                    _arguments "::env: " && ret=0
+                    ;;
+            esac
+    esac
+}
+
+compdef _venv_comp venv
+
 
 # end of file
