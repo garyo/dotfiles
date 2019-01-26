@@ -574,11 +574,15 @@ fi
 # NOTE: I'm using my own trivial "venv" rather than official
 # virtualenvwrapper since it's not being maintained anymore.
 # My own "venv" just allows workon, create, and list.
+# It's basically compatible with virtualenvwrapper; uses same dir for envs.
 ########################################################################
 
 WORKON_HOME=$HOME/.virtualenvs
+# VIRTUALENVWRAPPER_PYTHON must be full path
 if has_command "python3"; then
-    export VIRTUALENVWRAPPER_PYTHON=python3
+    export VIRTUALENVWRAPPER_PYTHON=$(which python3)
+else
+    export VIRTUALENVWRAPPER_PYTHON=$(which python)
 fi
 
 # Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
@@ -616,7 +620,7 @@ setup_virtualenvwrapper()
     done
 }
 #### I'm not using this -- see "venv" below
-# setup_virtualenvwrapper
+setup_virtualenvwrapper
 
 #### virtualenvwrapper alternative: simple command to list and activate
 
