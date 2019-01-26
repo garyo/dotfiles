@@ -600,9 +600,9 @@ fi
 # To install initially, `python -mpip install [--user] virtualenvwrapper`
 setup_virtualenvwrapper()
 {
-    local scripts_dirs=()
+    scripts_dirs=()
     if [[ $_OS == windows ]]; then
-        local pythonpath=$(/bin/ls -d c:/Python*|tail -1)
+        pythonpath=$(/bin/ls -d c:/Python*|tail -1)
         scripts_dirs+=("$pythonpath/Scripts")
     else
         scripts_dirs+=($(python3 -c 'import site; print(site.USER_BASE)'))
@@ -627,25 +627,25 @@ setup_virtualenvwrapper
 function venv ()
 {
     if [[ $_OS == windows ]]; then
-        local VIRTUALENV_BINDIR=Scripts
+        VIRTUALENV_BINDIR=Scripts
     else
-        local VIRTUALENV_BINDIR=bin
+        VIRTUALENV_BINDIR=bin
     fi
     if [[ $# == 0 ]]; then
-        local cmd="help"
+        cmd="help"
     else
-        local cmd=$1; shift
+        cmd=$1; shift
     fi
     case $cmd in
         workon)
-            local env=$1; shift
+            env=$1; shift
             source $WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate
             ;;
         list)
             (cd $WORKON_HOME ; ls -d */ | sed s,//,,g )
             ;;
         create)
-            local env=$1; shift
+            env=$1; shift
             echo Creating new virtualenv $env
             $VIRTUALENVWRAPPER_PYTHON -mvenv "$WORKON_HOME/$env"
             source "$WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate"
@@ -669,7 +669,7 @@ function _venv_comp_simple () {
 }
 
 function _venv_comp () {
-    local ret=1
+    ret=1
     venvs=$(cd $WORKON_HOME ; echo */ | sed s,/,,g )
     # First arg is subcommand (set state to "args"), then
     # complete args below depending on subcommand
