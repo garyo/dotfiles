@@ -69,9 +69,12 @@ umask 2
 ########################################################################
 # PATH setup
 
-path_append ()  { path_remove "$1"; export PATH="$PATH:$1"; }
-path_prepend () { path_remove "$1"; export PATH="$1:$PATH"; }
+path_append ()  { path_remove "$1"; export PATH="$PATH:$1";
+                  [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1" }
+path_prepend () { path_remove "$1"; export PATH="$1:$PATH";
+                  [[ $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"}
 path_remove ()  {
+    [[ $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
     if [[ -n "$ZSH_VERSION" ]]; then
       path_remove_zsh "$1"
     else
@@ -218,8 +221,9 @@ setpath_all() {
 
 maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
+    [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: maybe_setpath"
     if ! [[ "$PATH" == *PATHSETFROM* ]]; then
-	# echo Setting PATH, orig="$PATH"
+        [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path, orig=$PATH"
 	export ORIG_PATH="$PATH"
 	path_append /PATHSETFROMBASH
 	machine_setpath=setpath_$MACHINENAME
@@ -270,8 +274,14 @@ setvars_tower1() {
 
 # for WSL on tower1
 setvars_tower1_linux() {
+    hash -d HORIZON=/mnt/c/dss/Product/Horizon/WebProjects/horizon-app
     hash -d WEBPR=/mnt/c/dss/Product/Horizon/WebProjects
     hash -d CONS=/mnt/c/dss/Consulting
+    hash -d GARYO=/mnt/c/Users/garyo
+}
+
+setvars_surfpro4_linux() {
+    setvars_tower1_linux        # WSL, same setup
 }
 
 # Do machine or OS-specific variable setup
@@ -375,12 +385,17 @@ function h()
     fc -li -${1:-50}
 }
 
+function sc()
+{
+    . ~/.bashrc
+    reset_path
+}
+
 alias ls='ls -CF'
 alias m='less'
 alias f='find . -name'
 # alias which='type -a'
 alias which='command -v'
-alias sc='. ~/.bashrc'
 alias d='dirs -v'
 alias df='df -h'
 alias j='jobs -l'
