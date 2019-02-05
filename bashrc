@@ -210,6 +210,9 @@ setpath_all() {
     path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
     path_prepend $HOME/bin
     path_append "./node_modules/.bin" # for Node.js
+    if has_command yarn; then
+        path_append $(yarn global bin)
+    fi
     path_append .
 }
 
