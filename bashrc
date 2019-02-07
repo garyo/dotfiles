@@ -72,9 +72,9 @@ umask 2
 path_append ()  { path_remove "$1"; export PATH="$PATH:$1";
                   [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1" }
 path_prepend () { path_remove "$1"; export PATH="$1:$PATH";
-                  [[ $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"}
+                  [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"}
 path_remove ()  {
-    [[ $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
+    [[ -n $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
     if [[ -n "$ZSH_VERSION" ]]; then
       path_remove_zsh "$1"
     else
