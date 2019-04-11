@@ -69,10 +69,14 @@ umask 2
 ########################################################################
 # PATH setup
 
-path_append ()  { path_remove "$1"; export PATH="$PATH:$1";
-                  [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1" }
-path_prepend () { path_remove "$1"; export PATH="$1:$PATH";
-                  [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"}
+path_append ()  {
+    path_remove "$1"; export PATH="$PATH:$1";
+    [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1"
+}
+path_prepend () {
+    path_remove "$1"; export PATH="$1:$PATH";
+    [[ $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"
+}
 path_remove ()  {
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
     if [[ -n "$ZSH_VERSION" ]]; then
@@ -262,23 +266,6 @@ setvars_dev-mac() {
     hash -d RV=~/dss/consulting/revision/revision-licensing
     hash -d SL=~/dss/consulting/shorelight
 }
-setvars_tower1() {
-    # Commonly used dirs, easy to cd to and display in prompt
-    # "cd ~RV"
-    hash -d FLOSS=/c/dss/Consulting/spontaneous/FLOSS/src
-    hash -d RV=/c/dss/Consulting/revision/revision-licensing
-    hash -d HORIZON=/c/dss/Product/Horizon/GodotProjects/Horizon
-    hash -d GODOT=/c/dss/Product/GodotEngine
-    hash -d PRODUCT=/c/dss/Product
-}
-
-# for WSL on tower1
-setvars_tower1_linux() {
-    hash -d HORIZON=/mnt/c/dss/Product/Horizon/WebProjects/horizon-app
-    hash -d WEBPR=/mnt/c/dss/Product/Horizon/WebProjects
-    hash -d CONS=/mnt/c/dss/Consulting
-    hash -d GARYO=/mnt/c/Users/garyo
-}
 
 setvars_surfpro4_linux() {
     setvars_tower1_linux        # WSL, same setup
@@ -290,9 +277,10 @@ setvars() {
     machine_setvars=setvars_$MACHINENAME
     machine_os_setvars=setvars_${MACHINENAME}_${_OS}
     os_setvars=setvars_$_OS
-    declare -f "$machine_os_setvars" >/dev/null && $machine_os_setvars
-    declare -f "$machine_setvars" >/dev/null    && $machine_setvars
+    # Most specific last so it wins
     declare -f "$os_setvars" >/dev/null         && $os_setvars
+    declare -f "$machine_setvars" >/dev/null    && $machine_setvars
+    declare -f "$machine_os_setvars" >/dev/null && $machine_os_setvars
 }
 # now do it
 setvars
@@ -389,6 +377,12 @@ function sc()
 {
     . ~/.bashrc
     reset_path
+}
+
+function dos2unix()
+{
+    # this looks funny but it works -- replaces all backslashes with fwd
+    echo ${1//\\//} | sed 's,^[cC]:,/mnt/c,'
 }
 
 alias ls='ls -CF'
@@ -585,6 +579,9 @@ fi
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
     source ~/Dotfiles/bashrc.local
 fi
+if [[ -f ~/.bashrc.local ]]; then
+    source ~/.bashrc.local
+fi
 
 ########################################################################
 # Python virtualenvwrapper
@@ -713,7 +710,9 @@ function _venv_comp () {
     esac
 }
 
-compdef _venv_comp venv
+if has_command "compdef"; then
+    compdef _venv_comp venv
+fi
 
 
 # end of file
