@@ -514,7 +514,9 @@ vcs_info_wrapper() {
 if [[ -n "$ZSH_VERSION" ]]; then
     setopt PROMPT_SUBST
 fi
-if has_command cygpath && [[ $TERM == emacs ]] ; then
+if [[ $TERM == dumb ]]; then
+  PROMPT="> "
+elif has_command cygpath && [[ $TERM == emacs ]] ; then
   # use cygpath so Emacs dirtrack mode can track it
   PROMPT='%U%m (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
@@ -558,8 +560,19 @@ else
     IS_LOGIN=$?
 fi
 
-if [[ $_OS == windows && $IS_LOGIN == 0 ]]; then
-   eval $(ssh-agent) > /dev/null
+# 0 means true here
+if [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
+   # Try using a fixed location for SSH_AUTH_SOCK systemwide
+   export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$NAME.sock
+   # Can we connect to a running agent?
+   ssh-add -l 2>/dev/null >/dev/null
+   _STATUS=$?
+   # echo ssh add status = $_STATUS
+   if [ $_STATUS -ge 2 ]; then  # didn't work
+       echo "No running ssh agent; starting new one with $SSH_AUTH_SOCK"
+       rm -f "$SSH_AUTH_SOCK"
+       eval $(ssh-agent -a $SSH_AUTH_SOCK) >& /dev/null
+   fi
 fi
 
 ########################################################################
@@ -714,5 +727,7 @@ if has_command "compdef"; then
     compdef _venv_comp venv
 fi
 
+# I don't care that some dirs are other-writable, and I care about my eyes
+export LS_COLORS=$(echo $LS_COLORS|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 
 # end of file
