@@ -75,7 +75,7 @@ path_append ()  {
 }
 path_prepend () {
     path_remove "$1"; export PATH="$1:$PATH";
-    [[ $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"
+    [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"
 }
 path_remove ()  {
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
