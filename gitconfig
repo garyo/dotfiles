@@ -77,3 +77,5 @@
 [include]
         # Include machine-local gitconfig, e.g. for Windows/Mac tool paths
         path = .gitconfig-local
+[rerere]
+	enabled = true
