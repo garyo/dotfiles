@@ -633,7 +633,7 @@ setup_virtualenvwrapper()
         pythonpath=$(/bin/ls -d c:/Python*|tail -1)
         scripts_dirs+=("$pythonpath/Scripts")
     else
-        scripts_dirs+=($(python3 -c 'import site; print(site.USER_BASE)'))
+        scripts_dirs+=($($VIRTUALENVWRAPPER_PYTHON -c 'import site; print(site.USER_BASE)'))
         scripts_dirs+=('/usr/local/bin')
     fi
     for dir in $scripts_dirs; do
