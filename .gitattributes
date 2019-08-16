@@ -5,6 +5,7 @@
 bashrc	text eol=lf
 profile	text eol=lf
 zshrc	text eol=lf
+vimrc	text eol=lf
 
 # Auto detect text files and perform LF normalization
 * text=auto
