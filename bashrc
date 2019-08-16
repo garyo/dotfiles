@@ -728,6 +728,6 @@ if has_command "compdef"; then
 fi
 
 # I don't care that some dirs are other-writable, and I care about my eyes
-export LS_COLORS=$(echo $LS_COLORS|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
+export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 
 # end of file
