@@ -322,8 +322,10 @@ SAVEHIST=5000
 HISTSIZE=9999
 NUMERICGLOBSORT=1
 READNULLCMD=less
-LC_ALL=C			# use regular "C" locale, fixes man pages
-LANG=C
+# Locale
+export LC_ALL=          # this overrides all other locale settings, keep blank
+export LANG=en_US.utf-8 # use utf-8 for everything, except specific LC_*
+export LC_COLLATE=C     # sort dotfiles first, use ASCII ordering
 TIMEFMT="%J:
 	%U(u)+%S(s)/%E=%P.
 	%W swap, %Kk(max %M), pf=%F+%R,
@@ -341,8 +343,6 @@ export EXINIT='set redraw sw=2 wm=2'
 export GTAGSFORCECPP=1 # for GNU Global tags
 export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
-export LANG=en_US.utf-8
-export LC_ALL=en_US.utf-8
 export MORE=s
 export PAGER='less'
 export PERLDOC=-t
