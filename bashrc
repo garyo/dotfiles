@@ -196,7 +196,10 @@ setpath_mac() {
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
+    path_append /usr/local/opt/llvm/bin # for clangd, C++ LSP server
     path_prepend /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9
+    path_prepend /usr/local/lib/ruby/gems/2.6.0/bin
+    path_prepend /usr/local/opt/ruby/bin
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
     path_prepend $HOME/Library/Python/3.6/bin # pipenv, before homebrew
     path_prepend $HOME/python36/bin # virtualenv python in home dir
