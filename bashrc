@@ -682,7 +682,7 @@ function venv ()
             source "$WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate"
             ;;
         *)
-            echo "Usage: $0 workon <env>|list"
+            echo "Usage: $0 workon <env>|list|create <name>"
             ;;
 
     esac
@@ -734,3 +734,7 @@ fi
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 
 # end of file
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
