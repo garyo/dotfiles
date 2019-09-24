@@ -608,6 +608,12 @@ fi
 # It's basically compatible with virtualenvwrapper; uses same dir for envs.
 ########################################################################
 
+# For Poetry (using pyproject.toml), it creates its own virtualenvs
+# To activate them, use this:
+poetry-activate() {
+    . $(poetry env info -p)/bin/activate
+}
+
 WORKON_HOME=$HOME/.virtualenvs
 # VIRTUALENVWRAPPER_PYTHON must be full path
 if has_command "python3"; then
