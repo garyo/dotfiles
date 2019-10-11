@@ -254,6 +254,11 @@ reset_path() {
     export PATH="$ORIG_PATH"
     path_remove /PATHSETFROMBASH
     maybe_setpath
+    type setpath_local
+    if type setpath_local | grep -s "shell function"; then
+        setpath_local
+        show_path
+    fi
 }
 show_path() {
     echo "$PATH" | tr ':' '\n'
@@ -592,13 +597,6 @@ if [[ -n "$ZSH_VERSION" ]]; then
     antigen apply
 fi
 
-if [[ -f ~/Dotfiles/bashrc.local ]]; then
-    source ~/Dotfiles/bashrc.local
-fi
-if [[ -f ~/.bashrc.local ]]; then
-    source ~/.bashrc.local
-fi
-
 ########################################################################
 # Python virtualenvwrapper
 #
@@ -739,8 +737,17 @@ fi
 # I don't care that some dirs are other-writable, and I care about my eyes
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 
-# end of file
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Local bashrc:
+if [[ -f ~/Dotfiles/bashrc.local ]]; then
+    source ~/Dotfiles/bashrc.local
+fi
+if [[ -f ~/.bashrc.local ]]; then
+    source ~/.bashrc.local
+fi
+
+
+# end of file
