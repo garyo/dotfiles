@@ -83,6 +83,7 @@ path_remove ()  {
       path_remove_zsh "$1"
     else
       REMOVE="$1"
+      OLD_IFS="$IFS"
       IFS=':'
       t=($PATH)
       n=${#t[*]}
@@ -92,6 +93,7 @@ path_remove ()  {
 	[ "${p}" ] && a[i]="${p}"
       done
       PATH="${a[*]}"
+      IFS="$OLD_IFS"
     fi
 }
 
