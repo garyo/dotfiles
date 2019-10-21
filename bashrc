@@ -256,10 +256,8 @@ reset_path() {
     export PATH="$ORIG_PATH"
     path_remove /PATHSETFROMBASH
     maybe_setpath
-    type setpath_local
-    if type setpath_local | grep -s "shell function"; then
+    if type setpath_local | grep -q "shell function"; then
         setpath_local
-        show_path
     fi
 }
 show_path() {
@@ -345,10 +343,13 @@ fignore=( .adm .sbin3 .sbin4 .vbin 0~ 1~ 2~ 3~ 4~ 5~ 6~ 7~ 8~ 9~
     .obj .pdb .bsc .ilk .idb  .OBJ .PDB .BSC .ILK .IDB)
 
 if [[ -e c:/bin2/emacs-garyo.sh ]]; then
-  export EDITOR='c:/bin2/emacs-garyo.sh' # wrapper for emacsclientw
+    export EDITOR='c:/bin2/emacs-garyo.sh' # wrapper for emacsclientw
+elif has_command emacs; then
+    export EDITOR='emacsclient -c -a ""'
 else
-  export EDITOR='emacsclient -c -a ""'
+    export EDITOR='vim'
 fi
+export GIT_EDITOR="$EDITOR"
 export EXINIT='set redraw sw=2 wm=2'
 export GTAGSFORCECPP=1 # for GNU Global tags
 export LESS='-eij3MqsFXR'
