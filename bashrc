@@ -390,7 +390,7 @@ function sc()
     reset_path
 }
 
-function dos2unix()
+function dos2unix-path()
 {
     # this looks funny but it works -- replaces all backslashes with fwd
     echo ${1//\\//} | sed 's,^[cC]:,/mnt/c,'
