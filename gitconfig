@@ -34,7 +34,8 @@
         ignored=!git ls-files -v | grep "^S"
         # quick status: one line per file, ignore untracked
         st=status -s -uno
-        amend-quick = commit --amend --no-edit
+        amend-quick=commit --amend --no-edit
+        dc=diff --cached
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
