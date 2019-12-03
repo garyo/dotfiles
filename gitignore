@@ -1,0 +1,14 @@
+# editor backups
+.#*
+*~
+
+# editor settings
+.vscode
+
+# Compiled files
+*.elc
+
+# Misc
+GRPATH
+GRTAGS
+GTAGS
