@@ -612,7 +612,13 @@ fi
 # For Poetry (using pyproject.toml), it creates its own virtualenvs
 # To activate them, use this:
 poetry-activate() {
-    . $(poetry env info -p)/bin/activate
+    script=$(poetry env info -p)/bin/activate
+    if [[ -f "$script" ]]; then
+        . "$script"
+    else
+        # try Windows
+        . $(poetry env info -p)/Script/activate
+    fi
 }
 
 WORKON_HOME=$HOME/.virtualenvs
