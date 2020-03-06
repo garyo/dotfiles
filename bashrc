@@ -7,13 +7,33 @@
 
 
 # set for debugging:
-# set -v
-# set -x
+#set -v
+#set -x
+last_ts=0
+# Set to 1 for timing info (this only works w/ zsh)
+TIMEDIFF_ON=0
+timediff1 () {
+    [[ $TIMEDIFF_ON = 0 ]] && return
+    label=$1
+    ts=$(date +%s.%N)
+    delta=$(($ts-$last_ts))
+    if [[ $last_ts > 0 ]]; then
+        if [[ $delta > 0.1 ]]; then # long times: print in red
+            echo "$label: [31m${delta}[39m sec since prev"
+        else
+            echo "$label: ${delta} sec since prev"
+        fi
+    fi
+    last_ts=$ts
+}
+
+
 #echo "Incoming PATH:"
 #echo $PATH | tr ':' '\n'
 #echo "Incoming env:"
 #env
 
+timediff1 start
 if [ -z "$ZSH_VERSION" -a -z "$BASH" ]; then
     SIMPLE_SH_MODE=1
     return # the rest of this file assumes at least bash or zsh.
@@ -264,8 +284,12 @@ show_path() {
     echo "$PATH" | tr ':' '\n'
 }
 
+timediff1 "before setpath"
+
 # Now do it
 maybe_setpath
+
+timediff1 "after setpath"
 
 setvars_dev-mac() {
     # Commonly used dirs, easy to cd to and display in prompt
@@ -393,7 +417,7 @@ function sc()
 function dos2unix-path()
 {
     # this looks funny but it works -- replaces all backslashes with fwd
-    echo ${1//\\//} | sed 's,^[cC]:,/mnt/c,'
+    echo ${1//\\//} | sed 's,^[cC]:,/c,'
 }
 
 alias ls='ls -CF'
@@ -563,6 +587,7 @@ if [[ "$TERM" != "dumb" && "$TERM" != "emacs" ]] ; then
 fi
 
 # If it's a login shell, start ssh-agent.
+timediff1 "before starting ssh-agent"
 if [[ -n "$ZSH_VERSION" ]]; then
     [[ -o login ]]
     IS_LOGIN=$?
@@ -585,12 +610,14 @@ if [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
        eval $(ssh-agent -a $SSH_AUTH_SOCK) >& /dev/null
    fi
 fi
+timediff1 "after starting ssh-agent"
 
 ########################################################################
 # Completion plugins
 ########################################################################
 
 if [[ -n "$ZSH_VERSION" ]]; then
+    timediff1 "before zsh antigen setup"
     if [[ ! -f ~/antigen.zsh ]]; then
         curl -L git.io/antigen > ~/antigen.zsh
     fi
@@ -598,6 +625,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
     antigen bundle git >& /dev/null
     antigen bundle zsh-users/zsh-completions >& /dev/null
     antigen apply
+    timediff1 "after zsh antigen setup"
 fi
 
 ########################################################################
@@ -608,6 +636,8 @@ fi
 # My own "venv" just allows workon, create, and list.
 # It's basically compatible with virtualenvwrapper; uses same dir for envs.
 ########################################################################
+
+timediff1 "before virtualenv setup"
 
 # For Poetry (using pyproject.toml), it creates its own virtualenvs
 # To activate them, use this:
@@ -743,12 +773,18 @@ if has_command "compdef"; then
     compdef _venv_comp venv
 fi
 
+timediff1 "after virtualenv setup"
+
 # I don't care that some dirs are other-writable, and I care about my eyes
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 
+timediff1 "before nvm setup"
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm
+timediff1 "after nvm base setup"
+# I don't think I care that much about nvm bash completion -- takes ~1 sec to load
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+timediff1 "after nvm completion"
 
 # Local bashrc:
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
@@ -758,5 +794,6 @@ if [[ -f ~/.bashrc.local ]]; then
     source ~/.bashrc.local
 fi
 
+timediff1 "end"
 
 # end of file
