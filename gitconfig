@@ -4,10 +4,10 @@
 [pretty]
 	twolines = tformat:%h %an, %cr: %d%n. . . . %w(70,0,8)%s
 [alias]
-	ll = !git log -10 --graph --date-order --format=twolines
+	ll = log -10 --graph --date-order --format=twolines
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
-	tags = !git for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
-	alias = !git config --get-regexp 'alias.*'
+	tags = for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
+	alias = config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
 	outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
 	outgoing-all = log --format=twolines  --branches --not --remotes
@@ -36,6 +36,7 @@
         st=status -s -uno
         amend-quick=commit --amend --no-edit
         dc=diff --cached
+        top=rev-parse --show-toplevel
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
@@ -57,8 +58,6 @@
 	preloadindex = true
 	fscache = true
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
-	commitGraph = true
-	writeCommitGraph = true
         # Use per-repo .gitattributes instead!
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"

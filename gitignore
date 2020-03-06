@@ -9,6 +9,7 @@
 *.elc
 
 # Misc
+.mypy_cache/
 GRPATH
 GRTAGS
 GTAGS
