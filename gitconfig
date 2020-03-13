@@ -5,6 +5,7 @@
 	twolines = tformat:%h %an, %cr: %d%n. . . . %w(70,0,8)%s
 [alias]
 	ll = log -10 --graph --date-order --format=twolines
+        ogl = !ogl --all
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
 	tags = for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
 	alias = config --get-regexp 'alias.*'
@@ -41,6 +42,11 @@
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
 	encoding = utf-8
+[pager]
+        log = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
+        show = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
+        diff = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
+
 [push]
 	default = tracking
         # when pushing, push all annotated tags
