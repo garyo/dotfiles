@@ -12,21 +12,26 @@
 last_ts=0
 # Set to 1 for timing info (this only works w/ zsh)
 TIMEDIFF_ON=0
-timediff1 () {
-    [[ $TIMEDIFF_ON = 0 ]] && return
-    label=$1
-    ts=$(date +%s.%N)
-    delta=$(($ts-$last_ts))
-    if [[ $last_ts > 0 ]]; then
-        if [[ $delta > 0.1 ]]; then # long times: print in red
-            echo "$label: [31m${delta}[39m sec since prev"
-        else
-            echo "$label: ${delta} sec since prev"
-        fi
-    fi
-    last_ts=$ts
-}
-
+if [ -n "$ZSH_VERSION" ]; then
+  timediff1 () {
+      [[ $TIMEDIFF_ON = 0 ]] && return
+      label=$1
+      ts=$(date +%s.%N)
+      delta=$(($ts-$last_ts))
+      if [[ $last_ts > 0 ]]; then
+          if [[ $delta > 0.1 ]]; then # long times: print in red
+              echo "$label: [31m${delta}[39m sec since prev"
+          else
+              echo "$label: ${delta} sec since prev"
+          fi
+      fi
+      last_ts=$ts
+  }
+else
+  function timediff1() {
+    /bin/false
+  }
+fi
 
 #echo "Incoming PATH:"
 #echo $PATH | tr ':' '\n'
@@ -605,7 +610,7 @@ if [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
    _STATUS=$?
    # echo ssh add status = $_STATUS
    if [ $_STATUS -ge 2 ]; then  # didn't work
-       echo "No running ssh agent; starting new one with $SSH_AUTH_SOCK"
+       #echo "No running ssh agent; starting new one with $SSH_AUTH_SOCK"
        rm -f "$SSH_AUTH_SOCK"
        eval $(ssh-agent -a $SSH_AUTH_SOCK) >& /dev/null
    fi
@@ -694,7 +699,7 @@ setup_virtualenvwrapper()
     done
 }
 #### I'm not using this -- see "venv" below
-setup_virtualenvwrapper
+#setup_virtualenvwrapper
 
 #### virtualenvwrapper alternative: simple command to list and activate
 
