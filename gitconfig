@@ -79,6 +79,7 @@
 	preloadindex = true
 	fscache = true
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
+	excludesfile = ~/.gitignore
         # Use per-repo .gitattributes instead!
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
