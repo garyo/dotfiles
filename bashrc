@@ -250,11 +250,9 @@ show_path() {
     echo "$PATH" | tr ':' '\n'
 }
 
-timediff1 "before setpath"
-
 # Now do it
+timediff1 "before setpath"
 maybe_setpath
-
 timediff1 "after setpath"
 
 setvars_surfpro4_linux() {
