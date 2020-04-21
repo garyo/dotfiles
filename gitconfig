@@ -2,7 +2,7 @@
 	name = Gary Oberbrunner
 	email = garyo@darkstarsystems.com
 [pretty]
-	twolines = tformat:%h %an, %cr: %d%n. . . . %w(70,0,8)%s
+	twolines = tformat:%C("#aaaaaa ul")%h%C(reset) %an, %cr: %d%n. . . . %C(yellow)%w(70,0,8)%s%C(reset)
 [alias]
 	ll = log -10 --graph --date-order --format=twolines
         ogl = !ogl --all
@@ -10,7 +10,7 @@
 	tags = for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
 	alias = config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
-	outgoing = log --format=\"%aD: %aN [%h]%n  %s\"  @{u}..HEAD
+	outgoing = log --format=\"%aD: %aN [%h]%n  %C(yellow)%s%C(reset)\"  @{u}..HEAD
 	outgoing-all = log --format=twolines  --branches --not --remotes
 	incoming = !git fetch && git log ..@{u}
 	ga-merge = merge --no-commit --no-ff --log=9999
@@ -38,6 +38,21 @@
         amend-quick=commit --amend --no-edit
         dc=diff --cached
         top=rev-parse --show-toplevel
+        # Show complete short status of all files, even ignored
+        file-status="!f() { cd -- ${GIT_PREFIX:-.}; sorted=$(printf '%s\\n' $(realpath --relative-to $(pwd) $@) | sort); for f in $sorted; do st=$(git status -s \"$f\"); lsf=$(git ls-files \"$f\"); if [ -n \"$st\" ]; then echo \"$st\"; elif [ -n \"$lsf\" ]; then echo \"   $lsf\"; else echo \"?? $f\"; fi; done }; f"
+        # Branch-switching history from reflog:
+        hist = !"git reflog | grep 'checkout:' | head -n10 | perl -ne 'if ($_ =~ m/checkout: moving from ([^ ]*)/) {print \"$.: $1\n\"}'"
+        s1 = switch @{-1}
+        s2 = switch @{-2}
+        s3 = switch @{-3}
+        s4 = switch @{-4}
+        s5 = switch @{-5}
+        s6 = switch @{-6}
+        s7 = switch @{-7}
+        s8 = switch @{-8}
+        s9 = switch @{-9}
+        s10 = switch @{-10}
+
 [gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
