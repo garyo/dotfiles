@@ -127,48 +127,6 @@ path_remove_zsh () {
     path=(${path:|to_remove})
 }
 
-# OLD
-setpath_noise() {
-    VC10="/Program Files (x86)/Microsoft Visual Studio 10.0/VC"
-    VS10="/Program Files (x86)/Microsoft Visual Studio 10.0"
-    path_append /gnupg
-    path_append "/Program Files/R/R-2.14.0/bin"
-    path_append "/Program Files (x86)/Lua/5.1"
-    path_append "/Program Files/GraphicsMagick-1.3.7-Q16"
-    path_append "/Program files/Mercurial"
-    path_append "/Program files (x86)/Mercurial"
-    path_append "/Program Files/TortoiseHg"
-    path_append "/Program Files/KDiff3"
-    path_append "/c/Program Files (x86)/GnuWin32/bin"
-    path_append "/Users/garyo/src/gccxml/build/bin/Debug" # for gccxml
-    # Tex/LaTeX (http://tug.org/texlive/)
-    path_append /texlive/2010/bin/win32
-    # LibreOffice (soffice.exe) - for converting odt to docx in emacs
-    path_append "/Program files (x86)/LibreOffice 4/program"
-    path_append /Windows
-    path_append /Windows/system32
-    path_append "/Program Files (x86)/PuTTY" # for plink (ssh)
-    path_append "$VS10/Common7/IDE" # DLLs for dumpbin
-    path_append "$VC10/Bin"
-    path_append "$VS10/Bin"
-    path_append "/c/Program Files (x86)/Windows Kits/10/Debuggers/x64" # for WinDBG
-    case $OSTYPE in
-	cygwin*) # msys2 comes with git
-	    path_append "/Program files (x86)/Git/cmd"
-	    path_prepend /bin
-	    ;;
-    esac
-    # for "wish", used by gitk:
-    path_prepend /mingw64/bin
-    path_prepend /msys64/usr/bin
-    path_prepend /mingw64/bin # mingw compiler etc., from msys shell
-    path_prepend "/Program Files (x86)"/GNU/GNUPG  # for gpg; use "gpg2"
-    path_prepend /usr/bin
-    path_prepend /usr/local/bin
-    path_prepend "/c/Python27"
-    path_prepend "/c/Python27/Scripts"
-}
-
 setpath_simplex_msys_emacs() {
     # This is just for building emacs with msys
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
@@ -385,6 +343,7 @@ export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
 export MORE=s
 export PAGER='less'
+export RIPGREP_CONFIG_PATH=~/.config/ripgrep.conf
 export PERLDOC=-t
 export PGPPATH=$HOME/.pgp
 if [[ $TERM = emacs || $TERM = dumb ]]; then
@@ -423,6 +382,17 @@ function dos2unix-path()
 {
     # this looks funny but it works -- replaces all backslashes with fwd
     echo ${1//\\//} | sed 's,^[cC]:,/c,'
+}
+
+function webget()
+{
+    curl -sS --insecure "$@"
+}
+
+# POST using curl. Accpts JSON for data.
+function webpost()
+{
+    curl -sS --insecure -X POST -H Content-Type:application/json "$@"
 }
 
 alias ls='ls -CF'
