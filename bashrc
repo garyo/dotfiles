@@ -176,8 +176,8 @@ setpath_windows() {
 }
 
 setpath_mac() {
-    path_append /usr/local/sbin
-    path_append /usr/local/bin
+    path_prepend /usr/local/sbin
+    path_prepend /usr/local/bin
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
@@ -208,6 +208,9 @@ setpath_all() {
     path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
     path_prepend $HOME/bin
     path_append "./node_modules/.bin" # for Node.js
+    if has_command pyenv; then
+        eval "$(pyenv init -)"
+    fi
     path_append .
 }
 
@@ -247,20 +250,10 @@ show_path() {
     echo "$PATH" | tr ':' '\n'
 }
 
-timediff1 "before setpath"
-
 # Now do it
+timediff1 "before setpath"
 maybe_setpath
-
 timediff1 "after setpath"
-
-setvars_dev-mac() {
-    # Commonly used dirs, easy to cd to and display in prompt
-    # "cd ~RV"
-    hash -d FLOSS=~/dss/consulting/spontaneous/FLOSS/src
-    hash -d RV=~/dss/consulting/revision/revision-licensing
-    hash -d SL=~/dss/consulting/shorelight
-}
 
 setvars_surfpro4_linux() {
     setvars_tower1_linux        # WSL, same setup

@@ -77,7 +77,7 @@
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
         # Use per-repo .gitattributes instead!
         pager = command -v delta > /dev/null && delta --theme 'Monokai Extended' --file-color="#00ffff" --plus-color="#004400" --hunk-color="#00ffff" || less
-
+	excludesfile = ~/.gitignore
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
