@@ -57,10 +57,6 @@
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
 	encoding = utf-8
-[pager]
-        log = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
-        show = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
-        diff = (command -v diff-highlight > /dev/null && diff-highlight || cat) | less
 
 [push]
 	default = tracking
@@ -80,6 +76,8 @@
 	fscache = true
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
         # Use per-repo .gitattributes instead!
+        pager = command -v delta > /dev/null && delta --theme 'Monokai Extended' --file-color="#00ffff" --plus-color="#004400" --hunk-color="#00ffff" || less
+
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool]
