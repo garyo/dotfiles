@@ -202,12 +202,12 @@ setpath() {
 
 # Runs after all other setpaths, always
 setpath_all() {
+    if has_command yarn; then
+        path_prepend $(yarn global bin)
+    fi
     path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
     path_prepend $HOME/bin
     path_append "./node_modules/.bin" # for Node.js
-    if has_command yarn; then
-        path_append $(yarn global bin)
-    fi
     path_append .
 }
 
@@ -283,10 +283,6 @@ setvars
 ########################################################################
 # Terminal setup
 
-if [[ $TERM = xterm-256color ]]; then  # get this coming from a Mac via ssh
-  TERM=xterm
-fi
-
 ttymodes=(-istrip erase \^\? susp \^Z intr \^C quit \^\\ flush \^O ixany)
 if [[ $TERM = emacs ]]; then
   :
@@ -299,6 +295,10 @@ fi
 if [[ -f /usr/bin/ssh-pageant ]]; then
   eval $(/usr/bin/ssh-pageant -r -a "/tmp/.ssh-pageant-$USERNAME")
 fi
+
+# All modern "256-color" terminals are really 24-bit, I think.
+# So set COLORTERM to indicate that to clients.
+[[ $TERM == xterm-256color ]] && export COLORTERM=24bit
 
 ########################################################################
 # Variables, shell functions and aliases
@@ -356,10 +356,17 @@ if [[ -e "$HOME/pythonstartup" ]]; then
 fi
 
 # 10 most recently modified files
-function la()
-{
-  ls -lt "$@" | head -10
-}
+if has_command exa; then
+  function la()
+  {
+      exa -l -snew -r "$@" --color always | head -15
+  }
+else
+  function la()
+  {
+      ls -lt "$@" | head -15
+  }
+fi
 
 function gdrive-upload()
 {
@@ -395,6 +402,10 @@ function webpost()
     curl -sS --insecure -X POST -H Content-Type:application/json "$@"
 }
 
+# Set up for X11
+export DISPLAY=:0.0
+export LIBGL_ALWAYS_INDIRECT=1
+
 alias ls='ls -CF'
 alias m='less'
 alias f='find . -name'
@@ -405,7 +416,12 @@ alias df='df -h'
 alias j='jobs -l'
 alias ll='ls -l'
 alias tf='tail -f'
-alias t='tree -I __pycache__\|*.pyc\|node_modules'
+if has_command exa; then
+    alias t='exa --tree'
+else
+    alias t='tree -I __pycache__\|*.pyc\|node_modules'
+fi
+
 
 # Show file tree, ignoring git-ignored files/dirs.
 function gtree {
@@ -465,6 +481,8 @@ if [[ -n "$ZSH_VERSION" ]]; then
   # If emacs, make like normal shell
   if [[ $TERM = emacs || $TERM = dumb ]]; then
     unsetopt ZLE
+  else
+    bindkey -em >& /dev/null
   fi
 fi
 
@@ -541,6 +559,19 @@ if has_command echotc ; then
 fi
 RPROMPT=
 
+# Modern replacements for find, ls, etc.:
+# - fzf: fuzzy-finder
+# - exa: ls with tree, git integration
+# - delta: pretty diff viewer
+# - bat: syntax-highlighted "cat"
+# - fd: find replacement
+[[ -n "$ZSH_VERSION" && -f ~/.fzf.zsh ]] && source ~/.fzf.zsh # enable completions with **[TAB] and CTRL-T
+# If we have both fd and fzf, use fd as source for fzf default:
+if has_command fd && has_command fzf; then
+    export FZF_DEFAULT_COMMAND='fd --type f'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
 # For bash, nothing fancy but better than default:
 if [[ -n "$BASH_VERSION" ]]; then
   PS1='\h [\W] % '
@@ -548,8 +579,8 @@ fi
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
 if [[ -n "$ZSH_VERSION" ]]; then
-  chpwd () { [[ $TERM = xterm ]] && print -Pn ']2;%m (%l): %~' > /dev/tty; }
-  if [[ $TERM = xterm ]]; then
+  chpwd () { [[ $TERM = xterm* ]] && print -Pn ']2;%m (%l): %~' > /dev/tty; }
+  if [[ $TERM = xterm* ]]; then
     set PROMPT='%{]2;%m (%l): %~%}'$PROMPT
   fi
 fi
@@ -591,17 +622,17 @@ timediff1 "after starting ssh-agent"
 # Completion plugins
 ########################################################################
 
-if [[ -n "$ZSH_VERSION" ]]; then
-    timediff1 "before zsh antigen setup"
-    if [[ ! -f ~/antigen.zsh ]]; then
-        curl -L git.io/antigen > ~/antigen.zsh
-    fi
-    source ~/antigen.zsh
-    antigen bundle git >& /dev/null
-    antigen bundle zsh-users/zsh-completions >& /dev/null
-    antigen apply
-    timediff1 "after zsh antigen setup"
-fi
+# if [[ -n "$ZSH_VERSION" ]]; then
+#     timediff1 "before zsh antigen setup"
+#     if [[ ! -f ~/antigen.zsh ]]; then
+#         curl -L git.io/antigen > ~/antigen.zsh
+#     fi
+#     source ~/antigen.zsh
+#     antigen bundle git >& /dev/null
+#     antigen bundle zsh-users/zsh-completions >& /dev/null
+#     antigen apply
+#     timediff1 "after zsh antigen setup"
+# fi
 
 ########################################################################
 # Python virtualenvwrapper
@@ -752,6 +783,8 @@ timediff1 "after virtualenv setup"
 
 # I don't care that some dirs are other-writable, and I care about my eyes
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
+# brighter blue for dates (see https://en.wikipedia.org/wiki/ANSI_escape_code)
+export EXA_COLORS='da=38;5;63'
 
 timediff1 "before nvm setup"
 export NVM_DIR="$HOME/.nvm"
