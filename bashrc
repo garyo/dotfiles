@@ -87,6 +87,16 @@ esac
 # utility to see if command is defined (in any way)
 has_command () { command -v "$1" > /dev/null 2>&1 ; }
 
+# utility to see if command is a shell function (zsh & bash are different)
+# type -t returns "function" in bash, whence -w ends with "function" in zsh
+is_function () {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        whence -w "$1" | grep -q "function$"
+    else
+        [[ "$(type -t $1)" = "function" ]]
+    fi
+}
+
 ########################################################################
 # Misc stuff
 umask 2
@@ -242,7 +252,7 @@ reset_path() {
     export PATH="$ORIG_PATH"
     path_remove /PATHSETFROMBASH
     maybe_setpath
-    if type setpath_local | grep -q "shell function"; then
+    if is_function setpath_local; then
         setpath_local
     fi
 }
@@ -402,7 +412,6 @@ export LIBGL_ALWAYS_INDIRECT=1
 alias ls='ls -CF'
 alias m='less'
 alias f='find . -name'
-# alias which='type -a'
 alias which='command -v'
 alias d='dirs -v'
 alias df='df -h'
@@ -469,6 +478,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
   setopt rcquotes nolistbeep
   setopt appendhistory histexpiredupsfirst histfindnodups histsavenodups incappendhistory extendedhistory
   autoload -U zmv # fancy batch rename utility
+  bindkey -e # emacs keybindings
   DIRSTACKSIZE=10
 
   # If emacs, make like normal shell
@@ -796,5 +806,4 @@ if [[ -f ~/.bashrc.local ]]; then
 fi
 
 timediff1 "end"
-
 # end of file
