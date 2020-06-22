@@ -405,9 +405,22 @@ function webpost()
     curl -sS --insecure -X POST -H Content-Type:application/json "$@"
 }
 
+# WSL2:
+if has_command ipconfig.exe; then
+    WSL_HOST_IP=$(ipconfig.exe | tr -d '\r' | grep -n4 WSL  | tail -n 1 |sed 's/.*: //')
+fi
+
 # Set up for X11
-export DISPLAY=:0.0
+if [ -n $WSL_HOST_IP ]; then
+    export DISPLAY="${WSL_HOST_IP}":0.0
+
+else
+    export DISPLAY=:0.0
+fi
 export LIBGL_ALWAYS_INDIRECT=1
+# Support HIDPI displays (Emacs menu bar for instance)
+export GDK_SCALE=0.5
+export GDK_DPI_SCALE=2
 
 alias ls='ls -CF'
 alias m='less'
