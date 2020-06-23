@@ -418,9 +418,18 @@ else
     export DISPLAY=:0.0
 fi
 export LIBGL_ALWAYS_INDIRECT=1
-# Support HIDPI displays (Emacs menu bar for instance)
-export GDK_SCALE=0.5
-export GDK_DPI_SCALE=2
+if has_command xdpyinfo; then
+    # resolution in dpi
+    XRESOLUTION=$(xdpyinfo -display :0.0|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
+    # Support HIDPI displays (Emacs menu bar for instance)
+    if [ $XRESOLUTION -gt 150 ]; then
+        export GDK_SCALE=0.5
+        export GDK_DPI_SCALE=2
+    else
+        export GDK_SCALE=1
+        export GDK_DPI_SCALE=1
+    fi
+fi
 
 alias ls='ls -CF'
 alias m='less'
