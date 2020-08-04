@@ -224,6 +224,20 @@ setpath_all() {
     path_append .
 }
 
+setpath_fnm() {
+    # use fnm -- much faster to start a shell than nvm
+    if ! [[ -d ~/.fnm ]]; then
+        echo "No fnm for node.js; Install fnm using 'curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash'"
+    else
+        # Install like this:
+        #   curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
+        timediff1 "before nvm/fnm setup"
+        export PATH=~/.fnm:$PATH
+        eval "`fnm env --multi`"
+        timediff1 "after nvm/fnm base setup"
+    fi
+}
+
 maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: maybe_setpath"
@@ -244,6 +258,7 @@ maybe_setpath() {
 	else
 	    setpath
 	fi
+        setpath_fnm
         setpath_all           # always run this at end for paths to always add
     fi
 }
@@ -810,14 +825,6 @@ timediff1 "after virtualenv setup"
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
 # brighter blue for dates (see https://en.wikipedia.org/wiki/ANSI_escape_code)
 export EXA_COLORS='da=38;5;63'
-
-timediff1 "before nvm setup"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm
-timediff1 "after nvm base setup"
-# I don't think I care that much about nvm bash completion -- takes ~1 sec to load
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-timediff1 "after nvm completion"
 
 # Local bashrc:
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
