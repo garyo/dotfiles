@@ -447,18 +447,27 @@ if has_command xdpyinfo; then
 fi
 
 alias ls='ls -CF'
-alias m='less'
-alias f='find . -name'
+if has_command bat; then
+    alias m='bat'
+else
+    alias m='less'
+fi
+if has_command fd; then
+    alias f='fd'
+else
+    alias f='find . -name'
+fi
 alias which='command -v'
 alias d='dirs -v'
 alias df='df -h'
 alias j='jobs -l'
-alias ll='ls -l'
 alias tf='tail -f'
 if has_command exa; then
     alias t='exa --tree'
+    alias ll='exa -l'
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
+    aliasf ll='ls -l'
 fi
 
 
@@ -481,9 +490,17 @@ if [[ -n "$ZSH_VERSION" ]]; then
     alias 4='cd ~4'
     alias 5='cd ~5'
     alias 6='cd ~6'
+    alias 7='cd ~7'
+    alias 8='cd ~8'
+    alias 9='cd ~9'
     # this seems odd, but it just rotates the dir stack (so it's similar to 1,2,3)
     alias 0='pushd +1'
 fi
+
+function mcd {
+    mkdir -p "$1"
+    cd "$1"
+}
 
 if [[ $_OS = windows ]]; then
   if [[ $OSTYPE != msys ]]; then
@@ -822,7 +839,8 @@ fi
 timediff1 "after virtualenv setup"
 
 # I don't care that some dirs are other-writable, and I care about my eyes
-export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=34;40/g')
+# use light-blue (94) for other-writable dirs
+export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=94;40/g')
 # brighter blue for dates (see https://en.wikipedia.org/wiki/ANSI_escape_code)
 export EXA_COLORS='da=38;5;63'
 
