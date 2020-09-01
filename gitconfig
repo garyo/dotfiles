@@ -104,4 +104,6 @@
 [rerere]
 	enabled = true
 [fetch]
-	writeCommitGraph = true
+	writecommitgraph = false
+[gc]
+	writeCommitGraph = false
