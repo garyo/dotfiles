@@ -40,6 +40,8 @@
         top=rev-parse --show-toplevel
         # Show complete short status of all files, even ignored
         file-status="!f() { cd -- ${GIT_PREFIX:-.}; sorted=$(printf '%s\\n' $(realpath --relative-to $(pwd) $@) | sort); for f in $sorted; do st=$(git status -s \"$f\"); lsf=$(git ls-files \"$f\"); if [ -n \"$st\" ]; then echo \"$st\"; elif [ -n \"$lsf\" ]; then echo \"   $lsf\"; else echo \"?? $f\"; fi; done }; f"
+        # Git add with fuzzy matching courtesy of fzf:
+        fza = "!git status --porcelain | fzf -m | cut -c4- | (cd $(git rev-parse --show-toplevel); xargs -d\\\\n -t -o git add)"
         # Branch-switching history from reflog:
         hist = !"git reflog | grep 'checkout:' | head -n10 | perl -ne 'if ($_ =~ m/checkout: moving from ([^ ]*)/) {print \"$.: $1\n\"}'"
         s1 = switch @{-1}
@@ -59,7 +61,7 @@
 	encoding = utf-8
 
 [push]
-	default = tracking
+	default = current
         # when pushing, push all annotated tags
         followTags = true
 [diff]
