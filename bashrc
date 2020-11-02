@@ -437,7 +437,7 @@ if has_command xdpyinfo; then
     # resolution in dpi
     XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
     # Support HIDPI displays (Emacs menu bar for instance)
-    if [ $XRESOLUTION -gt 150 ]; then
+    if [ "$XRESOLUTION" -gt 150 ]; then
         export GDK_SCALE=0.5
         export GDK_DPI_SCALE=2
     else
@@ -467,7 +467,7 @@ if has_command exa; then
     alias ll='exa -l'
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
-    aliasf ll='ls -l'
+    alias ll='ls -l'
 fi
 
 
