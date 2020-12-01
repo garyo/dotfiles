@@ -435,7 +435,13 @@ fi
 export LIBGL_ALWAYS_INDIRECT=1
 if has_command xdpyinfo; then
     # resolution in dpi
-    XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
+    XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/') >&/dev/null
+    # try again with :0.0 if it fails
+    if [[ $? -ne 0 ]]; then
+        export DISPLAY=:0.0
+        XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
+        [[ $? -ne 0 ]] && echo "Warning: can't open X11 display $DISPLAY"
+    fi
     # Support HIDPI displays (Emacs menu bar for instance)
     if [ "$XRESOLUTION" -gt 150 ]; then
         export GDK_SCALE=0.5
