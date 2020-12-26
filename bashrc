@@ -527,6 +527,23 @@ function whatshell {
   ps -p $$
 }
 
+function gcproject {
+    if [[ -e ~/.config/gcloud/active_config ]]; then
+        local configfile=~/.config/gcloud/configurations/config_$(cat ~/.config/gcloud/active_config)
+        if [[ $1 == "short" ]]; then
+            # horizon-dev-123abc => dev
+            awk '/^project/ {gsub(/-[0-9a-z]+$/, "", $3); print $3}' $configfile
+        else
+            awk '/^project/ {print $3}' $configfile
+        fi
+    fi
+}
+
+function gcproject_prompt {
+    local p=$(gcproject short)
+    [[ -n $p ]] && echo "[GCP:$p]"
+}
+
 ########################################################################
 # Shell options
 
@@ -613,7 +630,7 @@ elif has_command cygpath && [[ $TERM == emacs ]] ; then
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U%m (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U%m %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 fi
