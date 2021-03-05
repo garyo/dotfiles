@@ -476,7 +476,6 @@ else
     alias ll='ls -l'
 fi
 
-
 # Show file tree, ignoring git-ignored files/dirs.
 function gtree {
     git_ignore_files=("$(git config --get core.excludesfile)" .gitignore ~/.gitignore)
@@ -543,6 +542,8 @@ function gcproject_prompt {
     local p=$(gcproject short)
     [[ -n $p ]] && echo "[GCP:$p]"
 }
+
+alias units="units --verbose -1"
 
 ########################################################################
 # Shell options
@@ -866,6 +867,14 @@ timediff1 "after virtualenv setup"
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=94;40/g')
 # brighter blue for dates (see https://en.wikipedia.org/wiki/ANSI_escape_code)
 export EXA_COLORS='da=38;5;63'
+
+# Direnv -- directory-local .env files
+# https://github.com/direnv/direnv
+if [ -n "$ZSH_VERSION" ]; then
+    eval "$(direnv hook zsh)"
+else
+    eval "$(direnv hook bash)"
+fi
 
 # Local bashrc:
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
