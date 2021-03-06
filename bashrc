@@ -97,12 +97,18 @@ is_function () {
     fi
 }
 
+[[ -n $WSLENV ]] && IS_WSL=1
+[[ -n $WSL_INTEROP ]] && IS_WSL2=1
+
 ########################################################################
 # Misc stuff
 umask 2
 
 ########################################################################
 # PATH setup
+
+# Uncomment for setpath debugging
+# SETPATH_VERBOSE=1
 
 path_append ()  {
     path_remove "$1"; export PATH="$PATH:$1";
@@ -227,7 +233,8 @@ setpath_all() {
 setpath_fnm() {
     # use fnm -- much faster to start a shell than nvm
     if ! [[ -d ~/.fnm ]]; then
-        echo "No fnm for node.js; Install fnm using 'curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash'"
+        # echo "No fnm for node.js; Install fnm using 'curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash'"
+        return 1
     else
         # Install like this:
         #   curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
@@ -235,7 +242,29 @@ setpath_fnm() {
         export PATH=~/.fnm:$PATH
         eval "`fnm env --multi`"
         timediff1 "after nvm/fnm base setup"
+        return 0
     fi
+}
+
+setpath_nvm() {
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+}
+
+setpath_linux() {
+    if [[ $IS_WSL -gt 0 ]]; then
+        path_remove '/mnt/c/Program Files/nodejs' # don't use Windows npm
+        path_remove '/mnt/c/Program Files/Git/cmd'
+        path_remove '/mnt/c/Program Files/Git LFS'
+        path_remove '/mnt/c/Program Files (x86)/Yarn/bin'
+        path_remove '/mnt/c/Program Files/Cmake/bin'
+    fi
+    [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
+    [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
+    # Not sure these are needed
+    path_append /usr/local/sbin
+    path_append /usr/sbin
+    path_append /sbin
 }
 
 maybe_setpath() {
@@ -250,15 +279,19 @@ maybe_setpath() {
 	# echo "machine os setpath = " $machine_os_setpath
 	os_setpath=setpath_$_OS
 	if declare -f "$machine_os_setpath" >/dev/null; then
+            [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path via $machine_os_setpath"
 	    $machine_os_setpath
 	elif declare -f "$machine_setpath" >/dev/null; then
+            [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path via $machine_setpath"
 	    $machine_setpath
 	elif declare -f "$os_setpath" >/dev/null; then
+            [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path via $os_setpath"
 	    $os_setpath
 	else
+            [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path via setpath"
 	    setpath
 	fi
-        setpath_fnm
+        setpath_fnm || setpath_nvm
         setpath_all           # always run this at end for paths to always add
     fi
 }
@@ -618,6 +651,14 @@ vcs_info_wrapper() {
   fi
 }
 
+wsl_prompt() {
+    if [[ $IS_WSL2 -gt 0 ]]; then
+        echo '\xf0\x9f\x9f\xa2' # unicode green circle
+    elif [[ $IS_WSL -gt 0 ]]; then
+        echo '\xf0\x9f\x94\xb4' # unicode red circle
+    fi
+}
+
 # multiline highlighted prompt
 # PROMPT='%U%m (%~) %@ %B%!=>%b%u
 if [[ -n "$ZSH_VERSION" ]]; then
@@ -631,7 +672,7 @@ elif has_command cygpath && [[ $TERM == emacs ]] ; then
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U%m %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U$(wsl_prompt)%m %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
 fi
