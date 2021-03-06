@@ -657,7 +657,7 @@ wsl_prompt() {
         echo -n '%F{83}\xf0\x9d\x9f\x9a%f' # unicode double-struck digit 2
     elif [[ $IS_WSL -gt 0 ]]; then
         # echo '\xf0\x9f\x94\xb4' # unicode red circle
-        echo -n '%F{red}\xf0\x9d\x9f\x99%f' # unicode double-struck digit 1
+        echo -n '%F{160}\xf0\x9d\x9f\x99%f' # unicode double-struck digit 1
     fi
 }
 
