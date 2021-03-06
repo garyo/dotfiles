@@ -653,9 +653,11 @@ vcs_info_wrapper() {
 
 wsl_prompt() {
     if [[ $IS_WSL2 -gt 0 ]]; then
-        echo '\xf0\x9f\x9f\xa2' # unicode green circle
+        # echo '\xf0\x9f\x9f\xa2' # unicode green circle
+        echo -n '%F{83}\xf0\x9d\x9f\x9a%f' # unicode double-struck digit 2
     elif [[ $IS_WSL -gt 0 ]]; then
-        echo '\xf0\x9f\x94\xb4' # unicode red circle
+        # echo '\xf0\x9f\x94\xb4' # unicode red circle
+        echo -n '%F{red}\xf0\x9d\x9f\x99%f' # unicode double-struck digit 1
     fi
 }
 
