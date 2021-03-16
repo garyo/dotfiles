@@ -111,3 +111,5 @@
 	writecommitgraph = false
 [gc]
 	writeCommitGraph = false
+[pull]
+	ff = only
