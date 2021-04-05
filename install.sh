@@ -5,7 +5,7 @@ SCRIPTDIR=$(dirname $BASH_SOURCE)
 cd "$SCRIPTDIR"
 
 DOTFILES=(bashrc emacs emacs-orgmode gitconfig gitignore
-	  hgrc profile pythonstartup
+	  hgrc profile pythonstartup ogl
           vimrc zshrc)
 
 for f in "${DOTFILES[@]}"; do
