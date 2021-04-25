@@ -240,7 +240,7 @@ setpath_fnm() {
         #   curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
         timediff1 "before nvm/fnm setup"
         export PATH=~/.fnm:$PATH
-        eval "`fnm env --multi`"
+        eval "`fnm env`"
         timediff1 "after nvm/fnm base setup"
         return 0
     fi
