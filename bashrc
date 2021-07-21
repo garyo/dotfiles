@@ -264,6 +264,7 @@ setpath_linux() {
         path_remove '/mnt/c/Program Files/Git/cmd'
         path_remove '/mnt/c/Program Files/Git LFS'
         path_remove '/mnt/c/Program Files (x86)/Yarn/bin'
+        path_remove '/mnt/c/Program Files (x86)/Yarn/bin/'
         path_remove '/mnt/c/Program Files/Cmake/bin'
         path_remove '/mnt/c/Python37/Scripts'
     fi
@@ -402,7 +403,7 @@ export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
 export MORE=s
 export PAGER='less'
-export RIPGREP_CONFIG_PATH=~/.config/ripgrep.conf
+[[ -f ~/.config/ripgrep.conf ]] && export RIPGREP_CONFIG_PATH=~/.config/ripgrep.conf
 export PERLDOC=-t
 export PGPPATH=$HOME/.pgp
 if [[ $TERM = emacs || $TERM = dumb ]]; then
