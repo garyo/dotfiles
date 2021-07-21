@@ -99,6 +99,11 @@ is_function () {
 
 [[ -n $WSLENV ]] && IS_WSL=1
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
+[[ -e /etc/centos-release ]] && IS_CENTOS=1
+[[ -e /etc/os-release ]] && grep -is ubuntu /etc/os-release && IS_UBUNTU=1
+[[ -n $IS_WSL2 ]] && [[ -n $IS_CENTOS ]] && WSL2_OSNAME="CENTOS"
+[[ -n $IS_WSL2 ]] && [[ -n $IS_UBUNTU ]] && WSL2_OSNAME="UBUNTU"
+
 
 ########################################################################
 # Misc stuff
@@ -258,6 +263,7 @@ setpath_linux() {
         path_remove '/mnt/c/Program Files/Git LFS'
         path_remove '/mnt/c/Program Files (x86)/Yarn/bin'
         path_remove '/mnt/c/Program Files/Cmake/bin'
+        path_remove '/mnt/c/Python37/Scripts'
     fi
     [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
     [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
@@ -655,6 +661,7 @@ wsl_prompt() {
     if [[ $IS_WSL2 -gt 0 ]]; then
         # echo '\xf0\x9f\x9f\xa2' # unicode green circle
         echo -n '%F{83}\xf0\x9d\x9f\x9a%f' # unicode double-struck digit 2
+        [[ $IS_CENTOS -gt 0 ]] && echo -n '%F{83}CENTOS%f '
     elif [[ $IS_WSL -gt 0 ]]; then
         # echo '\xf0\x9f\x94\xb4' # unicode red circle
         echo -n '%F{160}\xf0\x9d\x9f\x99%f' # unicode double-struck digit 1
@@ -703,7 +710,9 @@ fi
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
 if [[ -n "$ZSH_VERSION" ]]; then
-  chpwd () { [[ $TERM = xterm* ]] && print -Pn ']2;%m (%l): %~' > /dev/tty; }
+  chpwd () {
+      [[ $TERM = xterm* ]] && print -Pn "]2;%m (%l:$WSL2_OSNAME): %~" > /dev/tty
+  }
   if [[ $TERM = xterm* ]]; then
     set PROMPT='%{]2;%m (%l): %~%}'$PROMPT
   fi
