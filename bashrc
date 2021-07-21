@@ -232,6 +232,8 @@ setpath_all() {
     if has_command pyenv; then
         eval "$(pyenv init -)"
     fi
+    # fzf: its install script creates ~/.fzf.zsh/bash which adds ~/.fzf/bin to $PATH
+    [[ -n $ZSH_VERSION ]] && [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
     path_append .
 }
 
