@@ -925,10 +925,12 @@ export EXA_COLORS='da=38;5;63'
 
 # Direnv -- directory-local .env files
 # https://github.com/direnv/direnv
-if [ -n "$ZSH_VERSION" ]; then
-    eval "$(direnv hook zsh)"
-else
-    eval "$(direnv hook bash)"
+if has_command direnv; then
+    if [ -n "$ZSH_VERSION" ]; then
+        eval "$(direnv hook zsh)"
+    else
+        eval "$(direnv hook bash)"
+    fi
 fi
 
 # Local bashrc:
