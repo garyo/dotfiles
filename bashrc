@@ -100,7 +100,7 @@ is_function () {
 [[ -n $WSLENV ]] && IS_WSL=1
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
 [[ -e /etc/centos-release ]] && IS_CENTOS=1
-[[ -e /etc/os-release ]] && grep -is ubuntu /etc/os-release && IS_UBUNTU=1
+[[ -e /etc/os-release ]] && grep -isq ubuntu /etc/os-release && IS_UBUNTU=1
 [[ -n $IS_WSL2 ]] && [[ -n $IS_CENTOS ]] && WSL2_OSNAME="CENTOS"
 [[ -n $IS_WSL2 ]] && [[ -n $IS_UBUNTU ]] && WSL2_OSNAME="UBUNTU"
 
