@@ -84,6 +84,8 @@ case $OSTYPE in
       ;;
 esac
 
+PATH=$PATH:/bin:/usr/bin        # for grep at least (can be missing in msys2)
+
 # utility to see if command is defined (in any way)
 has_command () { command -v "$1" > /dev/null 2>&1 ; }
 
@@ -97,7 +99,8 @@ is_function () {
     fi
 }
 
-[[ -n $WSLENV ]] && IS_WSL=1
+[[ -f /msys2.exe ]] && IS_MSYS2=1
+[[ -n $WSLENV && ! $IS_MSYS2 ]] && IS_WSL=1
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
 [[ -e /etc/centos-release ]] && IS_CENTOS=1
 [[ -e /etc/os-release ]] && grep -isq ubuntu /etc/os-release && IS_UBUNTU=1
@@ -227,6 +230,8 @@ setpath_all() {
         path_prepend $(yarn global bin)
     fi
     path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
+    # Rust
+    [[ -d ~/.cargo/bin ]] && path_append ~/.cargo/bin
     path_prepend $HOME/bin
     path_append "./node_modules/.bin" # for Node.js
     if has_command pyenv; then
@@ -512,7 +517,7 @@ alias j='jobs -l'
 alias tf='tail -f'
 if has_command exa; then
     alias t='exa --tree'
-    alias ll='exa -l'
+    alias ll='exa -lGF'
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
     alias ll='ls -l'
@@ -662,12 +667,12 @@ vcs_info_wrapper() {
 
 wsl_prompt() {
     if [[ $IS_WSL2 -gt 0 ]]; then
-        # echo '\xf0\x9f\x9f\xa2' # unicode green circle
         echo -n '%F{83}\xf0\x9d\x9f\x9a%f' # unicode double-struck digit 2
         [[ $IS_CENTOS -gt 0 ]] && echo -n '%F{83}CENTOS%f '
     elif [[ $IS_WSL -gt 0 ]]; then
-        # echo '\xf0\x9f\x94\xb4' # unicode red circle
         echo -n '%F{160}\xf0\x9d\x9f\x99%f' # unicode double-struck digit 1
+    elif [[ $IS_MSYS2 -gt 0 ]]; then
+        echo -n '%F{160}\xf0\x9d\x95\x84%f' # unicode double-struck digit M
     fi
 }
 
