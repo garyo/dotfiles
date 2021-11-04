@@ -232,6 +232,7 @@ setpath_all() {
     path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
     # Rust
     [[ -d ~/.cargo/bin ]] && path_append ~/.cargo/bin
+    path_prepend $HOME/.local/bin # alt path for poetry, maybe other things
     path_prepend $HOME/bin
     path_append "./node_modules/.bin" # for Node.js
     if has_command pyenv; then
