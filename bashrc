@@ -473,13 +473,13 @@ if has_command ipconfig.exe; then
 fi
 
 # Set up for X11
-if [ -n $WSL_HOST_IP ] && has_command nc && nc -w 1 $WSL_HOST_IP 6000; then
-    export DISPLAY="${WSL_HOST_IP}":0.0 # X11 server running
-    export LIBGL_ALWAYS_INDIRECT=1
+# Note: if we have WSL2 with XWayland, /mnt/wslg will exist, so we can use :0.0 and direct LIBGL.
+if [ -n $WSL_HOST_IP -a ! -e /mnt/wslg ]; then
+    export DISPLAY="${WSL_HOST_IP}":0.0
 else
     export DISPLAY=:0.0  # local X server or WSLg w/ built-in Xwayland
 fi
-
+[ ! -e /mnt/wslg ] && export LIBGL_ALWAYS_INDIRECT=1
 if has_command xdpyinfo; then
     # resolution in dpi
     XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/') >&/dev/null
