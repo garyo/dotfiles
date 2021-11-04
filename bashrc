@@ -473,13 +473,13 @@ if has_command ipconfig.exe; then
 fi
 
 # Set up for X11
-if [ -n $WSL_HOST_IP ]; then
-    export DISPLAY="${WSL_HOST_IP}":0.0
-
+if [ -n $WSL_HOST_IP ] && has_command nc && nc -w 1 $WSL_HOST_IP 6000; then
+    export DISPLAY="${WSL_HOST_IP}":0.0 # X11 server running
+    export LIBGL_ALWAYS_INDIRECT=1
 else
-    export DISPLAY=:0.0
+    export DISPLAY=:0.0  # local X server or WSLg w/ built-in Xwayland
 fi
-export LIBGL_ALWAYS_INDIRECT=1
+
 if has_command xdpyinfo; then
     # resolution in dpi
     XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/') >&/dev/null
@@ -948,3 +948,4 @@ fi
 
 timediff1 "end"
 # end of file
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
