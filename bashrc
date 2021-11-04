@@ -510,7 +510,23 @@ if has_command fd; then
 else
     alias f='find . -name'
 fi
-alias which='command -v'
+# Zsh has many similar commands: which, type, whence, command, where.
+# All bourne-like shells have "type" and "command -v"
+# To get path of a command: "command -v"
+# All cmds with given name:
+#   - "where" in zsh (same as "whence -ca")
+#   - "type -a" in bash or zsh
+# "type" works for functions & aliases too (in zsh)
+# generally, don't use "which" anymore -- it's builtin in zsh, but not elsewhere
+# zsh:
+#  whence is the base reference, takes many options
+#  type = whence -v
+#  command -v = whence
+#  command -V = whence -v
+#  where = whence -ca
+#  which = whence -a
+# I'll alias "which" to "type -a" to show everything
+alias which="type -a" # show builtins, functions, aliases, and all in $PATH
 alias d='dirs -v'
 alias df='df -h'
 alias j='jobs -l'
