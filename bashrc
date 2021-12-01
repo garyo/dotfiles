@@ -475,7 +475,7 @@ fi
 
 # Set up for X11
 # Note: if we have WSL2 with XWayland, /mnt/wslg will exist, so we can use :0.0 and direct LIBGL.
-if [ -n $WSL_HOST_IP -a ! -e /mnt/wslg ]; then
+if [ -n "$WSL_HOST_IP" -a ! -e /mnt/wslg ]; then
     export DISPLAY="${WSL_HOST_IP}":0.0
 else
     export DISPLAY=:0.0  # local X server or WSLg w/ built-in Xwayland
