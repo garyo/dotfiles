@@ -95,13 +95,12 @@
 	# magit needs this even though it's the default,
 	# otherwise it recursively shows all untracked files (which can be slow).
 	showUntrackedFiles = normal
-	#submodulesummary = 1
+	submoduleSummary = true
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
-
 [include]
         # Include machine-local gitconfig, e.g. for Windows/Mac tool paths
         path = .gitconfig-local
@@ -109,7 +108,10 @@
 	enabled = true
 [fetch]
 	writecommitgraph = false
+        recurseSubmodules = on-demand
 [gc]
 	writeCommitGraph = false
 [pull]
 	ff = only
+[init]
+	defaultBranch = main
