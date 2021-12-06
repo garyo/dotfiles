@@ -100,7 +100,7 @@ is_function () {
 }
 
 [[ -f /msys2.exe ]] && IS_MSYS2=1
-[[ -n $WSLENV && ! $IS_MSYS2 ]] && IS_WSL=1
+[[ -n $WSLENV && -z $IS_MSYS2 ]] && IS_WSL=1
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
 [[ -e /etc/centos-release ]] && IS_CENTOS=1
 [[ -e /etc/os-release ]] && grep -isq ubuntu /etc/os-release && IS_UBUNTU=1
@@ -818,9 +818,9 @@ poetry-activate() {
 WORKON_HOME=$HOME/.virtualenvs
 # VIRTUALENVWRAPPER_PYTHON must be full path
 if has_command "python3"; then
-    export VIRTUALENVWRAPPER_PYTHON=$(which python3)
+    export VIRTUALENVWRAPPER_PYTHON=$(command -v python3)
 else
-    export VIRTUALENVWRAPPER_PYTHON=$(which python)
+    export VIRTUALENVWRAPPER_PYTHON=$(command -v python)
 fi
 
 # Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
