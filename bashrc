@@ -7,8 +7,8 @@
 
 
 # set for debugging:
-#set -v
-#set -x
+# set -v
+# set -x
 last_ts=0
 # Set to 1 for timing info (this only works w/ zsh)
 TIMEDIFF_ON=0
@@ -468,6 +468,7 @@ function webpost()
     curl -sS --insecure -X POST -H Content-Type:application/json "$@"
 }
 
+timediff1 "before WSL2 & X11"
 # WSL2:
 if has_command ipconfig.exe; then
     WSL_HOST_IP=$(ipconfig.exe | tr -d '\r' | grep -n4 WSL  | tail -n 1 |sed 's/.*: //')
@@ -499,6 +500,7 @@ if has_command xdpyinfo; then
         export GDK_DPI_SCALE=1
     fi
 fi
+timediff1 "after WSL2 & X11"
 
 alias ls='ls -CF'
 if has_command bat; then
