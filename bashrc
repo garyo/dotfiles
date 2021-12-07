@@ -104,8 +104,8 @@ is_function () {
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
 [[ -e /etc/centos-release ]] && IS_CENTOS=1
 [[ -e /etc/os-release ]] && grep -isq ubuntu /etc/os-release && IS_UBUNTU=1
-[[ -n $IS_WSL2 ]] && [[ -n $IS_CENTOS ]] && WSL2_OSNAME="CENTOS"
-[[ -n $IS_WSL2 ]] && [[ -n $IS_UBUNTU ]] && WSL2_OSNAME="UBUNTU"
+[[ -n $IS_WSL2 && -n $IS_CENTOS ]] && WSL2_OSNAME="CENTOS"
+[[ -n $IS_WSL2 && -n $IS_UBUNTU ]] && WSL2_OSNAME="UBUNTU"
 
 
 ########################################################################
@@ -818,9 +818,9 @@ poetry-activate() {
 WORKON_HOME=$HOME/.virtualenvs
 # VIRTUALENVWRAPPER_PYTHON must be full path
 if has_command "python3"; then
-    export VIRTUALENVWRAPPER_PYTHON=$(command -v python3)
+    export VIRTUALENVWRAPPER_PYTHON="$(command -v python3)"
 else
-    export VIRTUALENVWRAPPER_PYTHON=$(command -v python)
+    export VIRTUALENVWRAPPER_PYTHON="$(command -v python)"
 fi
 
 # Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
