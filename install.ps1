@@ -27,3 +27,10 @@ foreach ($d in $dirs) {
     }
   }
 }
+
+$dir = c:/Users/garyo/AppData/Roaming
+foreach ($f in espanso/*) {
+  if (-not (Test-Path $dir/$f)) {
+    New-Item -type SymbolicLink -path $dir/$f -value $f
+  }
+}

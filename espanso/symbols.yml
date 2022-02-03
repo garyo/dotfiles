@@ -1,0 +1,20 @@
+# espanso configuration file - garyo@oberbrunner.com
+name: symbols
+parent: default
+
+matches:
+  # emoji/symbols
+  - trigger: :check
+    replace: "🗸"
+  - trigger: :smile
+    replace: "☺"
+  - trigger: :heart
+    replace: "♡"
+  - trigger: :question
+    replace: "❓"
+  - trigger: :star
+    replace: "★"
+  - trigger: :yen
+    replace: "¥"
+  - trigger: :gbp
+    replace: "£"
