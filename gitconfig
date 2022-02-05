@@ -74,6 +74,7 @@
 	submodule = log
 [merge]
 	tool = kdiff3
+	conflictStyle = diff3
 [core]
 	editor = emacsclient -c -a \"\"
 	preloadindex = true
