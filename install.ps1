@@ -14,7 +14,7 @@ Break
 }
 
 # Files to symlink
-$files = @("emacs", "bashrc", "emacs-orgmode", "hgrc", "gitconfig", "gitignore",
+$files = @("bashrc", "hgrc", "gitconfig", "gitignore",
            "profile", "pythonstartup", "vimrc", "zshrc")
 $dirs = @("..", "c:/msys64/home/garyo")
 foreach ($d in $dirs) {

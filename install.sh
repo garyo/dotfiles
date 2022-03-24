@@ -4,7 +4,7 @@ SCRIPTDIR=$(dirname $BASH_SOURCE)
 
 cd "$SCRIPTDIR"
 
-DOTFILES=(bashrc emacs emacs-orgmode gitconfig gitignore
+DOTFILES=(bashrc gitconfig gitignore
 	  hgrc profile pythonstartup ogl
           vimrc zshrc)
 
