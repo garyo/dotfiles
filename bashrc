@@ -118,12 +118,32 @@ umask 2
 # Uncomment for setpath debugging
 # SETPATH_VERBOSE=1
 
+# Check if given path $1 exists
+# Assume it's present if $2 is "always"
+path_check () {
+    [[ "${2:-ifexists}" == "always" ]] && return 0
+    if ! [[ -e "$1" ]] ; then
+        [[ -n $SETPATH_VERBOSE ]] && echo "Nonexistent path $1 -- not using"
+        return 1
+    fi
+    return 0
+}
+
+# Append $1 to path; move to back if already in path.
+# If $2 is "always", append to path even if it doesn't exist.
 path_append ()  {
-    path_remove "$1"; export PATH="$PATH:$1";
+    local old=$PATH
+    path_remove "$1"
+    path_check "$1" "${2:-ifexists}" || return 1
+    export PATH="$PATH:$1";
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1"
 }
+# Prepend $1 to path; move to front if already in path.
+# If $2 is "always", prepend to path even if it doesn't exist.
 path_prepend () {
-    path_remove "$1"; export PATH="$1:$PATH";
+    path_remove "$1"
+    path_check "$1" "${2:-ifexists}" || return 1
+    export PATH="$1:$PATH";
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Prepending $1"
 }
 path_remove ()  {
@@ -167,9 +187,9 @@ setpath_tower1_msys() {
     # path_prepend /c/emacs/emacs/bin # emacsclient
     path_prepend /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
     path_prepend "/c/Program Files/GnuGlobal/bin"
-    path_prepend /c/bin # ffmpeg etc.
+    path_prepend /c/bin always # ffmpeg etc.
     # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
-    path_prepend "/c/Python37"  # Standard python
+    path_prepend "/c/Python37"  # Standard python, but see pyenv below
     path_prepend "/c/Python37/Scripts" # pip
     path_append "/c/Program Files/Cppcheck" # cppcheck, useful utility
     # dumpbin.exe:
@@ -194,7 +214,7 @@ setpath_windows() {
     path_append /c/Windows
     path_append /c/Windows/system32
     path_append "/c/Program Files (x86)/PuTTY" # for plink (ssh)
-    path_prepend "/c/bin" # local programs e.g. git-lfs
+    path_prepend "/c/bin" always # local programs e.g. git-lfs
     path_append "/c/Program Files/GnuGlobal/bin"
     path_append "/swig"
 }
@@ -210,8 +230,8 @@ setpath_mac() {
     path_prepend /usr/local/lib/ruby/gems/2.6.0/bin
     path_prepend /usr/local/opt/ruby/bin
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
+    path_prepend /opt/homebrew/bin # M1 mac location
     path_prepend $HOME/Library/Python/3.6/bin # pipenv, before homebrew
-    path_prepend $HOME/python36/bin # virtualenv python in home dir
     path_prepend /usr/local/opt/go/libexec/bin # Go itself (the language, not the game)
     path_prepend $HOME/go/bin # Go programs
 }
@@ -229,11 +249,11 @@ setpath_all() {
     if has_command yarn; then
         path_prepend $(yarn global bin)
     fi
-    path_prepend $HOME/.poetry/bin # Python dependency/virtualenv manager
+    path_prepend $HOME/.poetry/bin always # Python dependency/virtualenv manager
     # Rust
-    [[ -d ~/.cargo/bin ]] && path_append ~/.cargo/bin
-    path_prepend $HOME/.local/bin # alt path for poetry, maybe other things
-    path_prepend $HOME/bin
+    path_append ~/.cargo/bin
+    path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
+    path_prepend $HOME/bin always
     path_append "./node_modules/.bin" # for Node.js
     if has_command pyenv; then
         eval "$(pyenv init -)"
@@ -288,7 +308,7 @@ maybe_setpath() {
     if ! [[ "$PATH" == *PATHSETFROM* ]]; then
         [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: setting path, orig=$PATH"
 	export ORIG_PATH="$PATH"
-	path_append /PATHSETFROMBASH
+	PATH="${PATH}:/PATHSETFROMBASH"
 	machine_setpath=setpath_$MACHINENAME
 	machine_os_setpath=setpath_${MACHINENAME}_${OSTYPE} # really only for msys on simplex
 	# echo "machine os setpath = " $machine_os_setpath
