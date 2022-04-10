@@ -121,8 +121,8 @@ umask 2
 # Check if given path $1 exists
 # Assume it's present if $2 is "always"
 path_check () {
-    [[ "${2:-ifexists}" == "always" ]] && return 0
-    if ! [[ -e "$1" ]] ; then
+    [[ ${2:-ifexists} == always ]] && return 0
+    if ! [[ -e $1 ]] ; then
         [[ -n $SETPATH_VERBOSE ]] && echo "Nonexistent path $1 -- not using"
         return 1
     fi
@@ -254,7 +254,8 @@ setpath_all() {
     path_append ~/.cargo/bin
     path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
     path_prepend $HOME/bin always
-    path_append "./node_modules/.bin" # for Node.js
+    path_append ./node_modules/.bin # for Node.js
+    path_prepend ~/.pyenv/shims # python/pyenv
     if has_command pyenv; then
         eval "$(pyenv init -)"
     fi
