@@ -256,7 +256,8 @@ setpath_all() {
     path_prepend $HOME/bin always
     path_append ./node_modules/.bin # for Node.js
     path_prepend ~/.pyenv/shims # python/pyenv
-    if has_command pyenv; then
+    # not needed for msys/pyenv-win; add pyenv to $PATH, $PYENV, etc. manually there
+    if has_command pyenv && [[ $OSTYPE != msys ]] ; then
         eval "$(pyenv init -)"
     fi
     # fzf: its install script creates ~/.fzf.zsh/bash which adds ~/.fzf/bin to $PATH
