@@ -10,6 +10,8 @@ matches:
     replace: "☑"
   - trigger: :bigx
     replace: "❌"
+  - trigger: :excl
+    replace: "❗"
   - trigger: :smile
     replace: "☺"
   - trigger: :heart
