@@ -255,6 +255,7 @@ setpath_all() {
     path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
     path_prepend $HOME/bin always
     path_append ./node_modules/.bin # for Node.js
+    path_prepend ~/.pyenv/bin # python/pyenv
     path_prepend ~/.pyenv/shims # python/pyenv
     # not needed for msys/pyenv-win; add pyenv to $PATH, $PYENV, etc. manually there
     if has_command pyenv && [[ $OSTYPE != msys ]] ; then
