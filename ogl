@@ -12,12 +12,12 @@ style=rounded
 
 # This fixes some column sizes.
 #unlimited-fields=false
-subject.width=48
-author.width=8
+subject.width=50
+author.width=12
 date.width=8
 
 # Field colors
-#subject.color=15
+subject.color=0
 #author.color=66
 #date.color=237
 
@@ -28,7 +28,7 @@ date.width=8
 vertical-shrink=2
 
 # Align commit messages (aligned looks better but takes more space)
-align-messages=false
+# align-messages=false
 
 # Number of columns to give up aligning commits
 # When graph is too wide it can get hard to read commits
