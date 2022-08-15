@@ -5,7 +5,11 @@ parent: default
 matches:
   # emoji/symbols
   - trigger: :check
-    replace: "🗸"
+    replace: "✓"
+  - trigger: :chk2
+    replace: "☑"
+  - trigger: :bigx
+    replace: "❌"
   - trigger: :smile
     replace: "☺"
   - trigger: :heart
@@ -18,3 +22,21 @@ matches:
     replace: "¥"
   - trigger: :gbp
     replace: "£"
+  - trigger: :->
+    replace: "→"
+  - trigger: :<-
+    replace: "←"
+  - trigger: :=>
+    replace: "⇒"
+  - trigger: :<=
+    replace: "⇐"
+  - trigger: :---
+    replace: "—"
+  - trigger: :--
+    replace: "–"
+  - trigger: :up
+    replace: "↑"
+  - trigger: :down
+    replace: "↓"
+  - trigger: :deg
+    replace: "°"
