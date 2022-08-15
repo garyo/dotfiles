@@ -12,6 +12,8 @@ matches:
     replace: "❌"
   - trigger: :excl
     replace: "❗"
+  - trigger: :bullet
+    replace: "•"
   - trigger: :smile
     replace: "☺"
   - trigger: :heart
