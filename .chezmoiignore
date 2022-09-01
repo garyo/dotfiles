@@ -1,0 +1,9 @@
+README.org
+install.sh
+install.ps1
+{{ if ne .chezmoi.os "darwin" }}
+Library/Preferences/espanso
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+.config/espanso
+{{ end }}
