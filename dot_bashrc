@@ -227,6 +227,7 @@ setpath_mac() {
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
     path_append /usr/local/opt/llvm/bin # for clangd, C++ LSP server
     path_prepend /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9
+    path_prepend /Applications/Emacs.app/Contents/MacOS/bin # emacsclient may be here
     path_prepend /usr/local/lib/ruby/gems/2.6.0/bin
     path_prepend /usr/local/opt/ruby/bin
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
@@ -420,7 +421,7 @@ fignore=( .adm .sbin3 .sbin4 .vbin 0~ 1~ 2~ 3~ 4~ 5~ 6~ 7~ 8~ 9~
 
 if [[ -e c:/bin2/emacs-garyo.sh ]]; then
     export EDITOR='c:/bin2/emacs-garyo.sh' # wrapper for emacsclientw
-elif has_command emacs; then
+elif has_command emacsclient; then
     export EDITOR='emacsclient -c -a ""'
 else
     export EDITOR='vim'
@@ -456,6 +457,16 @@ else
       ls -lt "$@" | head -15
   }
 fi
+
+function edit()
+{
+    # allow word-splitting, prefer VISUAL, then EDITOR
+    if [[ -n "$ZSH_VERSION" ]]; then
+        ${=VISUAL:-${EDITOR:-vi}} "$@"
+    else
+        ${VISUAL:-${EDITOR:-vi}} "$@"
+    fi
+}
 
 function gdrive-upload()
 {
