@@ -22,6 +22,8 @@ matches:
     replace: "❓"
   - trigger: :star
     replace: "★"
+  - trigger: :fire
+    replace: "🔥"
   - trigger: :yen
     replace: "¥"
   - trigger: :gbp
