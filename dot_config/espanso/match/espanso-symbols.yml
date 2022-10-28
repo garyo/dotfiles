@@ -46,3 +46,13 @@ matches:
     replace: "↓"
   - trigger: :deg
     replace: "°"
+      - trigger: ":cmd"
+    replace: "⌘"
+  - trigger: ":shift"
+    replace: "⇧"
+  - trigger: ":ctrl"
+    replace: "⌃"
+  - trigger: ":alt"
+    replace: "⌥"
+  - trigger: ":opt"
+    replace: "⌥"
