@@ -1,9 +1,3 @@
 README.org
 install.sh
 install.ps1
-{{ if ne .chezmoi.os "windows" }}
-AppData/Roaming/espanso
-{{ end }}
-{{ if (and (ne .chezmoi.os "linux") (ne .chezmoi.os "darwin")) }}
-.config/espanso
-{{ end }}
