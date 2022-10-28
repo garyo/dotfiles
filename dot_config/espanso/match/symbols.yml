@@ -28,6 +28,8 @@ matches:
     replace: "¥"
   - trigger: :gbp
     replace: "£"
+  - trigger: :euro
+    replace: "€"
   - trigger: :->
     replace: "→"
   - trigger: :<-
