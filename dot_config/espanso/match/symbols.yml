@@ -46,7 +46,7 @@ matches:
     replace: "↓"
   - trigger: :deg
     replace: "°"
-      - trigger: ":cmd"
+  - trigger: ":cmd"
     replace: "⌘"
   - trigger: ":shift"
     replace: "⇧"
