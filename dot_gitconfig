@@ -58,6 +58,7 @@
         sw = !git checkout $(git branch -a --format '%(refname:short)' | sed 's~origin/~~' | sort | uniq | fzf)
 	# Show all branches proceeding from a ref
 	log-from = "!f() { git log --oneline --graph $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
+	ogl-from = "!f() { ogl $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
 
 [Gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
