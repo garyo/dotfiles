@@ -10,14 +10,17 @@
 # set -v
 # set -x
 last_ts=0
-# Set to 1 for timing info (this only works w/ zsh)
+
+# Set to 1 for timing info (this only works w/ zsh): enables zprof
+# Set to 2 to also print times for known-slow operations
 TIMEDIFF_ON=0
 if [ -n "$ZSH_VERSION" ]; then
+  [[ $TIMEDIFF_ON > 0 ]] && zmodload zsh/zprof
   timediff1 () {
-      [[ $TIMEDIFF_ON = 0 ]] && return
+      [[ $TIMEDIFF_ON > 1 ]] || return
       label=$1
-      ts=$(date +%s.%N)
-      delta=$(($ts-$last_ts))
+      ts=$(perl -MTime::HiRes=time -e 'printf "%.9f\n", time')
+      delta=$(( $ts - $last_ts ))
       if [[ $last_ts > 0 ]]; then
           if [[ $delta > 0.1 ]]; then # long times: print in red
               echo "$label: [31m${delta}[39m sec since prev"
@@ -257,27 +260,21 @@ setpath_all() {
     path_prepend $HOME/bin always
     path_append ./node_modules/.bin # for Node.js
     path_prepend ~/.pyenv/bin # python/pyenv
-    path_prepend ~/.pyenv/shims # python/pyenv
-    # not needed for msys/pyenv-win; add pyenv to $PATH, $PYENV, etc. manually there
-    if has_command pyenv && [[ $OSTYPE != msys ]] ; then
-        eval "$(pyenv init -)"
-    fi
-    # fzf: its install script creates ~/.fzf.zsh/bash which adds ~/.fzf/bin to $PATH
-    [[ -n $ZSH_VERSION ]] && [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+    path_prepend ~/.pyenv/shims # python/pyenv (should be set by pyenv init)
     path_append .
 }
 
 setpath_fnm() {
     # use fnm -- much faster to start a shell than nvm
-    if ! [[ -d ~/.fnm ]]; then
-        # echo "No fnm for node.js; Install fnm using 'curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash'"
+    if ! [[ -d ~/.fnm ]] && ! has_command fnm; then
+        # echo "No fnm for node.js; Install fnm using `curl -fsSL https://fnm.vercel.app/install | bash`"
         return 1
     else
         # Install like this:
-        #   curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
+        #   curl -fsSL https://fnm.vercel.app/install | bash
         timediff1 "before nvm/fnm setup"
         export PATH=~/.fnm:$PATH
-        eval "`fnm env`"
+        eval "$(fnm env --use-on-cd)"
         timediff1 "after nvm/fnm base setup"
         return 0
     fi
@@ -306,6 +303,18 @@ setpath_linux() {
     path_append /sbin
 }
 
+setpath_pyenv() {
+    # not needed for msys/pyenv-win; add pyenv to $PATH, $PYENV, etc. manually there
+    if has_command pyenv && [[ $OSTYPE != msys ]] ; then
+        eval "$(pyenv init -)"
+    fi
+}
+
+setpath_fzf() {
+    # fzf: its install script creates ~/.fzf.zsh/bash which adds ~/.fzf/bin to $PATH
+    [[ -n $ZSH_VERSION ]] && [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+}
+
 maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: maybe_setpath"
@@ -331,6 +340,8 @@ maybe_setpath() {
 	    setpath
 	fi
         setpath_fnm || setpath_nvm
+        setpath_pyenv
+        setpath_fzf
         setpath_all           # always run this at end for paths to always add
     fi
 }
@@ -1009,3 +1020,7 @@ fi
 timediff1 "end"
 # end of file
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if [[ $TIMEDIFF_ON > 0 && -n "$ZSH_VERSION" ]] ; then
+    zprof
+fi
