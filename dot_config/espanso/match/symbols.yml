@@ -38,6 +38,8 @@ matches:
     replace: "⇒"
   - trigger: :<=
     replace: "⇐"
+  - trigger: :arrow
+    replace: "⮕"
   - trigger: :---
     replace: "—"
   - trigger: :--
