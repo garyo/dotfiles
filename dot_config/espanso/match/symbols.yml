@@ -4,59 +4,59 @@ parent: default
 
 matches:
   # emoji/symbols
-  - trigger: :check
+  - trigger: ":check"
     replace: "✓"
-  - trigger: :chk2
+  - trigger: ":chk2"
     replace: "☑"
-  - trigger: :bigx
+  - trigger: ":bigx"
     replace: "❌"
-  - trigger: :excl
+  - trigger: ":excl"
     replace: "❗"
-  - trigger: :bullet
+  - trigger: ":bullet"
     replace: "•"
-  - trigger: :smile
+  - trigger: ":smile"
     replace: "☺"
-  - trigger: :heart
+  - trigger: ":heart"
     replace: "♡"
-  - trigger: :question
+  - trigger: ":question"
     replace: "❓"
-  - trigger: :star
+  - trigger: ":star:"
     replace: "★"
-  - trigger: :fire
+  - trigger: ":fire"
     replace: "🔥"
-  - trigger: :yen
+  - trigger: ":yen"
     replace: "¥"
-  - trigger: :gbp
+  - trigger: ":gbp"
     replace: "£"
-  - trigger: :euro
+  - trigger: ":euro"
     replace: "€"
-  - trigger: :->
+  - trigger: ":->"
     replace: "→"
-  - trigger: :<-
+  - trigger: ":<-"
     replace: "←"
-  - trigger: :=>
+  - trigger: ":=>"
     replace: "⇒"
-  - trigger: :<=
+  - trigger: ":<="
     replace: "⇐"
-  - trigger: :arrow
+  - trigger: ":arrow"
     replace: "⮕"
-  - trigger: :---
+  - trigger: ":---"
     replace: "—"
-  - trigger: :--
+  - trigger: ":--"
     replace: "–"
-  - trigger: :up
+  - trigger: ":up"
     replace: "↑"
-  - trigger: :down
+  - trigger: ":down"
     replace: "↓"
-  - trigger: :deg
+  - trigger: ":deg:"
     replace: "°"
-  - trigger: ":cmd"
+  - trigger: ":cmd:"
     replace: "⌘"
-  - trigger: ":shift"
+  - trigger: ":shift:"
     replace: "⇧"
-  - trigger: ":ctrl"
+  - trigger: ":ctrl:"
     replace: "⌃"
-  - trigger: ":alt"
+  - trigger: ":alt:"
     replace: "⌥"
-  - trigger: ":opt"
+  - trigger: ":opt:"
     replace: "⌥"
