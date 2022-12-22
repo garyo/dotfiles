@@ -414,9 +414,8 @@ if [[ -n "$ZSH_VERSION" ]]; then
 else
   HISTFILE=~/.history
 fi
-SAVEHIST=5000
-HISTSIZE=9999
-NUMERICGLOBSORT=1
+SAVEHIST=10000
+HISTSIZE=99999
 READNULLCMD=less
 # Locale
 export LC_ALL=          # this overrides all other locale settings, keep blank
@@ -661,11 +660,12 @@ alias units="units --verbose -1"
 
 if [[ -n "$ZSH_VERSION" ]]; then
   setopt autolist automenu autopushd autoresume
-  setopt extendedglob glob_dots
-  setopt histignoredups ignoreeof listtypes longlistjobs
+  setopt extendedglob numericglobsort
+  setopt ignoreeof listtypes longlistjobs
   setopt nobadpattern nonomatch notify pushdignoredups pushdsilent
   setopt rcquotes nolistbeep
-  setopt appendhistory histexpiredupsfirst histfindnodups histsavenodups incappendhistory extendedhistory
+  setopt histignoredups histexpiredupsfirst histfindnodups histsavenodups
+  setopt incappendhistorytime extendedhistory
   autoload -U zmv # fancy batch rename utility
   bindkey -e # emacs keybindings
   DIRSTACKSIZE=10
