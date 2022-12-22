@@ -259,8 +259,6 @@ setpath_all() {
     path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
     path_prepend $HOME/bin always
     path_append ./node_modules/.bin # for Node.js
-    path_prepend ~/.pyenv/bin # python/pyenv
-    path_prepend ~/.pyenv/shims # python/pyenv (should be set by pyenv init)
     path_append .
 }
 
@@ -294,6 +292,8 @@ setpath_linux() {
         path_remove '/mnt/c/Program Files (x86)/Yarn/bin/'
         path_remove '/mnt/c/Program Files/Cmake/bin'
         path_remove '/mnt/c/Python37/Scripts'
+        path_remove '/mnt/c/Users/garyo/.pyenv/pyenv-win/shims'
+        path_remove '/mnt/c/Users/garyo/.pyenv/pyenv-win/bin'
     fi
     [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
     [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
@@ -305,6 +305,8 @@ setpath_linux() {
 
 setpath_pyenv() {
     # not needed for msys/pyenv-win; add pyenv to $PATH, $PYENV, etc. manually there
+    path_prepend ~/.pyenv/bin # python/pyenv
+    path_prepend ~/.pyenv/shims # python/pyenv (should be set by pyenv init)
     if has_command pyenv && [[ $OSTYPE != msys ]] ; then
         eval "$(pyenv init -)"
     fi
