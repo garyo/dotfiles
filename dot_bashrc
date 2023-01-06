@@ -583,9 +583,11 @@ alias tf='tail -f'
 if has_command exa; then
     alias t='exa --tree'
     alias ll='exa -lGF'
+    alias lld='exa -lFd' # long listing of dirs (shows symlink targets)
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
     alias ll='ls -l'
+    alias lld='ls -ld'
 fi
 
 # Show file tree, ignoring git-ignored files/dirs.
