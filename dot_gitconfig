@@ -121,3 +121,10 @@
 	defaultBranch = main
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
+[core]
+    packedGitLimit = 512m
+    packedGitWindowSize = 512m
+[pack]
+    deltaCacheSize = 2047m
+    packSizeLimit = 2047m
+    windowMemory = 2047m
