@@ -312,6 +312,9 @@ setpath_pyenv() {
     if has_command pyenv && [[ $OSTYPE != msys ]] ; then
         eval "$(pyenv init -)"
     fi
+    if has_command conan && pyenv which conan >& /dev/null; then
+      path_prepend $(dirname $(pyenv which conan))
+    fi
 }
 
 setpath_fzf() {
