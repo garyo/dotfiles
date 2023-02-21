@@ -586,7 +586,7 @@ alias df='df -h'
 alias j='jobs -l'
 alias tf='tail -f'
 if has_command exa; then
-    alias t='exa --tree'
+    alias t='exa --tree --git-ignore'
     alias ll='exa -lGF'
     alias lld='exa -lFd' # long listing of dirs (shows symlink targets)
 else
@@ -754,17 +754,22 @@ wsl_prompt() {
 if [[ -n "$ZSH_VERSION" ]]; then
     setopt PROMPT_SUBST
 fi
+
+mname_prompt() {
+  [[ $USER == garyo ]] && echo -n "%m" || echo -n '%n@%m'
+}
+
 if [[ $TERM == dumb ]]; then
   PROMPT="> "
 elif has_command cygpath && [[ $TERM == emacs ]] ; then
   # use cygpath so Emacs dirtrack mode can track it
-  PROMPT='%U%m (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U$(mname_prompt) (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
-  PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
+  PROMPT2='%U$(mname_prompt)%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U$(wsl_prompt)%m %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U$(wsl_prompt)$(mname_prompt) %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
-  PROMPT2='%U%m%u %U%B%UMORE:%u%b %B=>%b '
+  PROMPT2='%U$(mname_prompt)%u %U%B%UMORE:%u%b %B=>%b '
 fi
 if has_command echotc ; then
   POSTEDIT=`echotc me`	# turn off all attributes
