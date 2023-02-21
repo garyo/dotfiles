@@ -32,7 +32,7 @@ if [ -n "$ZSH_VERSION" ]; then
   }
 else
   function timediff1() {
-    /bin/false
+    /usr/bin/false
   }
 fi
 
@@ -104,8 +104,6 @@ is_function () {
 
 [[ -f /msys2.exe ]] && IS_MSYS2=1
 [[ -n $WSLENV && -z $IS_MSYS2 ]] && IS_WSL=1
-[[ $(uname -r) =~ "microsoft" && -z $IS_MSYS2 ]] && IS_WSL=1
-[[ $(uname -r) =~ "microsoft.*WSL2" && -z $IS_MSYS2 ]] && IS_WSL2=1
 [[ -n $WSL_INTEROP ]] && IS_WSL2=1
 [[ -e /etc/centos-release ]] && IS_CENTOS=1
 [[ -e /etc/os-release ]] && grep -isq ubuntu /etc/os-release && IS_UBUNTU=1
@@ -311,9 +309,6 @@ setpath_pyenv() {
     path_prepend ~/.pyenv/shims # python/pyenv (should be set by pyenv init)
     if has_command pyenv && [[ $OSTYPE != msys ]] ; then
         eval "$(pyenv init -)"
-    fi
-    if has_command conan && pyenv which conan >& /dev/null; then
-      path_prepend $(dirname $(pyenv which conan))
     fi
 }
 
@@ -791,7 +786,7 @@ fi
 
 # For bash, nothing fancy but better than default:
 if [[ -n "$BASH_VERSION" ]]; then
-  PS1='\h [\W] % '
+  PS1='\u@\h [\W] % '
 fi
 
 # Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
