@@ -174,6 +174,16 @@ path_remove_zsh () {
     path=(${path:|to_remove})
 }
 
+# Check if $PATH contains dir (case sensitive, so beware on Windows)
+function path_contains_dir {
+  local dir_path=$1
+  if [[ ":$PATH:" =~ ":$dir_path:" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 setpath_simplex_msys_emacs() {
     # This is just for building emacs with msys
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
@@ -235,7 +245,6 @@ setpath_mac() {
     path_prepend /usr/local/opt/ruby/bin
     path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
     path_prepend /opt/homebrew/bin # M1 mac location
-    path_prepend $HOME/Library/Python/3.6/bin # pipenv, before homebrew
     path_prepend /usr/local/opt/go/libexec/bin # Go itself (the language, not the game)
     path_prepend $HOME/go/bin # Go programs
 }
@@ -244,14 +253,16 @@ setpath() {
     path_append /usr/local/sbin
     path_append /usr/sbin
     path_append /sbin
-    [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
-    [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
+    path_prepend ~/anaconda3/bin
 }
 
 # Runs after all other setpaths, always
 setpath_all() {
     if has_command yarn; then
-        path_prepend $(yarn global bin)
+        local yarndir=$(yarn global bin)
+        # don't move /usr/local/bin to front if it's already somewhere in $PATH
+        # (on Mac that can get the wrong version of homebrew)
+        path_contains_dir $yarndir || path_append $yarndir
     fi
     path_prepend $HOME/.poetry/bin always # Python dependency/virtualenv manager
     # Rust
@@ -295,8 +306,6 @@ setpath_linux() {
         path_remove '/mnt/c/Users/garyo/.pyenv/pyenv-win/shims'
         path_remove '/mnt/c/Users/garyo/.pyenv/pyenv-win/bin'
     fi
-    [[ -d ~/anaconda3/bin ]] && path_prepend ~/anaconda3/bin
-    [[ -d ~/.local/bin ]] && path_prepend ~/.local/bin # for virtualenv & virtualenvwrapper
     # Not sure these are needed
     path_append /usr/local/sbin
     path_append /usr/sbin
