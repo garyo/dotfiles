@@ -294,6 +294,13 @@ setpath_nvm() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 }
 
+setpath_gcloud() {
+    if [[ -d ~/google-cloud-sdk && $SHELL =~ zsh ]]; then
+        source ~/google-cloud-sdk/path.zsh.inc
+        source ~/google-cloud-sdk/completion.zsh.inc
+    fi
+}
+
 setpath_linux() {
     if [[ $IS_WSL -gt 0 ]]; then
         path_remove '/mnt/c/Program Files/nodejs' # don't use Windows npm
@@ -352,6 +359,7 @@ maybe_setpath() {
 	fi
         setpath_fnm || setpath_nvm
         setpath_pyenv
+        setpath_gcloud
         setpath_fzf
         setpath_all           # always run this at end for paths to always add
     fi
