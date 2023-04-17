@@ -7,7 +7,9 @@
 	ll = log -10 --graph --date-order --format=twolines
         ogl = !ogl --all
 	tube = log --graph --format=oneline --abbrev-commit --decorate --color
-	tags = for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
+	# tags = for-each-ref --sort=taggerdate --format '%(taggerdate:short)%09%(tag)' 'refs/tags'
+	# Show all tags in date order, with "*" for annotated tags
+	tags = for-each-ref --sort=creatordate --format '%(creatordate:short): %(refname:lstrip=2)%(if)%(taggerdate)%(then)*%(end)' 'refs/tags'
 	alias = config --get-regexp 'alias.*'
 	ff = merge --ff-only @{u}
 	outgoing = log --format=\"%aD: %aN [%h]%n  %C(yellow)%s%C(reset)\"  @{u}..HEAD
@@ -59,6 +61,7 @@
 	# Show all branches proceeding from a ref
 	log-from = "!f() { git log --oneline --graph $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
 	ogl-from = "!f() { ogl $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
+	ggraph = "graph -n200 -f '%h %an %as:%d %s'"
 
 [Gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
@@ -112,17 +115,22 @@
 	enabled = true
 [fetch]
 	writecommitgraph = false
-        recurseSubmodules = on-demand
+  recurseSubmodules = on-demand
 [gc]
 	writeCommitGraph = false
 [pull]
 	ff = only
 [init]
 	defaultBranch = main
+#[url "ssh://git@github.com/"]
+#	insteadOf = https://github.com/
 [core]
-    packedGitLimit = 512m
-    packedGitWindowSize = 512m
+  packedGitLimit = 2048m
+  packedGitWindowSize = 2048m
+  compression = 0
+  longpaths = true
 [pack]
-    deltaCacheSize = 2047m
-    packSizeLimit = 2047m
-    windowMemory = 2047m
+  deltaCacheSize = 1024m
+  packSizeLimit = 2048m
+  windowMemory = 2048m
+  window = 1
