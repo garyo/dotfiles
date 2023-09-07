@@ -475,10 +475,10 @@ if [[ -e "$HOME/pythonstartup" ]]; then
 fi
 
 # 10 most recently modified files
-if has_command exa; then
+if has_command eza; then
   function la()
   {
-      exa -l -snew -r "$@" --color always | head -15
+      eza -l -snew -r "$@" --color always | head -15
   }
 else
   function la()
@@ -597,10 +597,10 @@ alias d='dirs -v'
 alias df='df -h'
 alias j='jobs -l'
 alias tf='tail -f'
-if has_command exa; then
-    alias t='exa --tree --git-ignore'
-    alias ll='exa -lGF'
-    alias lld='exa -lFd' # long listing of dirs (shows symlink targets)
+if has_command eza; then
+    alias t='eza --tree --git-ignore'
+    alias ll='eza -lGF'
+    alias lld='eza -lFd' # long listing of dirs (shows symlink targets)
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
     alias ll='ls -l'
@@ -675,7 +675,7 @@ function gcproject_prompt {
 }
 
 if has_command units; then
-  units -1 >& /dev/null
+  command units -1 >& /dev/null
   if [[ $? -ne 0 ]]; then
       # old version of units; alias to `gunits` (e.g. brew install gnu-units on mac)
       alias units="gunits --verbose -1"
@@ -798,7 +798,7 @@ RPROMPT=
 
 # Modern replacements for find, ls, etc.:
 # - fzf: fuzzy-finder
-# - exa: ls with tree, git integration
+# - eza: ls with tree, git integration
 # - delta: pretty diff viewer
 # - bat: syntax-highlighted "cat"
 # - fd: find replacement
