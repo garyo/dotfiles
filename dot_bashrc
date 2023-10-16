@@ -539,30 +539,34 @@ fi
 
 # Set up for X11
 # Note: if we have WSL2 with XWayland, /mnt/wslg will exist, so we can use :0.0 and direct LIBGL.
-if [ -n "$WSL_HOST_IP" -a ! -e /mnt/wslg ]; then
-    export DISPLAY="${WSL_HOST_IP}":0.0
-else
-    export DISPLAY=:0.0  # local X server or WSLg w/ built-in Xwayland
-fi
-[ ! -e /mnt/wslg ] && export LIBGL_ALWAYS_INDIRECT=1
-if has_command xdpyinfo; then
-    # resolution in dpi
-    XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/') >&/dev/null
-    # try again with :0.0 if it fails
-    if [[ $? -ne 0 ]]; then
-        export DISPLAY=:0.0
-        XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
-        [[ $? -ne 0 ]] && echo "Warning: can't open X11 display $DISPLAY"
-    fi
-    # Support HIDPI displays (Emacs menu bar for instance)
-    if [ "$XRESOLUTION" -gt 150 ]; then
-        export GDK_SCALE=0.5
-        export GDK_DPI_SCALE=2
+# Note: on Rocky Linux 8 with Wayland (or maybe any session) we can't just set $DISPLAY. So avoid all of this if $WAYLAND_DISPLAY is set (but we do need to do it on WSLg).
+# Might need to enhance this if on a HIDPI Wayland monitor.
+if [ -z "$WAYLAND_DISPLAY" -o "$IS_WSL2" ]; then
+    if [ -n "$WSL_HOST_IP" -a ! -e /mnt/wslg ]; then
+	export DISPLAY="${WSL_HOST_IP}":0.0
     else
-        export GDK_SCALE=1
-        export GDK_DPI_SCALE=1
+	export DISPLAY=:0.0  # local X server or WSLg w/ built-in Xwayland
     fi
-fi
+    [ ! -e /mnt/wslg ] && export LIBGL_ALWAYS_INDIRECT=1
+    if has_command xdpyinfo; then
+	# resolution in dpi
+	XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/') >&/dev/null
+	# try again with :0.0 if it fails
+	if [[ $? -ne 0 ]]; then
+            export DISPLAY=:0.0
+            XRESOLUTION=$(xdpyinfo|grep resolution|head -1|sed 's/.*resolution: \+\([0-9]\+\)x[0-9].*\+/\1/')
+            [[ $? -ne 0 ]] && echo "Warning: can't open X11 display $DISPLAY"
+	fi
+	# Support HIDPI displays (Emacs menu bar for instance)
+	if [ "$XRESOLUTION" -gt 150 ]; then
+            export GDK_SCALE=0.5
+            export GDK_DPI_SCALE=2
+	else
+            export GDK_SCALE=1
+            export GDK_DPI_SCALE=1
+	fi
+    fi
+fi # not WAYLAND_DISPLAY
 timediff1 "after WSL2 & X11"
 
 alias ls='ls -CF'
