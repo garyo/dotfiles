@@ -861,6 +861,10 @@ if [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
 fi
 timediff1 "after starting ssh-agent"
 
+if [[ -f ~/.authinfo ]]; then
+   export OPENAI_API_KEY=$(awk '/openai/ {print $4}' ~/.authinfo)
+fi
+
 ########################################################################
 # Enable completion (e.g. git, cd, etc.)
 ########################################################################
