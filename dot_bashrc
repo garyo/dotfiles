@@ -294,6 +294,15 @@ setpath_nvm() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 }
 
+# bun
+setpath_bun() {
+    if [[ -d $HOME/.bun ]]; then
+        export BUN_INSTALL="$HOME/.bun"
+        path_append "$BUN_INSTALL/bin"
+    fi
+}
+
+
 setpath_gcloud() {
     if [[ -d ~/google-cloud-sdk && $SHELL =~ zsh ]]; then
         source ~/google-cloud-sdk/path.zsh.inc
@@ -358,6 +367,7 @@ maybe_setpath() {
 	    setpath
 	fi
         setpath_fnm || setpath_nvm
+        setpath_bun
         setpath_pyenv
         setpath_gcloud
         setpath_fzf
