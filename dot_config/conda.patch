@@ -1,0 +1,29 @@
+--- /tmp/conda-orig.sh	2023-12-02 10:33:10.201413800 -0500
++++ /tmp/conda.sh	2023-12-02 09:58:48.659722400 -0500
+@@ -1,7 +1,7 @@
+-export CONDA_EXE="$(cygpath 'C:\Users\garyo\miniconda3\Scripts\conda.exe')"
++export CONDA_EXE="$(cygpath 'C:\Users\garyo\miniconda3\Scripts\conda.exe' | tr -d '\r')"
+ export _CE_M=''
+ export _CE_CONDA=''
+-export CONDA_PYTHON_EXE="$(cygpath 'C:\Users\garyo\miniconda3\python.exe')"
++export CONDA_PYTHON_EXE="$(cygpath 'C:\Users\garyo\miniconda3\python.exe' | tr -d '\r')"
+ 
+ # Copyright (C) 2012 Anaconda, Inc
+ # SPDX-License-Identifier: BSD-3-Clause
+@@ -27,14 +27,14 @@
+         \unset CONDA_PS1_BACKUP
+     fi
+     \local ask_conda
+-    ask_conda="$(PS1="${PS1:-}" __conda_exe shell.posix "$@")" || \return
++    ask_conda="$(PS1="${PS1:-}" __conda_exe shell.posix "$@" | tr -d '\r')" || \return
+     \eval "$ask_conda"
+     __conda_hashr
+ }
+ 
+ __conda_reactivate() {
+     \local ask_conda
+-    ask_conda="$(PS1="${PS1:-}" __conda_exe shell.posix reactivate)" || \return
++    ask_conda="$(PS1="${PS1:-}" __conda_exe shell.posix reactivate | tr -d '\r')" || \return
+     \eval "$ask_conda"
+     __conda_hashr
+ }
