@@ -294,7 +294,7 @@ setpath_nvm() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 }
 
-# bun
+# bun (fast JS/TS runtime, faster than node.js, runs typescript natively)
 setpath_bun() {
     if [[ -d $HOME/.bun ]]; then
         export BUN_INSTALL="$HOME/.bun"
