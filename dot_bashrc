@@ -493,6 +493,7 @@ export PAGER='less'
 [[ -f ~/.config/ripgrep.conf ]] && export RIPGREP_CONFIG_PATH=~/.config/ripgrep.conf
 export PERLDOC=-t
 export PGPPATH=$HOME/.pgp
+export CLANGD_FLAGS="--header-insertion=never --header-insertion-decorators=0 --completion-style=detailed --clang-tidy --background-index --pch-storage=memory --log=error -j 8"
 if [[ $TERM = emacs || $TERM = dumb ]]; then
   export PAGER=
   export GIT_PAGER=
