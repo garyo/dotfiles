@@ -631,7 +631,7 @@ alias df='df -h'
 alias j='jobs -l'
 alias tf='tail -f'
 if has_command eza; then
-    alias t='eza --tree --git-ignore'
+    alias t='eza --tree'
     alias ll='eza -lGF'
     alias lld='eza -lFd' # long listing of dirs (shows symlink targets)
 else
