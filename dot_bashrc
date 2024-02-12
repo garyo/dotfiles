@@ -347,11 +347,17 @@ setpath_fzf() {
 # newline issues; see https://github.com/conda/conda/issues/13391
 # so this patches the setup file before sourcing it.
 setup_miniconda() {
-    if [[ -z $CONDA_EXE && -d $HOME/miniconda3/Scripts ]]; then
+    if [[ -z $CONDA_EXE && -d /opt/homebrew/Caskroom/miniconda ]]; then
+        # Mac with homebrew
+        __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+        if [ $? -eq 0 ]; then
+            eval "$__conda_setup"
+        fi
+    elif [[ -z $CONDA_EXE && -d $HOME/miniconda3/Scripts ]]; then
         $HOME/miniconda3/Scripts/conda shell.zsh hook > $TMP/conda.sh
         (cd $TMP; patch -s -p1 $TMP/conda.sh $HOME/.config/conda.patch)
         source $TMP/conda.sh
-        # rm $TMP/conda.sh
+        rm $TMP/conda.sh
     fi
     # miniconda doesn't provide `python3` but `python` is v3.
     if ! has_command python3; then
