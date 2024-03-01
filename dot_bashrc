@@ -353,9 +353,10 @@ setup_miniconda() {
         if [ $? -eq 0 ]; then
             eval "$__conda_setup"
         fi
-    elif [[ -z $CONDA_EXE && -d $HOME/miniconda3/Scripts ]]; then
-        $HOME/miniconda3/Scripts/conda shell.zsh hook > $TMP/conda.sh
-        (cd $TMP; patch -s -p1 $TMP/conda.sh $HOME/.config/conda.patch)
+    # Windows: installed into c:/Users/garyo, not $HOME which is the msys home
+    elif [[ -z $CONDA_EXE && -d $USERPROFILE/miniconda3/Scripts ]]; then
+        $USERPROFILE/miniconda3/Scripts/conda shell.zsh hook > $TMP/conda.sh
+        (cd $TMP; patch -s -p1 $TMP/conda.sh $USERPROFILE/.config/conda.patch)
         source $TMP/conda.sh
         rm $TMP/conda.sh
     fi
@@ -363,6 +364,7 @@ setup_miniconda() {
     if ! has_command python3; then
         alias python3='python'
     fi
+    set +vx
 }
 
 maybe_setpath() {
