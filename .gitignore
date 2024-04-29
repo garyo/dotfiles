@@ -1,2 +1,15 @@
+# editor backups
+.#*
 *~
+
+# editor settings
+.vscode
+
+# Compiled files
 *.elc
+
+# Misc
+.mypy_cache/
+GRPATH
+GRTAGS
+GTAGS

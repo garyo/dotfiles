@@ -1,0 +1,34 @@
+#!/bin/sh
+
+system_type=$(uname -s)
+
+has_command () { command -v "$1" > /dev/null 2>&1 ; }
+
+mkdir -p $HOME/bin
+
+if [ $system_type = "linux" ] && has_command apt ; then
+  sudo apt install zsh curl git less vim ripgrep fd-find
+fi
+
+if has_command brew; then
+  brew install -q ripgrep fzf fd
+fi
+
+# fzf
+if ! has_command fzf; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
+
+# git graph
+if ! has_command git-graph; then
+  if [ $system_type = "linux" ]; then
+     url="https://github.com/mlange-42/git-graph/releases/download/0.5.3/git-graph-0.5.3-linux-amd64.tar.gz"
+  elif [ $system_type = "Darwin" ]; then
+     url="https://github.com/mlange-42/git-graph/releases/download/0.5.3/git-graph-0.5.3-macos-amd64.tar.gz"
+  else # [ $system_type = "Windows" ]
+     url="https://github.com/mlange-42/git-graph/releases/download/0.5.3/git-graph-0.5.3-windows-amd64.tar.gz"
+  fi
+  curl -sL "$url" | tar x -C $HOME/bin/ # single executable, untar directly
+fi
+
