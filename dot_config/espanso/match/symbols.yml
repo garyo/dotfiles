@@ -66,3 +66,7 @@ matches:
     replace: "®"
   - trigger: ":trademark:"
     replace: "™"
+  - trigger: ":flat:"
+    replace: "♭"
+  - trigger: ":sharp:"
+    replace: "♯"
