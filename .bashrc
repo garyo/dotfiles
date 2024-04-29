@@ -15,14 +15,14 @@ last_ts=0
 # Set to 2 to also print times for known-slow operations
 TIMEDIFF_ON=0
 if [ -n "$ZSH_VERSION" ]; then
-  [[ $TIMEDIFF_ON > 0 ]] && zmodload zsh/zprof
+  [[ $TIMEDIFF_ON -gt 0 ]] && zmodload zsh/zprof
   timediff1 () {
-      [[ $TIMEDIFF_ON > 1 ]] || return
+      [[ $TIMEDIFF_ON -gt 1 ]] || return
       label=$1
       ts=$(perl -MTime::HiRes=time -e 'printf "%.9f\n", time')
-      delta=$(( $ts - $last_ts ))
-      if [[ $last_ts > 0 ]]; then
-          if [[ $delta > 0.1 ]]; then # long times: print in red
+      delta=$(( ts - last_ts ))
+      if [[ $last_ts -gt 0 ]]; then
+          if [[ $delta -gt 1 ]]; then # long times: print in red
               echo "$label: [31m${delta}[39m sec since prev"
           else
               echo "$label: ${delta} sec since prev"
