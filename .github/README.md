@@ -1,10 +1,10 @@
 # Dotfiles for Gary Oberbrunner #
 
-This is my dotfiles setup. Managed with [yadm](yadm.io). Everything except emacs config is in here.
+This is my dotfiles setup. Managed with [yadm](https://yadm.io). Everything except emacs config is in here.
 
 # Usage
 
-* Install [yadm](yadm.io) -- it's just a shell script, but it's in homebrew.
+* Install [yadm](https://yadm.io) -- it's just a shell script, but it's in homebrew.
 * `yadm clone https://github.com/garyo/dotfiles`
 
 That's it! It will try to run the `bootstrap` file which installs some useful things on a new machine.
