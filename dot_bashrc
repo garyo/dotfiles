@@ -347,14 +347,14 @@ setpath_fzf() {
 # newline issues; see https://github.com/conda/conda/issues/13391
 # so this patches the setup file before sourcing it.
 setup_miniconda() {
-    if [[ -z $CONDA_EXE && -d /opt/homebrew/Caskroom/miniconda ]]; then
+    if [[ -d /opt/homebrew/Caskroom/miniconda ]]; then
         # Mac with homebrew
         __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
         if [ $? -eq 0 ]; then
             eval "$__conda_setup"
         fi
     # Windows: installed into c:/Users/garyo, not $HOME which is the msys home
-    elif [[ -z $CONDA_EXE && -d $USERPROFILE/miniconda3/Scripts ]]; then
+    elif [[ -d $USERPROFILE/miniconda3/Scripts ]]; then
         $USERPROFILE/miniconda3/Scripts/conda shell.zsh hook > $TMP/conda.sh
         (cd $TMP; patch -s -p1 $TMP/conda.sh $USERPROFILE/.config/conda.patch)
         source $TMP/conda.sh
@@ -364,7 +364,6 @@ setup_miniconda() {
     if ! has_command python3; then
         alias python3='python'
     fi
-    set +vx
 }
 
 maybe_setpath() {
@@ -396,9 +395,10 @@ maybe_setpath() {
         setpath_pyenv
         setpath_gcloud
         setpath_fzf
-        setup_miniconda
         setpath_all           # always run this at end for paths to always add
     fi
+    # this adds shell functions etc. so always run it
+    setup_miniconda
 }
 
 reset_path() {
