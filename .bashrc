@@ -134,12 +134,18 @@ path_check () {
 
 # Append $1 to path; move to back if already in path.
 # If $2 is "always", append to path even if it doesn't exist.
+# Use cygpath on Windows to preprocess into cygwin/Unix style
 path_append ()  {
+    if has_command cygpath; then
+        P=$(cygpath "$1")
+    else
+        P="$1"
+    fi
     local old=$PATH
-    path_remove "$1"
-    path_check "$1" "${2:-ifexists}" || return 1
-    export PATH="$PATH:$1";
-    [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $1"
+    path_remove "$P"
+    path_check "$P" "${2:-ifexists}" || return 1
+    export PATH="$PATH:$P";
+    [[ -n $SETPATH_VERBOSE ]] && echo "PATH: Appending $P"
 }
 # Prepend $1 to path; move to front if already in path.
 # If $2 is "always", prepend to path even if it doesn't exist.
@@ -151,10 +157,15 @@ path_prepend () {
 }
 path_remove ()  {
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
-    if [[ -n "$ZSH_VERSION" ]]; then
-      path_remove_zsh "$1"
+    if has_command cygpath; then
+        P=$(cygpath "$1")
     else
-      REMOVE="$1"
+        P="$1"
+    fi
+    if [[ -n "$ZSH_VERSION" ]]; then
+      path_remove_zsh "$P"
+    else
+      REMOVE="$P"
       OLD_IFS="$IFS"
       IFS=':'
       t=($PATH)
@@ -342,12 +353,20 @@ setpath_fzf() {
     [[ -n $ZSH_VERSION ]] && [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 }
 
+setpath_winget() {
+    if [[ $_OS = windows ]]; then
+        path_append $(cygpath "$LOCALAPPDATA/Microsoft/WinGet/Links")
+    fi
+}
+
+
 # Sets PATH and adds some shell functions, e.g. `conda` itself.
 # Note: on Windows, miniconda shell hook fails with zsh due to
 # newline issues; see https://github.com/conda/conda/issues/13391
 # so this patches the setup file before sourcing it.
 setup_miniconda() {
-    if [[ -d /opt/homebrew/Caskroom/miniconda ]]; then
+    # shellcheck disable=SC1091
+    if [[ -z $CONDA_EXE && -d /opt/homebrew/Caskroom/miniconda ]]; then
         # Mac with homebrew
         __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
         if [ $? -eq 0 ]; then
@@ -355,10 +374,10 @@ setup_miniconda() {
         fi
     # Windows: installed into c:/Users/garyo, not $HOME which is the msys home
     elif [[ -d $USERPROFILE/miniconda3/Scripts ]]; then
-        $USERPROFILE/miniconda3/Scripts/conda shell.zsh hook > $TMP/conda.sh
-        (cd $TMP; patch -s -p1 $TMP/conda.sh $USERPROFILE/.config/conda.patch)
-        source $TMP/conda.sh
-        rm $TMP/conda.sh
+        "$USERPROFILE/miniconda3/Scripts/conda" shell.zsh hook > "$TMP/conda.sh"
+        (cd "$TMP" && patch -s -p1 "$TMP/conda.sh" "$USERPROFILE/.config/conda.patch")
+        source "$TMP/conda.sh"
+        rm "$TMP/conda.sh"
     fi
     # miniconda doesn't provide `python3` but `python` is v3.
     if ! has_command python3; then
@@ -395,6 +414,7 @@ maybe_setpath() {
         setpath_pyenv
         setpath_gcloud
         setpath_fzf
+        setpath_winget
         setpath_all           # always run this at end for paths to always add
     fi
     # this adds shell functions etc. so always run it
@@ -716,7 +736,7 @@ function gcproject_prompt {
 }
 
 if has_command units; then
-  command units -1 < /dev/null >& /dev/null
+  command units -1 >& /dev/null
   if [[ $? -ne 0 ]]; then
       # old version of units; alias to `gunits` (e.g. brew install gnu-units on mac)
       alias units="gunits --verbose -1"
