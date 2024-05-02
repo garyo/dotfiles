@@ -474,7 +474,8 @@ fi
 
 # All modern "256-color" terminals are really 24-bit, I think.
 # So set COLORTERM to indicate that to clients.
-[[ $TERM == xterm-256color ]] && export COLORTERM=24bit
+# BUT NO, Mac Terminal is not!
+[[ $TERM == xterm-256color && $_OS != mac ]] && export COLORTERM=24bit
 
 ########################################################################
 # Variables, shell functions and aliases
@@ -863,6 +864,7 @@ RPROMPT=
 # - delta: pretty diff viewer
 # - bat: syntax-highlighted "cat"
 # - fd: find replacement
+# - ripgrep: grep/find
 [[ -n "$ZSH_VERSION" && -f ~/.fzf.zsh ]] && source ~/.fzf.zsh # enable completions with **[TAB] and CTRL-T
 # If we have both fd and fzf, use fd as source for fzf default:
 if has_command fd && has_command fzf; then
