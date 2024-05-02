@@ -737,7 +737,7 @@ function gcproject_prompt {
 }
 
 if has_command units; then
-  command units -1 >& /dev/null
+  command units -1 < /dev/null >& /dev/null
   if [[ $? -ne 0 ]]; then
       # old version of units; alias to `gunits` (e.g. brew install gnu-units on mac)
       alias units="gunits --verbose -1"
