@@ -61,7 +61,7 @@
 	# Show all branches proceeding from a ref
 	log-from = "!f() { git log --oneline --graph $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
 	ogl-from = "!f() { ogl $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
-	ggraph = "graph -s round -n200 -f '%h %an %as:%d %s'"
+	ggraph = !git graph -s round -n200 -f '%h %an %as:%d %s' --color always | $PAGER
 
 [Gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
@@ -75,9 +75,9 @@
 [diff]
 	renamelimit = 0
 	renames = copies
-	tool = kdiff3
 	guitool = kdiff3
 	submodule = log
+	colorMoved = default
 [merge]
 	tool = kdiff3
 	conflictStyle = diff3
@@ -87,7 +87,7 @@
 	fscache = true
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
         # Use per-repo .gitattributes instead!
-        pager = command -v delta > /dev/null && delta --theme 'Monokai Extended' --file-color="#00ffff" --plus-color="#004400" --hunk-color="#00ffff" || less
+	pager = command -v delta > /dev/null && delta --syntax-theme 'GitHub' || $PAGER
 	excludesfile = ~/.gitignore
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
@@ -111,6 +111,11 @@
 [include]
         # Include machine-local gitconfig, e.g. for Windows/Mac tool paths
         path = .gitconfig-local
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	light = true
 [rerere]
 	enabled = true
 [fetch]
