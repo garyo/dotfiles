@@ -62,7 +62,11 @@
 	log-from = "!f() { git log --oneline --graph $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
 	ogl-from = "!f() { ogl $(git branch --all --contains \"$1\" --format='%(objectname)') \"^${1}~\"; }; f"
 	ggraph = !git graph -s round -n200 -f '%h %an %as:%d %s' --color always | $PAGER
-
+	# Apply staged "fixup" changes to any commit $1.
+	# After adding changes, use as "git fixup <SHA>". It creates a
+	# "fixup!" commit and silently rebases it in.
+	# See https://arialdomartini.github.io/git-fixup
+	fixup = "!f() { TARGET=$(git rev-parse $1); git commit --fixup=$TARGET ${@:2} && GIT_SEQUENCE_EDITOR=true git rebase -i --autostash --autosquash $TARGET^; }; f"
 [Gui]
 	fontdiff = -family \"Droid Sans Mono Dotted\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	warndetachedcommit = true
@@ -87,7 +91,7 @@
 	fscache = true
 	autocrlf = false ### (this is best left unset or false; no CRLF conversion at all)
         # Use per-repo .gitattributes instead!
-	pager = command -v delta > /dev/null && delta --syntax-theme 'GitHub' || $PAGER
+	# pager = command -v delta > /dev/null && delta --syntax-theme 'GitHub' || $PAGER
 	excludesfile = ~/.gitignore
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
