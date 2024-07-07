@@ -40,3 +40,5 @@ if ! has_command git-graph; then
   curl -sL "$url" | tar zx -C $HOME/bin/ # single executable, untar directly
 fi
 
+# "zplug" zsh plugin manager
+curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh

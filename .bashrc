@@ -555,6 +555,20 @@ function edit()
     fi
 }
 
+# Function to wait for SSH server to be available
+function wait-ssh() {
+    local server="$1"
+    while true; do
+        if ssh -o ConnectTimeout=5 "${server}" "exit" 2>/dev/null; then
+            echo "SSH server at ${server} is up."
+            return 0
+        else
+            echo "SSH server at ${server} not yet up. Retrying in 5 seconds..."
+            sleep 5
+        fi
+    done
+}
+
 function gdrive-upload()
 {
     rclone copy "$1"  borisfx-gdrive:"Boris FX/$2"
@@ -1109,6 +1123,26 @@ if has_command direnv; then
         eval "$(direnv hook bash)"
     fi
 fi
+
+# Setup for zsh-autoenv. Set these before loading it.
+# See https://github.com/Tarrasch/zsh-autoenv
+# Use the same file for leave events as enter. (See $autoenv_event)
+AUTOENV_HANDLE_LEAVE=1
+AUTOENV_FILE_LEAVE=.autoenv.zsh
+
+
+# Zplug plugin manager
+# See https://github.com/zplug/zplug
+if [[ -n $ZSH_VERSION && -f ~/.zplug/init.zsh ]]; then
+    source ~/.zplug/init.zsh
+
+    zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+    zplug "Tarrasch/zsh-autoenv" # .autoenv.zsh files for dir enter/leave events
+
+    zplug load        # load all above plugins
+    # Note: if you get "no job control in this shell" do `rm ~/.zplug/log/job.lock`
+fi
+
 
 # Local bashrc:
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
