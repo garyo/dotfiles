@@ -40,6 +40,8 @@ matches:
     replace: "⇐"
   - trigger: ":arrow"
     replace: "⮕"
+  - trigger: ":darrow"
+    replace: "↔"
   - trigger: ":---"
     replace: "—"
   - trigger: ":--"
