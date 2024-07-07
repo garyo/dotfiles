@@ -725,7 +725,12 @@ if [[ $_OS = windows ]]; then
   # start on Windows opens a file with its default application.
   # It's a builtin in cmd.exe.
   function start()  {
-    cmd /c "start /B $@"
+    cmd ///c "start /B $(cygpath -w $@)"
+  }
+  # "open" is the Mac command to do this, might as well emulate on Windows
+  function open()  {
+    cmd ///c "start /B $(cygpath -w $@)"
+
   }
 fi
 
