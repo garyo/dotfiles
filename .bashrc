@@ -1135,6 +1135,10 @@ fi
 AUTOENV_HANDLE_LEAVE=1
 AUTOENV_FILE_LEAVE=.autoenv.zsh
 
+# Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
+if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/repos/eat/integration/zsh ]]; then
+    source ~/.config/emacs/elpaca/repos/eat/integration/zsh
+fi
 
 # Zplug plugin manager
 # See https://github.com/zplug/zplug
