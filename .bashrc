@@ -276,8 +276,6 @@ setpath_all() {
         path_contains_dir $yarndir || path_append $yarndir
     fi
     path_prepend $HOME/.poetry/bin always # Python dependency/virtualenv manager
-    # Rust
-    path_append ~/.cargo/bin
     path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
     path_prepend $HOME/bin always
     path_append ./node_modules/.bin # for Node.js
@@ -313,6 +311,15 @@ setpath_bun() {
     fi
 }
 
+
+setpath_rust() {
+    if [[ -d $HOME/.cargo ]]; then
+        # this prepends cargo bin to $PATH
+        # It might do something more some day, so best to
+        # use it rather than our path_prepend.
+        . "$HOME/.cargo/env"
+    fi
+}
 
 setpath_gcloud() {
     if [[ -d ~/google-cloud-sdk && $SHELL =~ zsh ]]; then
@@ -411,6 +418,7 @@ maybe_setpath() {
 	fi
         setpath_fnm || setpath_nvm
         setpath_bun
+        setpath_rust
         setpath_pyenv
         setpath_gcloud
         setpath_fzf
