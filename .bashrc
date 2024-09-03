@@ -5,7 +5,6 @@
 # otherwise I source this from .profile or .zshrc/.kshrc
 # (but only for interactive shells -- this should not be run for noninteractive shells)
 
-
 # set for debugging:
 # set -v
 # set -x
@@ -200,47 +199,39 @@ setpath_simplex_msys_emacs() {
     PATH=/FOR_MSYS:/bin:/usr/bin:/sbin:/mingw/bin:/c/Users/garyo/bin
 }
 
-setpath_tower1_msys() {
-    path_prepend "/bin"
-    path_prepend "/c/Program Files/git/bin"
-    path_prepend "/c/Program Files/git LFS"
-    path_prepend /msys64
-    path_prepend /c/Windows/System32/OpenSSH # for ssh-add etc.
-    path_prepend "/c/Program Files/nodejs"
-    # path_prepend /mingw64/bin       # git lfs is here, but I copied it to c:/bin
-    # path_prepend /c/emacs/emacs/bin # emacsclient
-    path_prepend /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
-    path_prepend "/c/Program Files/GnuGlobal/bin"
-    path_prepend /c/bin always # ffmpeg etc.
-    # path_prepend "/c/Users/garyo/Anaconda3" # Anaconda python
-    path_prepend "/c/Python37"  # Standard python, but see pyenv below
-    path_prepend "/c/Python37/Scripts" # pip
-    path_append "/c/Program Files/Cppcheck" # cppcheck, useful utility
-    # dumpbin.exe:
-    path_append "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx64/x64"
-}
-
 setpath_windows() {
-    path_prepend "/c/Python36"
-    path_prepend "/c/Python36/Scripts"
-    path_prepend "/Python37"
-    path_prepend "/Python37/Scripts"
     # path_prepend /bin
     path_prepend /msys64
     path_prepend /usr/bin # for msys2 bash/zsh
     path_prepend /mingw64/bin # mingw compiler etc., from msys shell
     case $OSTYPE in
-	cygwin*) # msys2 comes with git
+	   cygwin*) # msys2 comes with git
 	    path_append "/Program files (x86)/Git/cmd" ;;
     esac
+    path_prepend "/c/Program Files/git LFS"
+    path_prepend "/c/Program Files/git/bin"
+    path_prepend "/c/Program Files/git/cmd"
     # # Tex/LaTeX (http://tug.org/texlive/)
     path_append /texlive/2010/bin/win32
+    path_prepend /c/Windows/System32/OpenSSH # for ssh-add etc.
+    path_prepend /c/bin always # ffmpeg etc.
     path_append /c/Windows
     path_append /c/Windows/system32
+    path_prepend "/c/Program Files/GnuGlobal/bin"
+    path_append "/c/Program Files/Cppcheck" # cppcheck, useful utility
+    # dumpbin.exe:
+    path_append "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx64/x64"
     path_append "/c/Program Files (x86)/PuTTY" # for plink (ssh)
     path_prepend "/c/bin" always # local programs e.g. git-lfs
     path_append "/c/Program Files/GnuGlobal/bin"
     path_append "/swig"
+    # Common locations for Emacs:
+    path_prepend "/c/emacs/emacs/bin"
+    path_prepend "/c/emacs/bin"
+    path_prepend "/d/emacs/emacs/bin"
+    path_prepend "/d/emacs/bin"
+    path_append "$HOME/bin/_Dependencies" # list dll dependencies, exe is "Dependencies"
+    path_append /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
 }
 
 setpath_mac() {
@@ -314,10 +305,7 @@ setpath_bun() {
 
 setpath_rust() {
     if [[ -d $HOME/.cargo ]]; then
-        # this prepends cargo bin to $PATH
-        # It might do something more some day, so best to
-        # use it rather than our path_prepend.
-        . "$HOME/.cargo/env"
+        path_prepend "$HOME/.cargo/bin"
     fi
 }
 
@@ -719,7 +707,7 @@ fi
 
 function mcd {
     mkdir -p "$1"
-    cd "$1"
+    cd "$1" || return
 }
 
 if [[ $_OS = windows ]]; then
@@ -732,13 +720,17 @@ if [[ $_OS = windows ]]; then
   fi
   # start on Windows opens a file with its default application.
   # It's a builtin in cmd.exe.
-  function start()  {
-    cmd ///c "start /B $(cygpath -w $@)"
+  function start() {
+      local args=()
+      for arg in "$@"; do
+          args+=("$(cygpath -m "$arg")")
+      done
+      c:/Windows/System32/cmd ////s ////c "start /B ${args[*]}"
   }
+
   # "open" is the Mac command to do this, might as well emulate on Windows
   function open()  {
-    cmd ///c "start /B $(cygpath -w $@)"
-
+      start "$@"
   }
 fi
 
@@ -748,12 +740,13 @@ function whatshell {
 
 function gcproject {
     if [[ -e ~/.config/gcloud/active_config ]]; then
-        local configfile=~/.config/gcloud/configurations/config_$(cat ~/.config/gcloud/active_config)
+        local configfile
+        configfile=~/.config/gcloud/configurations/config_$(cat ~/.config/gcloud/active_config)
         if [[ $1 == "short" ]]; then
             # horizon-dev-123abc => dev
-            awk '/^project/ {gsub(/-[0-9a-z]+$/, "", $3); print $3}' $configfile
+            awk '/^project/ {gsub(/-[0-9a-z]+$/, "", $3); print $3}' "$configfile"
         else
-            awk '/^project/ {print $3}' $configfile
+            awk '/^project/ {print $3}' "$configfile"
         fi
     fi
 }
