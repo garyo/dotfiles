@@ -41,7 +41,7 @@ fi
 #env
 
 timediff1 start
-if [ -z "$ZSH_VERSION" -a -z "$BASH" ]; then
+if [ -z "$ZSH_VERSION" ] && [ -z "$BASH" ]; then
     SIMPLE_SH_MODE=1
     return # the rest of this file assumes at least bash or zsh.
 fi
@@ -59,15 +59,16 @@ case $OSTYPE in
   *)       _OS=linux ;;
 esac
 if [[ -n "$ZSH_VERSION" ]]; then
-  MACHINENAME=${${HOST%%.*}:l}
+  MACHINE_PART=${HOST%%.*}
+  MACHINENAME=${MACHINE_PART:l}
 else
   if [[ -n "$HOSTNAME" ]]; then
     MACHINENAME="$HOSTNAME"
   elif [[ -n "$COMPUTERNAME" ]]; then
     MACHINENAME="$COMPUTERNAME"
   else
-    MACHINENAME=${HOST%%.*}      # strip domain
-    MACHINENAME=`echo $MACHINENAME | tr '[A-Z]' '[a-z]'` # lowercase (${VAR,,} only works on bash 4.x)
+    MACHINE_PART=${HOST%%.*}      # strip domain
+    MACHINENAME=${MACHINE_PART,,}
   fi
 fi
 # echo MACHINENAME is $MACHINENAME
@@ -1026,7 +1027,7 @@ fi
 
 timediff1 "end"
 
-if [[ $TIMEDIFF_ON > 0 && -n "$ZSH_VERSION" ]] ; then
+if [[ $TIMEDIFF_ON -gt 0 && -n "$ZSH_VERSION" ]] ; then
     zprof
 fi
 
