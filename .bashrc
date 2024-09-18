@@ -255,7 +255,6 @@ setpath() {
     path_append /usr/local/sbin
     path_append /usr/sbin
     path_append /sbin
-    path_prepend ~/anaconda3/bin
 }
 
 # Runs after all other setpaths, always
@@ -303,6 +302,7 @@ setpath_bun() {
 }
 
 
+# Note: this also sets up `uv` python virtualenv manager (because it's a rust program)
 setpath_rust() {
     if [[ -d $HOME/.cargo ]]; then
         path_prepend "$HOME/.cargo/bin"
@@ -355,31 +355,6 @@ setpath_winget() {
 }
 
 
-# Sets PATH and adds some shell functions, e.g. `conda` itself.
-# Note: on Windows, miniconda shell hook fails with zsh due to
-# newline issues; see https://github.com/conda/conda/issues/13391
-# so this patches the setup file before sourcing it.
-setup_miniconda() {
-    # shellcheck disable=SC1091
-    if [[ -z $CONDA_EXE && -d /opt/homebrew/Caskroom/miniconda ]]; then
-        # Mac with homebrew
-        __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-        if [ $? -eq 0 ]; then
-            eval "$__conda_setup"
-        fi
-    # Windows: installed into c:/Users/garyo, not $HOME which is the msys home
-    elif [[ -d $USERPROFILE/miniconda3/Scripts ]]; then
-        "$USERPROFILE/miniconda3/Scripts/conda" shell.zsh hook > "$TMP/conda.sh"
-        (cd "$TMP" && patch -s -p1 "$TMP/conda.sh" "$USERPROFILE/.config/conda.patch")
-        source "$TMP/conda.sh"
-        rm "$TMP/conda.sh"
-    fi
-    # miniconda doesn't provide `python3` but `python` is v3.
-    if ! has_command python3; then
-        alias python3='python'
-    fi
-}
-
 maybe_setpath() {
     # set up path.  Only do this once, to avoid duplicates.
     [[ -n $SETPATH_VERBOSE ]]  && echo "PATH: maybe_setpath"
@@ -413,8 +388,6 @@ maybe_setpath() {
         setpath_winget
         setpath_all           # always run this at end for paths to always add
     fi
-    # this adds shell functions etc. so always run it
-    setup_miniconda
 }
 
 reset_path() {
@@ -963,10 +936,28 @@ if [[ -n "$ZSH_VERSION" ]]; then
    }
 fi
 
+# Setup for zsh-autoenv. Set these before loading it.
+# See https://github.com/Tarrasch/zsh-autoenv
+# Use the same file for leave events as enter. (See $autoenv_event)
+AUTOENV_HANDLE_LEAVE=1
+AUTOENV_FILE_LEAVE=.autoenv.zsh
 
 ########################################################################
 # Enable completion (e.g. git, cd, etc.)
 ########################################################################
+
+# Zplug plugin manager
+# See https://github.com/zplug/zplug
+if [[ -n $ZSH_VERSION && -f ~/.zplug/init.zsh ]]; then
+    source ~/.zplug/init.zsh
+
+    zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+    zplug "Tarrasch/zsh-autoenv" # .autoenv.zsh files for dir enter/leave events
+
+    zplug load        # load all above plugins
+    # Note: if you get "no job control in this shell" do `rm ~/.zplug/log/job.lock`
+fi
+
 if [[ -n "$ZSH_VERSION" ]]; then
     autoload -Uz compinit && compinit
 fi
@@ -987,153 +978,6 @@ fi
 #     timediff1 "after zsh antigen setup"
 # fi
 
-########################################################################
-# Python virtualenvwrapper
-#
-# NOTE: I'm using my own trivial "venv" rather than official
-# virtualenvwrapper since it's not being maintained anymore.
-# My own "venv" just allows workon, create, and list.
-# It's basically compatible with virtualenvwrapper; uses same dir for envs.
-########################################################################
-
-timediff1 "before virtualenv setup"
-
-# For Poetry (using pyproject.toml), it creates its own virtualenvs
-# To activate them, use this:
-poetry-activate() {
-    script=$(poetry env info -p)/bin/activate
-    if [[ -f "$script" ]]; then
-        . "$script"
-    else
-        # try Windows
-        . $(poetry env info -p)/Script/activate
-    fi
-}
-
-WORKON_HOME=$HOME/.virtualenvs
-# VIRTUALENVWRAPPER_PYTHON must be full path
-if has_command "python3"; then
-    export VIRTUALENVWRAPPER_PYTHON="$(command -v python3)"
-else
-    export VIRTUALENVWRAPPER_PYTHON="$(command -v python)"
-fi
-
-# Puts virtualenvs in ~/.virtualenvs or WORKON_HOME
-# To use:
-#  mkvirtualenv <envname> (-r requirements_file)
-#  workon <envname>
-#  deactivate
-#  "workon" by itself lists envs
-#  showvirtualenv
-#  cdvirtualenv, cdsitepackages, lssitepackages
-#  virtualenvwrapper: prints basic help & cmd list
-#  mktmpenv (deleted when deactivated)
-#  lsvirtualenv
-# NOTE: if it doesn't work, try VIRTUALENVWRAPPER_VIRTUALENV='python -mvenv'
-# To install initially, `python -mpip install [--user] virtualenvwrapper`
-setup_virtualenvwrapper()
-{
-    scripts_dirs=()
-    if [[ $_OS == windows ]]; then
-        pythonpath=$(/bin/ls -d c:/Python*|tail -1)
-        scripts_dirs+=("$pythonpath/Scripts")
-    else
-        scripts_dirs+=($($VIRTUALENVWRAPPER_PYTHON -c 'import site; print(site.USER_BASE)'))
-        scripts_dirs+=('/usr/local/bin')
-    fi
-    for dir in $scripts_dirs; do
-        # echo Checking for virtualenvwrapper.sh in $dir of $scripts_dirs
-        if [[ -f "$dir/bin/virtualenvwrapper.sh" ]]; then
-            source "$dir/bin/virtualenvwrapper.sh"
-            return
-        elif [[ -f "$dir/virtualenvwrapper.sh" ]]; then
-            source "$dir/virtualenvwrapper.sh"
-            return
-        fi
-    done
-}
-#### I'm not using this -- see "venv" below
-#setup_virtualenvwrapper
-
-#### virtualenvwrapper alternative: simple command to list and activate
-
-function venv ()
-{
-    if [[ $_OS == windows ]]; then
-        VIRTUALENV_BINDIR=Scripts
-    else
-        VIRTUALENV_BINDIR=bin
-    fi
-    if [[ $# == 0 ]]; then
-        cmd="help"
-    else
-        cmd=$1; shift
-    fi
-    case $cmd in
-        workon)
-            env=$1; shift
-            source $WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate
-            ;;
-        list)
-            (cd $WORKON_HOME ; ls -d */ | sed s,//,,g )
-            ;;
-        create)
-            env=$1; shift
-            echo Creating new virtualenv $env
-            $VIRTUALENVWRAPPER_PYTHON -mvenv "$WORKON_HOME/$env"
-            source "$WORKON_HOME/$env/$VIRTUALENV_BINDIR/activate"
-            ;;
-        *)
-            echo "Usage: $0 workon <env>|list|create <name>"
-            ;;
-
-    esac
-}
-
-function _venv_comp_simple () {
-    venvs=$(cd $WORKON_HOME ; echo */ | sed s,/,,g )
-    args=(
-        # '(-h --help)'{-h+,--help}'[show this help message and exit]'
-        # '(-)'--version'[display version information and exit]'
-        '1:command:(list workon create)'
-        "*::arguments:($venvs)"
-    )
-    _arguments -S $args
-}
-
-function _venv_comp () {
-    ret=1
-    venvs=$(cd $WORKON_HOME ; echo */ | sed s,/,,g )
-    # First arg is subcommand (set state to "args"), then
-    # complete args below depending on subcommand
-    _arguments -C \
-               '1: :(list workon create)' \
-               '*::arg:->args' \
-        && ret=0
-    case $state in
-        args)
-            case $line[1] in
-                list)
-                    _message 'no more args' && ret=0
-                    ;;
-                workon)
-                    # complete existing envs
-                    _arguments "::env:($venvs)" && ret=0
-                    ;;
-                create)
-                    # any name
-                    _arguments "::env: " && ret=0
-                    ;;
-            esac
-    esac
-}
-
-if has_command "compdef"; then
-    compdef _venv_comp venv
-fi
-
-timediff1 "after virtualenv setup"
-
 # I don't care that some dirs are other-writable, and I care about my eyes
 # use light-blue (94) for other-writable dirs
 export LS_COLORS=$(echo -n "$LS_COLORS"|sed 's/ow=[0-9]*;[0-9]*/ow=94;40/g')
@@ -1150,29 +994,25 @@ if has_command direnv; then
     fi
 fi
 
-# Setup for zsh-autoenv. Set these before loading it.
-# See https://github.com/Tarrasch/zsh-autoenv
-# Use the same file for leave events as enter. (See $autoenv_event)
-AUTOENV_HANDLE_LEAVE=1
-AUTOENV_FILE_LEAVE=.autoenv.zsh
+########################################################################
+# Python virtualenvs: always use `uv` as of 2024.
+# Poetry, conda/miniconda etc. are old, buggy & too heavyweight
+########################################################################
+
+# Must be after adding `uv`'s path (i.e. `setpath_rust`, called from `maybe_setpath`)
+# And after zplug setup.
+if has_command uv; then
+    # set up completions for `uv` and `uvx`
+    eval "$(uv generate-shell-completion zsh)"
+    compdef _uv uv
+fi
 
 # Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
 if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/repos/eat/integration/zsh ]]; then
     source ~/.config/emacs/elpaca/repos/eat/integration/zsh
 fi
 
-# Zplug plugin manager
-# See https://github.com/zplug/zplug
-if [[ -n $ZSH_VERSION && -f ~/.zplug/init.zsh ]]; then
-    source ~/.zplug/init.zsh
-
-    zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-    zplug "Tarrasch/zsh-autoenv" # .autoenv.zsh files for dir enter/leave events
-
-    zplug load        # load all above plugins
-    # Note: if you get "no job control in this shell" do `rm ~/.zplug/log/job.lock`
-fi
-
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Local bashrc:
 if [[ -f ~/Dotfiles/bashrc.local ]]; then
@@ -1182,10 +1022,11 @@ if [[ -f ~/.bashrc.local ]]; then
     source ~/.bashrc.local
 fi
 
+########################################################################
+
 timediff1 "end"
-# end of file
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 if [[ $TIMEDIFF_ON > 0 && -n "$ZSH_VERSION" ]] ; then
     zprof
 fi
+
