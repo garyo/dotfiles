@@ -1004,8 +1004,12 @@ fi
 # And after zplug setup.
 if has_command uv; then
     # set up completions for `uv` and `uvx`
-    eval "$(uv generate-shell-completion zsh)"
-    compdef _uv uv
+    if [ -n "$ZSH_VERSION" ]; then
+      eval "$(uv generate-shell-completion zsh)"
+      compdef _uv uv
+    else
+      eval "$(uv generate-shell-completion bash)"
+    fi
 fi
 
 # Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
