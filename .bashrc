@@ -730,7 +730,8 @@ function gcproject {
 }
 
 function gcproject_prompt {
-    local p=$(gcproject short)
+    local p
+    p=$(gcproject short)
     [[ -n $p ]] && echo "[GCP:$p]"
 }
 
