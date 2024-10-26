@@ -299,6 +299,10 @@ setpath_bun() {
     if [[ -d $HOME/.bun ]]; then
         export BUN_INSTALL="$HOME/.bun"
         path_append "$BUN_INSTALL/bin"
+        if [[ $SHELL =~ zsh && -s "$HOME/.bun/_bun" ]]; then
+            # bun shell completions
+            source "$HOME/.bun/_bun"
+        fi
     fi
 }
 
@@ -1013,8 +1017,8 @@ if has_command uv; then
 fi
 
 # Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
-if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/repos/eat/integration/zsh ]]; then
-    source ~/.config/emacs/elpaca/repos/eat/integration/zsh
+if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/var/repos/eat/integration/zsh ]]; then
+    source ~/.config/emacs/var/elpaca/repos/eat/integration/zsh
 fi
 
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
