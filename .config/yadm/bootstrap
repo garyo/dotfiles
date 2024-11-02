@@ -4,15 +4,19 @@ system_type=$(uname -s)
 
 has_command () { command -v "$1" > /dev/null 2>&1 ; }
 
-mkdir -p $HOME/bin
+mkdir -p "$HOME/bin"
 
-if [ $system_type = "linux" ] && has_command apt ; then
+if [[ $system_type =~ "MSYS" ]]; then
+  pacman -Syu --noconfirm
+  pacman -S --noconfirm zsh
+fi
+if [[ $system_type = [Ll]inux ]] && has_command apt ; then
   # Debian/Ubuntu
   # Note: no kdiff3; that pulls in all the GUI libs
   sudo apt install -y zsh curl git less vim bat eza fzf fd-find git-delta ripgrep
 fi
 
-if [ $system_type = "linux" ] && has_command dnf ; then
+if [[ $system_type = [Ll]inux ]] && has_command dnf ; then
   # Fedora/Rocky
   # Note: no kdiff3; that pulls in all the GUI libs
   sudo dnf install -y zsh curl git less vim bat eza fd-find git-delta ripgrep
@@ -30,7 +34,7 @@ fi
 
 # git graph
 if ! has_command git-graph; then
-  if [[ $system_type =~ "[Ll]inux" ]]; then
+  if [[ $system_type =~ [Ll]inux ]]; then
      url="https://github.com/mlange-42/git-graph/releases/download/0.5.3/git-graph-0.5.3-linux-amd64.tar.gz"
   elif [[ $system_type == "Darwin" ]]; then
      url="https://github.com/mlange-42/git-graph/releases/download/0.5.3/git-graph-0.5.3-macos-amd64.tar.gz"
