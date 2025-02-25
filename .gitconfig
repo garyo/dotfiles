@@ -73,18 +73,21 @@
 	encoding = utf-8
 
 [push]
-	default = current
+	default = simple
         # when pushing, push all annotated tags
-        followTags = true
+	followTags = true
+	autoSetupRemote = true
 [diff]
 	renamelimit = 0
-	renames = copies
+	renames = true
 	guitool = kdiff3
 	submodule = log
-	colorMoved = default
+	colorMoved = plain
+	algorithm = histogram
+	mnemonicPrefix = true
 [merge]
 	tool = kdiff3
-	conflictStyle = diff3
+	conflictstyle = zdiff3
 [core]
 	editor = emacsclient -c -a \"\"
 	preloadindex = true
@@ -122,9 +125,13 @@
 	light = true
 [rerere]
 	enabled = true
+	autoupdate = true
 [fetch]
 	writecommitgraph = false
   recurseSubmodules = on-demand
+	prune = true
+	pruneTags = true
+	all = true
 [gc]
 	writeCommitGraph = false
 [pull]
@@ -149,3 +156,13 @@
 	helper = !gh auth git-credential
 [commit]
 	template = /Users/garyo/.gitmessage
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true
