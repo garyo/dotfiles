@@ -121,6 +121,43 @@ umask 2
 # Uncomment for setpath debugging
 # SETPATH_VERBOSE=1
 
+# This is for speed, since we check for cygpath repeatedly
+CYGPATH_AVAILABLE=
+function has_cygpath {
+  [[ -n "$CYGPATH_AVAILABLE" ]] && return 0
+  if has_command cygpath; then
+    CYGPATH_AVAILABLE=1
+    return 0
+  fi
+  return 1
+}
+
+# Global cache (should be defined once)
+typeset -gA CYGPATH_CACHE
+
+# Usage: cached_cygpath "/some/path" resultvar
+cached_cygpath() {
+  local key=$1
+  local __retvar=$2
+  local val
+
+  # Fast path: if no backslash or colon, assume it's already Unix-style
+  if [[ $key != *[:\\]* ]]; then
+    eval "$__retvar=\"\$key\""
+    return
+  fi
+
+  if [[ -n ${CYGPATH_CACHE[$key]} ]]; then
+    val=${CYGPATH_CACHE[$key]}
+  else
+    val=$(cygpath "$key")
+    CYGPATH_CACHE[$key]=$val
+    echo "cached_cygpath($key) = ${CYGPATH_CACHE[$key]}"
+  fi
+
+  eval "$__retvar=\"\$val\""
+}
+
 # Check if given path $1 exists
 # Assume it's present if $2 is "always"
 path_check () {
@@ -132,12 +169,21 @@ path_check () {
     return 0
 }
 
+# Check if $PATH contains dir (case sensitive, so beware on Windows)
+path_contains_dir() {
+  case ":$PATH:" in
+    *":$1:"*) return 0 ;;
+    *)        return 1 ;;
+  esac
+}
+
 # Append $1 to path; move to back if already in path.
 # If $2 is "always", append to path even if it doesn't exist.
 # Use cygpath on Windows to preprocess into cygwin/Unix style
 path_append ()  {
-    if has_command cygpath; then
-        P=$(cygpath "$1")
+    local P
+    if has_cygpath; then
+        cached_cygpath "$1" P
     else
         P="$1"
     fi
@@ -157,11 +203,14 @@ path_prepend () {
 }
 path_remove ()  {
     [[ -n $SETPATH_VERBOSE ]] && echo "PATH: removing $1"
-    if has_command cygpath; then
-        P=$(cygpath "$1")
+    local P
+    if has_cygpath; then
+        cached_cygpath "$1" P
     else
         P="$1"
     fi
+    path_contains_dir "$1" || return 0  # Already absent, nothing to do
+
     if [[ -n "$ZSH_VERSION" ]]; then
       path_remove_zsh "$P"
     else
@@ -183,16 +232,6 @@ path_remove ()  {
 path_remove_zsh () {
     to_remove=($1)
     path=(${path:|to_remove})
-}
-
-# Check if $PATH contains dir (case sensitive, so beware on Windows)
-function path_contains_dir {
-  local dir_path=$1
-  if [[ ":$PATH:" =~ ":$dir_path:" ]]; then
-    return 0
-  else
-    return 1
-  fi
 }
 
 setpath_simplex_msys_emacs() {
@@ -218,19 +257,8 @@ setpath_windows() {
     path_prepend /c/bin always # ffmpeg etc.
     path_append /c/Windows
     path_append /c/Windows/system32
-    path_prepend "/c/Program Files/GnuGlobal/bin"
     path_append "/c/Program Files/Cppcheck" # cppcheck, useful utility
-    # dumpbin.exe:
-    path_append "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx64/x64"
-    path_append "/c/Program Files (x86)/PuTTY" # for plink (ssh)
     path_prepend "/c/bin" always # local programs e.g. git-lfs
-    path_append "/c/Program Files/GnuGlobal/bin"
-    path_append "/swig"
-    # Common locations for Emacs:
-    path_prepend "/c/emacs/emacs/bin"
-    path_prepend "/c/emacs/bin"
-    path_prepend "/d/emacs/emacs/bin"
-    path_prepend "/d/emacs/bin"
     path_append "$HOME/bin/_Dependencies" # list dll dependencies, exe is "Dependencies"
     path_append /c/ProgramData/chocolatey/bin # runemacs/emacs, putty etc.
 }
@@ -842,7 +870,7 @@ mname_prompt() {
 
 if [[ $TERM == dumb ]]; then
   PROMPT="> "
-elif has_command cygpath && [[ $TERM == emacs ]] ; then
+elif has_cygpath && [[ $TERM == emacs ]] ; then
   # use cygpath so Emacs dirtrack mode can track it
   PROMPT='%U$(mname_prompt) (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
@@ -965,7 +993,12 @@ if [[ -n $ZSH_VERSION && -f ~/.zplug/init.zsh ]]; then
 fi
 
 if [[ -n "$ZSH_VERSION" ]]; then
-    autoload -Uz compinit && compinit
+    DISABLE_COMPAUDIT=true
+    mkdir -p ~/.zsh/cache
+    zstyle ':completion:*' use-cache on
+    zstyle ':completion:*' cache-path ~/.zsh/cache
+    autoload -Uz compinit
+    compinit -u -C -d ~/.zsh/cache/zcompdump
 fi
 
 ########################################################################
