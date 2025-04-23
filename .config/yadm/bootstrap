@@ -45,4 +45,4 @@ if ! has_command git-graph; then
 fi
 
 # "zplug" zsh plugin manager
-curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+# curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
