@@ -965,32 +965,14 @@ if [[ -n "$ZSH_VERSION" ]]; then
        -H "Authorization: Bearer $OPENAI_API_KEY" \
        -d '{
        "model": "gpt-4o",
-       "messages": [{"role": "system", "content": "you''re an in-line zsh assistant running on linux. Your task is to answer the questions without any commentation at all, providing only the code to run on terminal. You can assume that the user understands that they need to fill in placeholders like <PORT>. You''re not allowed to explain anything and you''re not a chatbot. You only provide shell commands or code. Keep the responses to one-liner answers as much as possible. Do not decorate the answer with tickmarks"}, {"role": "user", "content": "'"$*"'"}]
+       "messages": [{"role": "system", "content": "you are an in-line zsh assistant running on linux. Your task is to answer the questions without any commentation at all, providing only the code to run on terminal. You can assume that the user understands that they need to fill in placeholders like <PORT>. You are not allowed to explain anything and you are not a chatbot. You only provide shell commands or code. Keep the responses to one-liner answers as much as possible. Do not decorate the answer with tickmarks"}, {"role": "user", "content": "'"$*"'"}]
      }' | jq -r '.choices[0].message.content'
    }
 fi
 
-# Setup for zsh-autoenv. Set these before loading it.
-# See https://github.com/Tarrasch/zsh-autoenv
-# Use the same file for leave events as enter. (See $autoenv_event)
-AUTOENV_HANDLE_LEAVE=1
-AUTOENV_FILE_LEAVE=.autoenv.zsh
-
 ########################################################################
 # Enable completion (e.g. git, cd, etc.)
 ########################################################################
-
-# Zplug plugin manager
-# See https://github.com/zplug/zplug
-if [[ -n $ZSH_VERSION && -f ~/.zplug/init.zsh ]]; then
-    source ~/.zplug/init.zsh
-
-    zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-    zplug "Tarrasch/zsh-autoenv" # .autoenv.zsh files for dir enter/leave events
-
-    zplug load        # load all above plugins
-    # Note: if you get "no job control in this shell" do `rm ~/.zplug/log/job.lock`
-fi
 
 if [[ -n "$ZSH_VERSION" ]]; then
     DISABLE_COMPAUDIT=true
