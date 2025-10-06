@@ -948,7 +948,8 @@ fi
 timediff1 "after starting ssh-agent"
 
 if [[ -f ~/.authinfo ]]; then
-   export OPENAI_API_KEY=$(awk '/openai/ {print $4}' ~/.authinfo)
+   export OPENAI_API_KEY=$(awk '!/^#/ && /openai/ {print $NF}' ~/.authinfo)
+   export ANTHROPIC_API_KEY=$(awk '!/^#/ && /anthropic/ {print $NF}' ~/.authinfo)
 fi
 
 # Simple ChatGPT command-line assistant for zsh
@@ -1030,6 +1031,18 @@ if has_command uv; then
     else
       eval "$(uv generate-shell-completion bash)"
     fi
+fi
+
+# Common virtualenv alias
+if [[ $_OS = windows ]]; then
+  alias activate="source .venv/Scripts/activate"
+else
+  alias activate="source .venv/bin/activate"
+fi
+
+# Claude AI:
+if ! has_command claude -a [[ -f ~/.claude/local ]] ; then
+    alias claude="~/.claude/local/claude"
 fi
 
 # Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
