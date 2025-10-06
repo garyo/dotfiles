@@ -150,10 +150,6 @@
   packSizeLimit = 2048m
   windowMemory = 2048m
   window = 1
-[credential "https://github.com"]
-	helper = !gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = !gh auth git-credential
 [commit]
 	template = /Users/garyo/.gitmessage
 [column]
@@ -166,3 +162,5 @@
 	autoSquash = true
 	autoStash = true
 	updateRefs = true
+[include]
+	path = .gitconfig-credentials
