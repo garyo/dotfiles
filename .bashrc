@@ -462,7 +462,7 @@ setvars
 # Terminal setup
 
 ttymodes=(-istrip erase \^\? susp \^Z intr \^C quit \^\\ flush \^O ixany)
-if [[ $TERM = emacs ]]; then
+if [[ $TERM = emacs || -t 1 ]]; then
   :
 else
   stty $ttymodes
@@ -904,13 +904,13 @@ if [[ -n "$BASH_VERSION" ]]; then
   PS1='\u@\h [\W] % '
 fi
 
-# Only set chpwd (or prompt) to echo to xterm title bar if on an xterm
+# Only set chpwd (or prompt) to echo to xterm title bar if on an xterm and on a tty (-t 1)
 if [[ -n "$ZSH_VERSION" ]]; then
   chpwd () {
-      [[ $TERM = xterm* ]] && print -Pn "]2;%m (%l:$WSL2_OSNAME): %~" > /dev/tty
+      [[ $TERM = xterm* && -t 1 ]] && print -Pn "]2;%m (%l:$WSL2_OSNAME): %~" > /dev/tty
   }
-  if [[ $TERM = xterm* ]]; then
-    set PROMPT='%{]2;%m (%l): %~%}'$PROMPT
+  if [[ $TERM = xterm* && -t 1 ]]; then
+    PROMPT='%{]2;%m (%l): %~%}'$PROMPT
   fi
 fi
 
