@@ -288,12 +288,12 @@ setpath() {
 
 # Runs after all other setpaths, always
 setpath_all() {
-    if has_command yarn; then
-        local yarndir=$(yarn global bin)
-        # don't move /usr/local/bin to front if it's already somewhere in $PATH
-        # (on Mac that can get the wrong version of homebrew)
-        path_contains_dir $yarndir || path_append $yarndir
-    fi
+    # Yarn 1's global bin dir by convention, rather than asking `yarn global bin`
+    # for it: where yarn is a corepack shim, running it pins a `packageManager`
+    # field into whatever package.json happens to be in the cwd.
+    local yarndir=${XDG_CONFIG_HOME:-$HOME/.config}/yarn/bin
+    [[ $_OS = windows ]] && yarndir=$LOCALAPPDATA/Yarn/bin
+    path_contains_dir $yarndir || path_append $yarndir
     path_prepend $HOME/.poetry/bin always # Python dependency/virtualenv manager
     path_prepend $HOME/.local/bin always # alt path for poetry, maybe other things
     path_prepend $HOME/bin always
@@ -517,6 +517,7 @@ fi
 export GIT_EDITOR="$EDITOR"
 export EXINIT='set redraw sw=2 wm=2'
 export GTAGSFORCECPP=1 # for GNU Global tags
+export COREPACK_ENABLE_AUTO_PIN=0 # else corepack's yarn/pnpm shims edit the cwd's package.json
 export LESS='-eij3MqsFXR'
 #export LESSOPEN='|lessopen.sh %s'
 export MORE=s
@@ -975,11 +976,14 @@ fi
 # Enable completion (e.g. git, cd, etc.)
 ########################################################################
 
-if [[ -n "$ZSH_VERSION" ]]; then
-    DISABLE_COMPAUDIT=true
+if [[ -n $ZSH_VERSION ]]; then
     mkdir -p ~/.zsh/cache
+
     zstyle ':completion:*' use-cache on
     zstyle ':completion:*' cache-path ~/.zsh/cache
+
+    fpath=("$HOME/.zfunc" $fpath)
+
     autoload -Uz compinit
     compinit -u -C -d ~/.zsh/cache/zcompdump
 fi
@@ -1045,9 +1049,16 @@ if ! has_command claude -a [[ -f ~/.claude/local ]] ; then
     alias claude="~/.claude/local/claude"
 fi
 
+# Yes this is dangerous, but I use it all the time for coding long sessions without me.
+alias dclaude="claude --dangerously-skip-permissions"
+
 # Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
 if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/var/repos/eat/integration/zsh ]]; then
     source ~/.config/emacs/var/elpaca/repos/eat/integration/zsh
+fi
+
+if [[ -d ~/Library/Android/sdk ]]; then
+  export ANDROID_HOME=~/Library/Android/sdk
 fi
 
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
