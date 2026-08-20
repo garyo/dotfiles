@@ -3,9 +3,11 @@
     "allow": [
       "WebSearch",
       "WebFetch",
+      "Bash(awk:*)",
       "Bash(bun:*)",
       "Bash(bunx:*)",
       "Bash(cat:*)",
+      "Bash(cp:*)",
       "Bash(curl:*)",
       "Bash(docker:*)",
       "Bash(echo:*)",
@@ -14,8 +16,10 @@
       "Bash(git:*)",
       "Bash(grep:*)",
       "Bash(head:*)",
+      "Bash(ln:*)",
       "Bash(ls:*)",
       "Bash(make:*)",
+      "Bash(mv:*)",
       "Bash(ninja:*)",
       "Bash(npm:*)",
       "Bash(otool:*)",
@@ -29,11 +33,14 @@
       "Bash(uv:*)",
       "Bash(xargs:*)",
       "Search(*)",
-      "Update(*)"
+      "Update(*)",
+      "Read(/home/garyo/Downloads)",
+      "Edit(/tmp)",
+      "Edit(/home/garyo/src)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "claude-fable-5[1m]",
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
@@ -41,5 +48,13 @@
     "code-review@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "awaySummaryEnabled": false,
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "light",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
