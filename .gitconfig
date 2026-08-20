@@ -45,7 +45,7 @@
         # Git add with fuzzy matching courtesy of fzf:
         fza = "!git status --porcelain | fzf -m | cut -c4- | (cd $(git rev-parse --show-toplevel); xargs -d\\\\n -t -o git add)"
         # Branch-switching history from reflog:
-        hist = !"git reflog | grep 'checkout:' | head -n10 | perl -ne 'if ($_ =~ m/checkout: moving from ([^ ]*)/) {print \"$.: $1\n\"}'"
+        hist = !"git reflog | grep 'checkout:' | head -n10 | perl -ne 'if ($_ =~ m/checkout: moving from ([^ ]*)/) {print \"$.: $1\\n\"}'"
         s1 = switch @{-1}
         s2 = switch @{-2}
         s3 = switch @{-3}
