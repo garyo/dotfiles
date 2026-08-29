@@ -468,12 +468,6 @@ else
   stty $ttymodes
 fi
 
-# ssh-pageant
-# see https://github.com/cuviper/ssh-pageant
-if [[ -f /usr/bin/ssh-pageant ]]; then
-  eval $(/usr/bin/ssh-pageant -r -a "/tmp/.ssh-pageant-$USERNAME")
-fi
-
 # All modern "256-color" terminals are really 24-bit, I think.
 # So set COLORTERM to indicate that to clients.
 # BUT NO, Mac Terminal is not!
@@ -721,9 +715,11 @@ if [[ $_OS = windows ]]; then
   if [[ $OSTYPE != msys ]]; then
     alias git="c:/Program\ Files\ \(x86\)/git/bin/git"
   fi
-  if [[ $OSTYPE = msys && -e c:/msys64/usr/bin/ssh.exe ]]; then
-    # git will find ssh without this, but git-lfs will not. So set it explicitly.
-    export GIT_SSH_COMMAND=c:/msys64/usr/bin/ssh.exe
+  if [[ -e /c/Windows/System32/OpenSSH/ssh.exe ]]; then
+    # git finds ssh via PATH, but git-lfs will not. So set it explicitly.
+    # Must be Windows OpenSSH, not the msys build: only it can reach the
+    # ssh-agent service, which listens on a named pipe rather than a socket.
+    export GIT_SSH_COMMAND=C:/Windows/System32/OpenSSH/ssh.exe
   fi
   # start on Windows opens a file with its default application.
   # It's a builtin in cmd.exe.
@@ -933,9 +929,19 @@ else
 fi
 
 # 0 means true here
-if [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
-   # Try using a fixed location for SSH_AUTH_SOCK systemwide
-   export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$NAME.sock
+if [[ $_OS = windows ]]; then
+   # Windows OpenSSH's ssh-agent runs as a system service, and it listens on
+   # a named pipe (\\.\pipe\openssh-ssh-agent) rather than a Unix
+   # socket. Its ssh/ssh-add find that pipe by themselves, but ONLY if
+   # SSH_AUTH_SOCK is unset -- a socket path here makes them fail with
+   # "invalid format". So there is no agent to start and no socket to set;
+   # just make sure nothing inherited a stale one. Keys added once with
+   # `ssh-add` persist across reboots.
+   unset SSH_AUTH_SOCK
+elif [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
+   # Fixed, per-machine location for SSH_AUTH_SOCK, so a shared/synced $HOME
+   # does not collide. ($NAME was never set, giving everyone "ssh-agent..sock".)
+   export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$MACHINENAME.sock
    # Can we connect to a running agent?
    ssh-add -l 2>/dev/null >/dev/null
    _STATUS=$?
