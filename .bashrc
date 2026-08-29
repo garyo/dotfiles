@@ -152,7 +152,7 @@ cached_cygpath() {
   else
     val=$(cygpath "$key")
     CYGPATH_CACHE[$key]=$val
-    echo "cached_cygpath($key) = ${CYGPATH_CACHE[$key]}"
+    [[ -n $SETPATH_VERBOSE ]] && echo "cached_cygpath($key) = ${CYGPATH_CACHE[$key]}"
   fi
 
   eval "$__retvar=\"\$val\""
