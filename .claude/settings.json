@@ -56,5 +56,6 @@
   "theme": "light",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoUpdatesChannel": "latest"
 }
