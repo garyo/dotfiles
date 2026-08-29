@@ -151,7 +151,7 @@
   windowMemory = 2048m
   window = 1
 [commit]
-	template = /Users/garyo/.gitmessage
+	template = ~/.gitmessage
 [column]
 	ui = auto
 [branch]
