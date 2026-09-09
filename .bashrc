@@ -269,14 +269,9 @@ setpath_mac() {
     path_append /usr/sbin
     path_append /sbin
     path_append /Applications/Xcode.app/Contents/Developer/usr/bin
-    path_append /usr/local/opt/llvm/bin # for clangd, C++ LSP server
     path_prepend /Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9
     path_prepend /Applications/Emacs.app/Contents/MacOS/bin # emacsclient may be here
-    path_prepend /usr/local/lib/ruby/gems/2.6.0/bin
-    path_prepend /usr/local/opt/ruby/bin
-    path_prepend /usr/local/Homebrew/bin # put this first in path, so last here
     path_prepend /opt/homebrew/bin # M1 mac location
-    path_prepend /usr/local/opt/go/libexec/bin # Go itself (the language, not the game)
     path_prepend $HOME/go/bin # Go programs
 }
 
