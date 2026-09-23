@@ -87,7 +87,7 @@ case $OSTYPE in
       ;;
 esac
 
-PATH=$PATH:/bin:/usr/bin        # for grep at least (can be missing in msys2)
+[[ ":$PATH:" == *:/usr/bin:* ]] || PATH=$PATH:/bin:/usr/bin   # for grep at least (can be missing in msys2)
 
 # utility to see if command is defined (in any way)
 has_command () { command -v "$1" > /dev/null 2>&1 ; }
@@ -419,7 +419,8 @@ maybe_setpath() {
 }
 
 reset_path() {
-    export PATH="$ORIG_PATH"
+    # ORIG_PATH is unset if PATH was inherited already set (e.g. from Emacs)
+    export PATH="${ORIG_PATH:-$PATH}"
     path_remove /PATHSETFROMBASH
     maybe_setpath
     if is_function setpath_local; then
@@ -667,7 +668,7 @@ alias j='jobs -l'
 alias tf='tail -f'
 if has_command eza; then
     alias t='eza --tree'
-    alias ll='eza -lGF'
+    alias ll='eza -l -F=auto -G'
     alias lld='eza -lFd' # long listing of dirs (shows symlink targets)
 else
     alias t='tree -I __pycache__\|*.pyc\|node_modules'
@@ -736,23 +737,26 @@ function whatshell {
   ps -p $$
 }
 
+# Current gcloud project, resolved the way gcloud does it:
+# $CLOUDSDK_CORE_PROJECT, else the project in the active configuration.
 function gcproject {
-    if [[ -e ~/.config/gcloud/active_config ]]; then
-        local configfile
-        configfile=~/.config/gcloud/configurations/config_$(cat ~/.config/gcloud/active_config)
-        if [[ $1 == "short" ]]; then
-            # horizon-dev-123abc => dev
-            awk '/^project/ {gsub(/-[0-9a-z]+$/, "", $3); print $3}' "$configfile"
-        else
-            awk '/^project/ {print $3}' "$configfile"
-        fi
+    local project=$CLOUDSDK_CORE_PROJECT
+    if [[ -z $project ]]; then
+        local config=${CLOUDSDK_ACTIVE_CONFIG_NAME:-$(cat "$HOME/.config/gcloud/active_config" 2>/dev/null)}
+        local configfile="$HOME/.config/gcloud/configurations/config_$config"
+        [[ -f $configfile ]] && project=$(awk '/^project/ {print $3}' "$configfile")
     fi
+    if [[ $1 == "short" ]]; then
+        # horizon-dev-123abc => horizon-dev
+        project=$(sed -E 's/-[a-z]*[0-9][a-z0-9]*$//' <<< "$project")
+    fi
+    [[ -n $project ]] && echo "$project"
 }
 
+# Shown only when this shell has explicitly selected a gcloud project or configuration
 function gcproject_prompt {
-    local p
-    p=$(gcproject short)
-    [[ -n $p ]] && echo "[GCP:$p]"
+    [[ -n $CLOUDSDK_CORE_PROJECT || -n $CLOUDSDK_ACTIVE_CONFIG_NAME ]] || return
+    echo " [GCP:$(gcproject short)]"
 }
 
 if has_command units; then
@@ -832,9 +836,9 @@ vcs_info_wrapper() {
   if in_git_dir; then
      [[ $has_vcs_info -eq 1 ]] && vcs_info
      if [ -n "$vcs_info_msg_0_" ]; then
-       echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+       echo " $vcs_info_msg_0_"
      else
-       echo "[$(git rev-parse --abbrev-ref HEAD 2>/dev/null)]"
+       echo " [$(git rev-parse --abbrev-ref HEAD 2>/dev/null)]"
      fi
   fi
 }
@@ -864,11 +868,11 @@ if [[ $TERM == dumb ]]; then
   PROMPT="> "
 elif has_cygpath && [[ $TERM == emacs ]] ; then
   # use cygpath so Emacs dirtrack mode can track it
-  PROMPT='%U$(mname_prompt) (%F{yellow}%{$(cygpath -m "`pwd`")%}%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U$(mname_prompt) (%F{yellow}%{$(cygpath -m "`pwd`")%}%f$(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U$(mname_prompt)%u %U%B%UMORE:%u%b %B=>%b '
 else
-  PROMPT='%U$(wsl_prompt)$(mname_prompt) %F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f $(vcs_info_wrapper)) %@ %B%!=>%b%u
+  PROMPT='%U$(wsl_prompt)$(mname_prompt)%F{cyan}$(gcproject_prompt)%f (%F{yellow}%~%f$(vcs_info_wrapper)) %@ %B%!=>%b%u
 %# %B'
   PROMPT2='%U$(mname_prompt)%u %U%B%UMORE:%u%b %B=>%b '
 fi
@@ -959,9 +963,9 @@ fi
 # but it's so simple, might as well just inline it here.)
 if [[ -n "$ZSH_VERSION" ]]; then
    gpt() {
-     if [[ ! $+commands[curl] ]]; then echo "Curl must be installed."; return 1; fi
-     if [[ ! $+commands[jq] ]]; then echo "Jq must be installed."; return 1; fi
-     if [[ ! -v OPENAI_API_KEY ]]; then echo "Must set OPENAI_API_KEY to your API key"; return 1; fi
+     if ! has_command curl; then echo "Curl must be installed."; return 1; fi
+     if ! has_command jq; then echo "Jq must be installed."; return 1; fi
+     if [[ -z $OPENAI_API_KEY ]]; then echo "Must set OPENAI_API_KEY to your API key"; return 1; fi
 
      curl https://api.openai.com/v1/chat/completions -s \
        -H "Content-Type: application/json" \
@@ -1053,9 +1057,10 @@ fi
 # Yes this is dangerous, but I use it all the time for coding long sessions without me.
 alias dclaude="claude --dangerously-skip-permissions"
 
-# Emacs eat: Emulate A Terminal -- load its simple shell integration for dir tracking
-if [[ -n $ZSH_VERSION && -f ~/.config/emacs/elpaca/var/repos/eat/integration/zsh ]]; then
-    source ~/.config/emacs/var/elpaca/repos/eat/integration/zsh
+# Emacs eat: Emulate A Terminal -- load its shell integration for dir tracking.
+# eat sets EAT_SHELL_INTEGRATION_DIR in shells it runs.
+if [[ -n $EAT_SHELL_INTEGRATION_DIR ]]; then
+    source "$EAT_SHELL_INTEGRATION_DIR/${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 fi
 
 if [[ -d ~/Library/Android/sdk ]]; then
