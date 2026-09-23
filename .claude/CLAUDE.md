@@ -80,3 +80,5 @@ sentence "If accepted, this commit will..."
 -  Avoid using the word "shape" to describe the structure of something; it's over-used. Instead of "this has the same shape as...", say "this has the same structure as" or "this is similar to" or "shares common subfields with" as appropriate. Use "shape" primarily to mean geometric shape, as in triangular or circular. 
   
 - Avoid using the word "spelling" or "spelled" to mean the term used to refer to something,   as in "often spelled as ...". Reserve "spelling" to actually mean the sequence of letters used to construct a particular word, not the word choice.
+
+- Avoid using the word "names" when you mean "identifies" or "gives" or "shows" as appropriate: instead of "a menu names each choice" say "a menu shows each choice".
