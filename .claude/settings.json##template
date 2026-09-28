@@ -1,6 +1,20 @@
 {
+{% if yadm.os == "Darwin" %}
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+{% endif %}
   "permissions": {
     "allow": [
+{% if yadm.os == "Msys" %}
+      "Bash(powershell:*)",
+{% endif %}
+{% if yadm.os == "Linux" %}
+      "Read(/home/garyo/Downloads)",
+      "Edit(/tmp)",
+      "Edit(/home/garyo/src)",
+{% endif %}
       "WebSearch",
       "WebFetch",
       "Bash(awk:*)",
@@ -33,14 +47,19 @@
       "Bash(uv:*)",
       "Bash(xargs:*)",
       "Search(*)",
-      "Update(*)",
-      "Read(/home/garyo/Downloads)",
-      "Edit(/tmp)",
-      "Edit(/home/garyo/src)"
+      "Update(*)"
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
@@ -51,11 +70,11 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "awaySummaryEnabled": false,
+  "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "theme": "light",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "autoUpdatesChannel": "latest"
+  "skipAutoPermissionPrompt": true
 }
