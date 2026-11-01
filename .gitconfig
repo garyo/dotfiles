@@ -130,7 +130,6 @@
 	writecommitgraph = false
   recurseSubmodules = on-demand
 	prune = true
-	pruneTags = true
 	all = true
 [gc]
 	writeCommitGraph = false
