@@ -953,10 +953,13 @@ elif [[ $IS_LOGIN == 0 ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
 fi
 timediff1 "after starting ssh-agent"
 
-if [[ -f ~/.authinfo ]]; then
-   export OPENAI_API_KEY=$(awk '!/^#/ && /openai/ {print $NF}' ~/.authinfo)
-   export ANTHROPIC_API_KEY=$(awk '!/^#/ && /anthropic/ {print $NF}' ~/.authinfo)
-fi
+# API keys are no longer exported to every process: a key in the environment
+# bills `claude -p` runs to the API account. Projects that need one load it
+# from their own .env.
+# if [[ -f ~/.authinfo ]]; then
+#    export OPENAI_API_KEY=$(awk '!/^#/ && /openai/ {print $NF}' ~/.authinfo)
+#    export ANTHROPIC_API_KEY=$(awk '!/^#/ && /anthropic/ {print $NF}' ~/.authinfo)
+# fi
 
 # Simple ChatGPT command-line assistant for zsh
 # (There's a plugin for this at https://github.com/antonjs/zsh-gpt/blob/main/zsh-gpt.plugin.zsh
@@ -965,7 +968,8 @@ if [[ -n "$ZSH_VERSION" ]]; then
    gpt() {
      if ! has_command curl; then echo "Curl must be installed."; return 1; fi
      if ! has_command jq; then echo "Jq must be installed."; return 1; fi
-     if [[ -z $OPENAI_API_KEY ]]; then echo "Must set OPENAI_API_KEY to your API key"; return 1; fi
+     local OPENAI_API_KEY=${OPENAI_API_KEY:-$(awk '!/^#/ && /openai/ {print $NF}' ~/.authinfo 2>/dev/null)}
+     if [[ -z $OPENAI_API_KEY ]]; then echo "Must set OPENAI_API_KEY or add it to ~/.authinfo"; return 1; fi
 
      curl https://api.openai.com/v1/chat/completions -s \
        -H "Content-Type: application/json" \
