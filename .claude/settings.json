@@ -83,6 +83,15 @@
             "statusMessage": "Reporting to Corgi"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'waiting)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -93,6 +102,15 @@
             "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
             "timeout": 2,
             "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'working)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
           }
         ]
       }
@@ -119,6 +137,15 @@
             "statusMessage": "Reporting to Corgi"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'working)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "PermissionRequest": [
@@ -131,6 +158,15 @@
             "statusMessage": "Reporting to Corgi"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'input)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "Stop": [
@@ -141,6 +177,15 @@
             "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
             "timeout": 2,
             "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'waiting)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
           }
         ]
       }
@@ -177,6 +222,16 @@
             "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
             "timeout": 2,
             "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      },
+      {
+        "matcher": "permission_prompt|elicitation_dialog|elicitation_url_dialog|agent_needs_input",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"${CLAUDE_CODE_STATUS_ID:-x}\" in *[!0-9]*) ;; *) emacsclient -n -a false --eval \"(claude-code-status-update $CLAUDE_CODE_STATUS_ID 'input)\" >/dev/null 2>&1 ;; esac; exit 0",
+            "timeout": 2
           }
         ]
       }
