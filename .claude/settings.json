@@ -1,0 +1,237 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+      "Bash(awk:*)",
+      "Bash(bun:*)",
+      "Bash(bunx:*)",
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(curl:*)",
+      "Bash(docker:*)",
+      "Bash(echo:*)",
+      "Bash(fd:*)",
+      "Bash(find:*)",
+      "Bash(git:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(ln:*)",
+      "Bash(ls:*)",
+      "Bash(make:*)",
+      "Bash(mv:*)",
+      "Bash(ninja:*)",
+      "Bash(npm:*)",
+      "Bash(otool:*)",
+      "Bash(pcons:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(tail:*)",
+      "Bash(tr:*)",
+      "Bash(uv:*)",
+      "Bash(xargs:*)",
+      "Search(*)",
+      "Update(*)",
+      "Bash(powershell:*)",
+      "Read(/home/garyo/Downloads)",
+      "Edit(/tmp)",
+      "Edit(/home/garyo/src)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "awaySummaryEnabled": false,
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -n \"${CORGI_PANE:-}\" ] && [ -n \"${CORGI_SOCKET:-}\" ] && [ -x \"${CORGI_BIN:-}\" ]; then \"$CORGI_BIN\" hook claude; fi",
+            "timeout": 2,
+            "statusMessage": "Reporting to Corgi"
+          }
+        ]
+      }
+    ]
+  },
+  "crossSessionInbound": "accept",
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "**Organization**: Gary Oberbrunner, an independent software developer and consultant (Dark Star Systems), who also volunteers with Long Now Boston, a nonprofit. Claude Code is used mainly for software development, plus writing, research and organizing for that volunteer work.",
+      "**Source control**: github.com/garyo (Gary's personal account, public and private repos) and github.com/DarkStarSystems (Gary's company). Projects in ~/src are Gary's own; each ~/dss/consulting/<client>/ directory holds one client's work, in that client's own GitHub org or in a private garyo repo. A repo's configured remotes are the right destinations for its code.",
+      "**Repository visibility**: ~/src mixes public open source (DarkStarSystems repos, many garyo repos, and upstream open-source projects Gary contributes to) with private garyo repos. Client repos are private unless the client publishes them as open source. When it matters and is not known, treat a repo as private.",
+      "**Sensitive data locations & audiences**: client work under ~/dss/consulting is confidential to each client, and Long Now Boston files under ~/Documents/LongNowBoston include personal data; the CLAUDE.md in each of those directories gives the rules. Treat .env files, API keys and tokens anywhere as secrets.",
+      "**Key internal services**: Gary's home lab is his own, secure and not shared: tower1 (Windows) and mac-ci-runner1 (macOS CI runner) are build, test and CI machines, and freenas is his NAS. Syncing any project to them and building, testing or running CI jobs there over SSH is within the trust boundary. homeassistant and the router are home infrastructure: change their configuration only when the user asks.",
+      "**Sensitive remote targets**: clients' servers (listed in ~/dss/consulting/CLAUDE.md), and any host, namespace or container whose name contains `prod` or `production` as a word or name segment."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Release Publishing [named+specifics — **must name:** the version, tag or deployment being released]: anything that starts a release or production publish: creating, pushing, moving or deleting a version tag (`git push --tags`, `--follow-tags`, `git push origin v1.2.3`), `gh release create`, dispatching a release, publish or production-deploy workflow or script, and uploading to a package index or app store (`uv publish`, `twine upload`, `npm publish`, TestPyPI included). In many repos a `v*` tag push runs CI that publishes, so a tag push is judged by this rule, not by the push-to-own-repo exception."
+    ]
+  }
+}

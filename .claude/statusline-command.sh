@@ -1,5 +1,6 @@
 #!/bin/bash
 input=$(cat)
+command -v jq >/dev/null || exit 0
 MODEL=$(jq -r '.model.display_name // "?"' <<<"$input")
 EFFORT=$(jq -r '.effort.level // empty' <<<"$input")
 PCT=$(jq -r '.context_window.used_percentage // 0' <<<"$input" | cut -d. -f1)
