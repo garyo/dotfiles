@@ -17,3 +17,7 @@ compile_commands.json
 
 .claude/
 .DS_Store
+
+# SSH keys and known_hosts never go in dotfiles; only config is tracked
+/.ssh/*
+!/.ssh/config
