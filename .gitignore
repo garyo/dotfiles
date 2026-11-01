@@ -21,3 +21,6 @@ compile_commands.json
 # SSH keys and known_hosts never go in dotfiles; only config is tracked
 /.ssh/*
 !/.ssh/config
+
+# Personal Claude Code notes for a project
+CLAUDE.local.md
